@@ -109,19 +109,19 @@ class AdminController extends Controller
         try {
             DB::beginTransaction();
             //$users = User::where('role_id', 'student')->whereDoesntHave('blocks')->get();
-            $users=User::whereHas('roles',function ($q){
-                $q->where('name',"student");
-            })->whereHas('profile_teacher',function ($qu){
-                $qu->where('status',1);
+            $users = User::whereHas('roles', function ($q) {
+                $q->where('name', "student");
+            })->whereHas('profile_teacher', function ($qu) {
+                $qu->where('status', 1);
             })->whereDoesntHave('blocks')->count();
-//            $data = [];
-//            foreach ($users as $user) {
-//                if ($user->profile_student) {
-//                    $data[] = $user;
-//                }
-//            }
+            //            $data = [];
+            //            foreach ($users as $user) {
+            //                if ($user->profile_student) {
+            //                    $data[] = $user;
+            //                }
+            //            }
             DB::commit();
-            return $this->returnData(200,$users);
+            return $this->returnData(200, $users);
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -132,21 +132,21 @@ class AdminController extends Controller
         try {
             DB::beginTransaction();
             //$users = User::where('role_id', 'teacher')->whereDoesntHave('blocks')->get();
-            $users=User::whereHas('roles',function ($q){
-                $q->where('name',"teacher");
-            })->whereHas('profile_teacher',function ($qu){
-                $qu->where('status',1);
+            $users = User::whereHas('roles', function ($q) {
+                $q->where('name', "teacher");
+            })->whereHas('profile_teacher', function ($qu) {
+                $qu->where('status', 1);
             })->whereDoesntHave('blocks')->count();
-//            $data = [];
-//            foreach ($users as $user) {
-//                if ($user->profile_teacher) {
-//                    if ($user->profile_teacher->status == 1) {
-//                        $data[] = $user;
-//                    }
-//                }
-//            }
+            //            $data = [];
+            //            foreach ($users as $user) {
+            //                if ($user->profile_teacher) {
+            //                    if ($user->profile_teacher->status == 1) {
+            //                        $data[] = $user;
+            //                    }
+            //                }
+            //            }
             DB::commit();
-            return $this->returnData(200,$users);
+            return $this->returnData(200, $users);
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -157,8 +157,8 @@ class AdminController extends Controller
         try {
             DB::beginTransaction();
             //$user = User::where('role_id', 'teacher')->find($id);
-            $user=User::where('id',$id)->whereHas('roles',function($query){
-                $query->where('name',"teacher");
+            $user = User::where('id', $id)->whereHas('roles', function ($query) {
+                $query->where('name', "teacher");
             })->first();
             if (!$user) {
                 return $this->returnError(404, 'not Found teacher');
@@ -178,8 +178,8 @@ class AdminController extends Controller
         try {
             DB::beginTransaction();
             //$user = User::where('role_id', 'student')->find($id);
-            $user=User::where('id',$id)->whereHas('roles',function($query){
-                $query->where('name',"student");
+            $user = User::where('id', $id)->whereHas('roles', function ($query) {
+                $query->where('name', "student");
             })->first();
             if (!$user) {
                 return $this->returnError(404, 'not Found student');
@@ -193,6 +193,42 @@ class AdminController extends Controller
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
+    }
+
+    public function searchByName(Request $request)
+    {
+        $searchTerm = $request->input('search');
+        if (!$searchTerm) {
+            return response()->json(['message' => 'Please provide a search term'], 400);
+        }
+        $searchTerms = explode(' ', $searchTerm);
+        $usersQuery = User::query();
+        foreach ($searchTerms as $term) {
+            $usersQuery->where('name', 'LIKE', '%' . $term . '%');
+        }
+        $users = $usersQuery->get();
+        if ($users->isEmpty()) {
+            return response()->json(['message' => 'No users found matching the search term'], 404);
+        }
+        return response()->json(['users' => $users], 200);
+    }
+
+    public function searchByAddress(Request $request)
+    {
+        $searchTerm = $request->input('search');
+        if (!$searchTerm) {
+            return response()->json(['message' => 'Please provide a search term'], 400);
+        }
+        $searchTerms = explode(' ', $searchTerm);
+        $usersQuery = User::query();
+        foreach ($searchTerms as $term) {
+            $usersQuery->where('address', 'LIKE', '%' . $term . '%');
+        }
+        $users = $usersQuery->get();
+        if ($users->isEmpty()) {
+            return response()->json(['message' => 'No users found matching the search term'], 404);
+        }
+        return response()->json(['users' => $users], 200);
     }
 }
 

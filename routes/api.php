@@ -182,12 +182,14 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::get('getAll', [RoleController::class, 'getAll']);
             Route::get('getById/{id}', [RoleController::class, 'getById']);
         });
+        Route::post('searchName', [AdminController::class, 'searchByName']);
+        Route::post('searchAddress', [AdminController::class, 'searchByAddress']);
     });
 
     Route::group(['middleware' => ['hasRole:teacher']], function () {
 
         Route::group(['prefix' => 'ServiceTeacher'], function () {
-            Route::post('store', [ServiceTeacherController::class, 'store']);//->middleware('profileTeacher');;
+            Route::post('store', [ServiceTeacherController::class, 'store']); //->middleware('profileTeacher');;
             Route::post('update/{id}', [ServiceTeacherController::class, 'update']);
             Route::delete('delete/{id}', [ServiceTeacherController::class, 'destroy']);
             Route::get('getMyService', [ServiceTeacherController::class, 'getMyService']);
@@ -331,6 +333,3 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::delete("{id}", [NotificationController::class, 'delete']);
     });
 });
-
-
-
