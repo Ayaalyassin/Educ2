@@ -67,9 +67,6 @@ class LockHourController extends Controller
                 }
             }
 
-
-            // return $this->returnData($student->hour_lock, 'operation completed successfully');
-
             $hours = CalendarHour::find($request->hour_id)->day->teacher->service_teachers;
 
             if (!CalendarHour::find($request->hour_id)) {
@@ -104,7 +101,7 @@ class LockHourController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-    
+
     public function destroy($id)
     {
         try {

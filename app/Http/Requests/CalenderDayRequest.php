@@ -27,7 +27,7 @@ class CalenderDayRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'day' => 'string|required',
+            'day' => 'array|required',
             'hour' => 'required|array',
             'hour.*' => 'required',
         ];
