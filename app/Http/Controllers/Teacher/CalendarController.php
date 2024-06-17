@@ -112,8 +112,23 @@ class CalendarController extends Controller
                 return $this->returnError(404, 'not found teacher');
             }
             $calender_day = $teacher->day()->with('hours')->get();
-            DB::commit();
-            return $this->returnData($calender_day, 'operation completed successfully');
+            // DB::commit();
+            $calendar_data = $calender_day->map(function ($day) {
+                return [
+                    "id" => $day->id,
+                    "teacher_id" => $day->teacher_id,
+                    $day->day => $day->hours->map(function ($hour) {
+                        return [
+                            "id" => $hour->id,
+                            "day_id" => $hour->day_id,
+                            "status" => $hour->status,
+                            "hour" => date("H:i", strtotime($hour->hour))
+                        ];
+                    })
+                ];
+            });
+            return $this->returnData($calendar_data, 'operation completed successfully');
+            // return $this->returnData($calender_day, 'operation completed successfully');
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -133,7 +148,63 @@ class CalendarController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            $days = $request->input('day', []);
+            $hours = $request->input('hour', []);
+            $teacher = auth()->user()->profile_teacher;
+
+            foreach ($days as $ind => $day) {
+                $calendarDay = $teacher->day()->where('day', $day)->first();
+                if (!$calendarDay) {
+                    $newDay = $teacher->day()->create([
+                        'day' => $day
+                    ]);
+                    $alternativeDayId = $newDay->id;
+                } else {
+                    $calendarHours = $calendarDay->hours;
+                    $calendarDay->hours()->delete();
+                    $alternativeDayId = $calendarDay->id;
+                }
+
+                $dayHasHours = false;
+                foreach ($hours as $id => $hour) {
+                    $key = array_keys($hour)[0];
+                    $value = $hour[$key];
+                    if ($ind == $key) {
+                        $existingHour = CalendarHour::where('day_id', $alternativeDayId)
+                            ->where('hour', $value)
+                            ->first();
+                        if (!$existingHour) {
+                            CalendarHour::create([
+                                'day_id' => isset($alternativeDayId) ? $alternativeDayId : $calendarDay->id,
+                                'hour' => $value,
+                                'status' => 0
+                            ]);
+                            $dayHasHours = true;
+                        }
+                    }
+                }
+
+                // Remove the day if it has no hours
+                if (!$dayHasHours) {
+                    $teacher->day()->where('id', $alternativeDayId)->delete();
+                }
+            }
+
+            $existingDays = $teacher->day()->pluck('day');
+            foreach ($existingDays as $existingDay) {
+                if (!in_array($existingDay, $days)) {
+                    $calendarDay = $teacher->day()->where('day', $existingDay)->first();
+                    $calendarDay->hours()->delete();
+                    $calendarDay->delete();
+                }
+            }
+
+            return $this->returnData(200, 'operation completed successfully');
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
     }
 
     /**
