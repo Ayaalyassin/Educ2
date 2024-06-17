@@ -79,7 +79,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         });
     });
 
-    Route::group(['middleware' => ['hasRole:student']], function () {
+    Route::group(['middleware' => ['hasRole:student|admin']], function () {
 
         Route::group(['prefix' => 'profile_teacher'], function () {
             Route::get('getById/{id}', [ProfileTeacherController::class, 'getById']);
@@ -97,7 +97,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         });
     });
 
-    Route::group(['middleware' => ['hasRole:teacher']], function () {
+    Route::group(['middleware' => ['hasRole:teacher|admin']], function () {
         Route::group(['prefix' => 'profile_student'], function () {
             Route::get('getById/{id}', [ProfileStudentController::class, 'getById']);
             Route::get('getAll', [ProfileStudentController::class, 'getAll']);

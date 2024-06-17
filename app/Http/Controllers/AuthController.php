@@ -92,7 +92,7 @@ class AuthController extends Controller
         if (!$token)
             return $this->returnError(401, 'Account Not found');
 
-        $code=mt_rand(0, 999999);
+        $code=mt_rand(1, 999999);
         $exist->update([
             'code' => $code,
         ]);

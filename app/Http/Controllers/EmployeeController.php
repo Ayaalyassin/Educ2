@@ -24,12 +24,15 @@ class EmployeeController extends Controller
                 'name'           => $request->name,//
                 'email'          => $request->email,
                 'password'       => $request->password,
-                'address'         => $request->address,
+                'address'        => $request->address,
                 'governorate'    => $request->governorate,
                 'birth_date'     =>$request->birth_date,
             ]);
-            $role=Role::where('name','employee')->first();
+            $role=Role::find($request->role_id);
+            if(!$role)
+                return $this->returnError("404",'Not found');
             $data->assignRole($role);
+            $data->loadMissing('roles');
             DB::commit();
             return $this->returnData($data,'operation completed successfully');
         }
@@ -58,6 +61,7 @@ class EmployeeController extends Controller
                 'governorate'    => isset($request->governorate)? $request->governorate :$data->governorate,
                 'birth_date'     => isset($request->birth_date)? $request->birth_date :$data->birth_date,
             ]);
+            $data->loadMissing('roles');
             DB::commit();
             return $this->returnData($data,'operation completed successfully');
         } catch (\Exception $ex) {
@@ -106,8 +110,11 @@ class EmployeeController extends Controller
     {
         try {
             $data = User::whereHas('roles',function ($query){
-                $query->where('name',"employee");
+                $query->where('id','!=',1)->where('id','!=',2)
+                ->where('id','!=',3);
             })->get();
+            if(count($data)>0)
+                $data->loadMissing('roles');
             return $this->returnData($data,'operation completed successfully');
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(),'Please try again later');

@@ -2,28 +2,37 @@
 
 namespace App\Http\Middleware;
 
-use App\Traits\GeneralTrait;
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use App\Traits\GeneralTrait;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Spatie\Permission\Contracts\Role;
 
 class RoleMiddleware
 {
-    use GeneralTrait;
+    Use GeneralTrait;
 
-    public function handle(Request $request, Closure $next,$role): Response
+
+    public function handle(Request $request, Closure $next,$role)
     {
         try {
-            $user = auth('api')->user();
-            if (!$user->hasRole($role)) {
-                return $this->returnError('512', "you dont have the right role");
-            }
-            else{
-                return $next($request);
+
+            $user=Auth::user();
+
+            $roles = is_array($role)
+                ? $role
+                : explode('|', $role);
+
+            foreach ($roles as $role) {
+                if($user->hasRole($role))
+                    return $next($request);
             }
 
-        }catch (\Exception $e) {
-            return $this->returnError('511', 'Unauthorized User');
+
+        }catch (\Exception $e){
+            return $this->returnError('512', "you dont have the right role");
         }
+        return $this->returnError('512', "you dont have the right role");
     }
 }
