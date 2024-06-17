@@ -63,40 +63,38 @@ class CalendarController extends Controller
     public function store(CalenderDayRequest $request)
     {
         try {
-            DB::beginTransaction();
-            $teacher = auth()->user()->profile_teacher;
-            if (!$teacher) {
-                return $this->returnError(400, 'Token is Invalid');
-            }
-            $calenderDay = $teacher->day()->where('day', $request->day)->first();
-            if (!$calenderDay) {
-                $day = $teacher->day()->create([
-                    'day' => $request->day
-                ]);
-                $day->save();
-                $alternativeDayId = $day->id;
-            }
-
+            $days = $request->input('day', []);
             $hours = $request->input('hour', []);
-            foreach ($hours as $hour) {
-                $calender_hour =  CalendarHour::create([
-                    'day_id' => isset($calenderDay->id) ? $calenderDay->id : $alternativeDayId,
-                    'status' => 0,
-                    'hour' => $hour
-                ]);
-                $calender_hour->save();
+            $teacher = auth()->user()->profile_teacher;
+            foreach ($days as $ind => $day) {
+                if (!$teacher->day()->where('day', $day)->first()) {
+                    $newDay = $teacher->day()->create([
+                        'day' => $day
+                    ]);
+                    $alternativeDayId = $newDay->id;
+                }
+                $calendarDay = $teacher->day()->where('day', $day)->first();
+                foreach ($hours as $id => $hour) {
+                    $key = array_keys($hour)[0];
+                    $value = $hour[$key];
+                    if ($ind == $key) {
+                        $existingHour = CalendarHour::where('day_id', $calendarDay->id)
+                            ->where('hour', $value)
+                            ->first();
+                        if (!$existingHour) {
+                            CalendarHour::create([
+                                'day_id' => isset($alternativeDayId) ? $alternativeDayId : $calendarDay->id,
+                                'hour' => $value,
+                                'status' => 0
+                            ]);
+                        }
+                    }
+                }
             }
-            // $calender_hour =  CalendarHour::create([
-            //     'day_id' => isset($calenderDay->id) ? $calenderDay->id : $alternativeDayId,
-            //     'status' => 0,
-            //     'hour' => $request->hour
-            // ]);
-            // $calender_hour->save();
-            DB::commit();
             return $this->returnData(200, 'operation completed successfully');
         } catch (\Exception $ex) {
             DB::rollback();
-            //return $this->returnError($ex->getCode(), $ex->getMessage());
+            return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
 
