@@ -48,10 +48,6 @@ class CalendarController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
