@@ -15,9 +15,6 @@ class CalendarController extends Controller
 {
 
     use GeneralTrait;
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         try {
@@ -48,11 +45,6 @@ class CalendarController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
