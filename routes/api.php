@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BlockController;
+use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileStudentAdsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -50,16 +53,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/login/google', [AuthController::class, 'redirectToGoogle']);
-Route::get('/login/google/callback', [AuthController::class, 'handleGoogleCallback']);
+Route::get('/login/google', [GoogleController::class, 'redirectToGoogle']);
+Route::get('/login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
-Route::post('forgetPassword', [AuthController::class, 'forgetPassword']);
-Route::post('checkCode', [AuthController::class, 'checkCode']);
-Route::post('passwordNew', [AuthController::class, 'passwordNew']);
-Route::post('login_admin', [AuthController::class, 'login_admin']);
-Route::post('codeAdmin', [AuthController::class, 'codeAdmin']);
+Route::post('forgetPassword', [PasswordController::class, 'forgetPassword']);
+Route::post('checkCode', [PasswordController::class, 'checkCode']);
+Route::post('passwordNew', [PasswordController::class, 'passwordNew']);
+Route::post('login_admin', [AdminAuthController::class, 'login_admin']);
+Route::post('codeAdmin', [AdminAuthController::class, 'codeAdmin']);
 Route::post('refreshToken', [AuthController::class, 'refreshToken']);
 
 
