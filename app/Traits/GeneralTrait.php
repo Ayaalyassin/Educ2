@@ -4,7 +4,8 @@ namespace App\Traits;
 
 use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Http;
+//use Illuminate\Support\Facades\Cache;
+//use Illuminate\Support\Facades\Http;
 
 trait GeneralTrait
 {
@@ -177,5 +178,37 @@ trait GeneralTrait
 //        return json_decode($fcm);
 //    }
 
+//      public function newFirebase($title,$body,$fcm_token)
+//      {
+//          try {
+//              $message = [
+//                  "message" => [
+//                      "token" => $fcm_token,
+//                      "notification" => [
+//                          "body" => $body,
+//                          "title" => $title
+//                      ]
+//                  ]
+//              ];
+//              $apiUrl = 'https://fcm.googleapis.com/v1/projects/educ-9319e/messages:send';
+//              $access_token = Cache::remember('access_token', now()->addHour(), function () use ($apiUrl) {
+//                  $credentialsFilePath = storage_path('app/fcm.json');
+//                  $client = new \Google_Client();
+//                  $client->setAuthConfig($credentialsFilePath);
+//                  $client->addScope('https://fcm.googleapis.com/auth/firebase.messaging');
+//                  $client->fetchAccessTokenWithAssertion();
+//                  var_dump($token = $client->getAccessToken());
+//                  return $token['access_token'];
+//              });
+//              return $access_token;
+//              $response = Http::withHeader('Authorization', "Bearer $access_token")
+//                  ->post($apiUrl, $message);
+//              return $response;
+//          }
+//          catch (\Exception $e)
+//          {
+//              return $this->returnError("500",$e->getMessage());
+//          }
+//      }
 
 }

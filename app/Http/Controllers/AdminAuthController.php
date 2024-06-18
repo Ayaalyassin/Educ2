@@ -24,21 +24,24 @@ class AdminAuthController extends Controller
         $token = JWTAuth::attempt($credentials);
         $exist=User::where('email',$request->email)->first();
         if($exist && !$token)
-            return $this->returnError(400,'The password is wrong');
+            return $this->returnError(401,'The password is wrong');
 
         if (!$token)
-            return $this->returnError(404, 'Account Not found');
+            return $this->returnError(401, 'Account Not found');
 
-        $code=mt_rand(0, 999999);
+        $code=mt_rand(100000, 999999);
         $exist->update([
             'code' => $code,
         ]);
         $mailData = [
+
             'title' => 'Code login',
+
             'code' => $code
+
         ];
-        //Mail::to($exist->email)->send(new CodeEmail($mailData));
-//        $job=(new sendCodeEmailJob($mailData,$exist));
+//        Mail::to($exist->email)->send(new CodeEmail($mailData));
+//        $job=(new sendCodeEmailJob($mailData,$exist))->delay(Carbon::now()->addSeconds(5));
 //        $this->dispatch($job);
 //        $job=(new DeleteCodeJob($exist))->delay(Carbon::now()->addMinutes(2));
 //        $this->dispatch($job);

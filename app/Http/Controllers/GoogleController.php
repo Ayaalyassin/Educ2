@@ -38,5 +38,4 @@ class GoogleController extends Controller
 
         return $this->returnData($user, 'operation completed successfully');
     }
-
 }
