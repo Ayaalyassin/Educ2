@@ -124,18 +124,19 @@ class AuthController extends Controller
     {
         $user=auth()->user();
         //dispatch(new SendFcmNotification($user->id,"message","title"));
-        $SERVER_KEY=env('FCM_SERVER_KEY');
-        $fcm=Http::acceptJson()->withToken($SERVER_KEY)
-            ->post('https://fcm.googleapis.com/fcm/send',
-                [
-                    'to'=>$user->fcm_token,
-                    'notification'=>
-                        [
-                            'title'=>"title",
-                            'body'=>"message"
-                        ]
-                ]);
-        return $fcm;
+//        $SERVER_KEY=env('FCM_SERVER_KEY');
+//        $fcm=Http::acceptJson()->withToken($SERVER_KEY)
+//            ->post('https://fcm.googleapis.com/fcm/send',
+//                [
+//                    'to'=>$user->fcm_token,
+//                    'notification'=>
+//                        [
+//                            'title'=>"title",
+//                            'body'=>"message"
+//                        ]
+//                ]);
+        //$fcm=$this->newFirebase("title","body",$user->fcm_token);
+        //return $fcm;
         //return $this->returnSuccessMessage('operation completed successfully');
     }
 
