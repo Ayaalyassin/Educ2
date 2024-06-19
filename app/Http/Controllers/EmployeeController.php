@@ -28,9 +28,9 @@ class EmployeeController extends Controller
                 'governorate'    => $request->governorate,
                 'birth_date'     =>$request->birth_date,
             ]);
-            $role=Role::find($request->role_id);
-            if(!$role)
-                return $this->returnError("404",'Not found');
+            $role=Role::where('name',"employee")->first();
+//            if(!$role)
+//                return $this->returnError("404",'Not found');
             $data->assignRole($role);
             $data->loadMissing('roles');
             DB::commit();
