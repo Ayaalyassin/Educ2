@@ -7,8 +7,10 @@ use App\Models\Governor;
 use Illuminate\Http\Request;
 
 use App\Http\Requests\TransactionsRequest;
+use App\Models\HistoryTransaction;
 use App\Models\User;
 use App\Traits\GeneralTrait;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Cast\Object_;
@@ -19,14 +21,15 @@ class GovernorController extends Controller
 {
     use GeneralTrait;
 
-    private $uploadPath = "assets/images/profile_teachers";
+    private $uploadPath = "assets/images/transaction";
     /**
      * Display a listing of the resource.
      */
     public function get_request_charge()
     {
         try {
-            DB::beginTransaction();
+            // DB::beginTransaction();
+            // return Auth::user();
             $convenors = DB::table('governors')
                 ->join('wallets', 'governors.wallet_id', '=', 'wallets.id')
                 ->join('users', 'users.id', '=', 'wallets.user_id')
@@ -40,7 +43,7 @@ class GovernorController extends Controller
                     'users.email',
                     'users.address',
                     'users.governorate',
-                    'users.role_id as userRole '
+                    // 'users.roles as userRole '
                 )
                 ->get();
             DB::commit();
@@ -66,7 +69,7 @@ class GovernorController extends Controller
                     'users.email',
                     'users.address',
                     'users.governorate',
-                    'users.role_id as userRole '
+                    // 'users.role_id as userRole '
                 )
                 ->get();
             DB::commit();
@@ -157,16 +160,24 @@ class GovernorController extends Controller
         //
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
             DB::beginTransaction();
-            // $convenor = Governor::where('type', 'charge')->find($id);
+            $history = Governor::with('wallet')->with('wallet.user')->find($id);
             $convenor = Governor::find($id);
             if (!$convenor) {
                 return $this->returnError(404, 'not found request');
             }
             $convenor->delete();
+            $historyTrn = HistoryTransaction::create([
+                'name' => $history->wallet->user->name,
+                'image' => $history->image_transactions,
+                'type' => $history->type,
+                'value' => $history->amount,
+                'status' => 'Unaccepted',
+                'case' => $request->case
+            ]);
             DB::commit();
             return $this->returnData(200, 'delete order successfully');
         } catch (\Exception $ex) {
@@ -179,6 +190,7 @@ class GovernorController extends Controller
     {
         try {
             DB::beginTransaction();
+            $history = Governor::with('wallet')->with('wallet.user')->where('type', 'charge')->find($id);
             $convenor = Governor::with('wallet')->where('type', 'charge')->find($id);
             if (!$convenor) {
                 return $this->returnError(404, 'not found request');
@@ -188,6 +200,13 @@ class GovernorController extends Controller
             ]);
             $convenor->wallet->save();
             $convenor->delete();
+            $historyTrn = HistoryTransaction::create([
+                'name' => $history->wallet->user->name,
+                'image' => $history->image_transactions,
+                'type' => 'charge',
+                'value' => $history->amount,
+                'status' => 'accepted'
+            ]);
             DB::commit();
             return $this->returnData(200, 'charge successfully');
         } catch (\Exception $ex) {
@@ -199,11 +218,19 @@ class GovernorController extends Controller
     {
         try {
             DB::beginTransaction();
+            $history = Governor::with('wallet')->with('wallet.user')->where('type', 'recharge')->find($id);
             $convenor = Governor::with('wallet')->where('type', 'recharge')->find($id);
             if (!$convenor) {
                 return $this->returnError(404, 'not found request');
             }
             $convenor->delete();
+            $historyTrn = HistoryTransaction::create([
+                'name' => $history->wallet->user->name,
+                // 'image' => $history->image_transactions,
+                'type' => 'recharge',
+                'value' => $history->amount,
+                'status' => 'accepted'
+            ]);
             DB::commit();
             return $this->returnData(200, 'recharge successfully');
         } catch (\Exception $ex) {

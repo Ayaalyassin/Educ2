@@ -32,6 +32,7 @@ use App\Http\Controllers\TeachingMethodController;
 use App\Http\Controllers\TeachingMethodUserController;
 use App\Http\Controllers\User\CompleteController;
 use App\Http\Controllers\User\CompleteStudentController;
+use App\Http\Controllers\User\HistoryTransactionController;
 use App\Http\Controllers\User\LockHourController;
 use App\Http\Controllers\WalletController;
 use App\Models\Wallet;
@@ -237,13 +238,15 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::group(['middleware' => ['hasRole:admin']], function () {
             Route::get('get-request-charge', [GovernorController::class, 'get_request_charge']);
             Route::get('get-request-recharge', [GovernorController::class, 'get_request_recharge']);
-            Route::delete('delete-request/{id}', [GovernorController::class, 'destroy']);
+            Route::post('delete-request/{id}', [GovernorController::class, 'destroy']);
             Route::get('accept_request_charge/{id}', [GovernorController::class, 'accept_request_charge']);
             Route::get('accept_request_recharge/{id}', [GovernorController::class, 'accept_request_recharge']);
+            Route::get('history_transaction', [HistoryTransactionController::class, 'index']);
         });
         // Route::group(['middleware' => ['hasRole:student', 'hasRole:teacher']], function () {
         Route::post('store', [GovernorController::class, 'store']);
         Route::get('show-my-request', [GovernorController::class, 'show']);
+        Route::get('show-my-history', [HistoryTransactionController::class, 'show']);
         // });
     });
 
