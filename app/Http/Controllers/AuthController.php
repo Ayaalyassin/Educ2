@@ -135,8 +135,8 @@ class AuthController extends Controller
 //                            'body'=>"message"
 //                        ]
 //                ]);
-        //$fcm=$this->newFirebase("title","body",$user->fcm_token);
-        //return $fcm;
+        $fcm=$this->newFirebase("title","body",$user->fcm_token);
+        return $fcm;
         //return $this->returnSuccessMessage('operation completed successfully');
     }
 

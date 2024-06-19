@@ -85,12 +85,11 @@ class ProfileTeacherController extends Controller
         try {
             DB::beginTransaction();
 
-            $profile_teacher = auth()->user()->profile_teacher()->first();
-            if($profile_teacher)
-                $profile_teacher->loadMissing(['user.wallet','domains']);
+            $user = auth()->user();
+            $user->loadMissing(['profile_teacher.domains,wallet']);
 
             DB::commit();
-            return $this->returnData($profile_teacher, 'operation completed successfully');
+            return $this->returnData($user, 'operation completed successfully');
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
