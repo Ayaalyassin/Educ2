@@ -178,6 +178,7 @@ trait GeneralTrait
 //        return json_decode($fcm);
 //    }
 
+
 //      public function newFirebase($title,$body,$fcm_token)
 //      {
 //          try {
@@ -195,15 +196,44 @@ trait GeneralTrait
 //                  $credentialsFilePath = storage_path('app/fcm.json');
 //                  $client = new \Google_Client();
 //                  $client->setAuthConfig($credentialsFilePath);
-//                  $client->addScope('https://fcm.googleapis.com/auth/firebase.messaging');
-//                  $client->fetchAccessTokenWithAssertion();
-//                  var_dump($token = $client->getAccessToken());
+//                  $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
+//                  //$client->fetchAccessTokenWithAssertion();
+//                  $client->refreshTokenWithAssertion();
+//                  $token = $client->getAccessToken();
 //                  return $token['access_token'];
 //              });
-//              return $access_token;
-//              $response = Http::withHeader('Authorization', "Bearer $access_token")
-//                  ->post($apiUrl, $message);
-//              return $response;
+////              $response = Http::withHeader('Authorization', "Bearer $access_token")
+////                  ->post($apiUrl, $message);
+////              return $response;
+//              $headers=["Authorization:Bearer $access_token",
+//                  'Content-Type:application/json'];
+//              $test_data=[
+//                  "title"=>$title,
+//                  "description"=>$body
+//              ];
+//
+//              $data['data']=$test_data;
+//              $data['token']=$fcm_token;
+//              $payload['message']=$data;
+//              $payload=json_encode($payload);
+//              $ch=curl_init();
+//              curl_setopt($ch,CURLOPT_URL,$apiUrl);
+//              curl_setopt($ch,CURLOPT_POST,true);
+//              curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+//              curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//              curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+//              curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+//              $response = curl_exec($ch);
+//              $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+//              if ($statusCode == 200) {
+//                  return response()->json([
+//                      'message' => 'Notification has been Sent'
+//                  ]);
+//              } else {
+//                  return $this->returnError($statusCode, $response);
+//              }
+//
+//
 //          }
 //          catch (\Exception $e)
 //          {
