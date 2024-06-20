@@ -26,24 +26,34 @@ class ProfileStudent extends Model
         return $this->hasMany(Intrest::class, 'profile_student_id', 'id');
     }
 
-    public function teaching_methods_user()
+//    public function teaching_methods_user()
+//    {
+//        return $this->belongsToMany(
+//            TeachingMethod::class,
+//            'teaching_method_users',
+//            'profile_student_id',
+//            'teaching_method_id'
+//        )->withPivot('id');
+//    }
+//
+//    public function profile_student_ads()
+//    {
+//        return $this->belongsToMany(
+//            Ads::class,
+//            'profile_student_ads',
+//            'profile_student_id',
+//            'ads_id'
+//        )->withPivot('id');
+//    }
+
+    public function reservation_ads()
     {
-        return $this->belongsToMany(
-            TeachingMethod::class,
-            'teaching_method_users',
-            'profile_student_id',
-            'teaching_method_id'
-        )->withPivot('id');
+        return $this->hasMany(ReservationAds::class, 'profile_student_id', 'id');
     }
 
-    public function profile_student_ads()
+    public function reservation_teaching_methods()
     {
-        return $this->belongsToMany(
-            Ads::class,
-            'profile_student_ads',
-            'profile_student_id',
-            'ads_id'
-        )->withPivot('id');
+        return $this->hasMany(ReservationTeachingMethod::class, 'profile_student_id', 'id');
     }
 
 

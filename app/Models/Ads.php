@@ -29,13 +29,4 @@ class Ads extends Model
         return $this->belongsTo(ProfileTeacher::class, 'profile_teacher_id');
     }
 
-    public function profile_students()
-    {
-        return $this->belongsToMany(
-            ProfileStudent::class,
-            'profile_student_ads',
-            'ads_id',
-            'profile_student_id'
-        )->withPivot('id');
-    }
 }

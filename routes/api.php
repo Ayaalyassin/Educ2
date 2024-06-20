@@ -7,6 +7,8 @@ use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileStudentAdsController;
+use App\Http\Controllers\ReservationAdsController;
+use App\Http\Controllers\ReservationTeachingMethodController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -224,9 +226,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['middleware' => ['hasRole:student']], function () {
         Route::group(['prefix' => 'TeachingMethodUser'], function () {
-            Route::post('store', [TeachingMethodUserController::class, 'store'])->middleware('profileStudent');
-            Route::delete('delete/{id}', [TeachingMethodUserController::class, 'destroy']);
-            Route::get('getMyTeachingMethod', [TeachingMethodUserController::class, 'getMyTeachingMethod']);
+            Route::post('store', [ReservationTeachingMethodController::class, 'store'])->middleware('profileStudent');
+            Route::delete('delete/{id}', [ReservationTeachingMethodController::class, 'destroy']);
+            Route::get('getMyTeachingMethod', [ReservationTeachingMethodController::class, 'getMyTeachingMethod']);
+            Route::get('getById/{id}', [ReservationTeachingMethodController::class, 'show']);
         });
     });
 
@@ -330,10 +333,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['middleware' => ['hasRole:student']], function () {
         Route::group(['prefix' => 'ProfileStudentAds'], function () {
-            Route::post('store', [ProfileStudentAdsController::class, 'store'])->middleware('profileStudent');
-            Route::delete('delete/{id}', [ProfileStudentAdsController::class, 'destroy']);
-            Route::get('getMyAds', [ProfileStudentAdsController::class, 'getMyAds']);
-            Route::get('getById/{id}', [ProfileStudentAdsController::class, 'show']);
+            Route::post('store', [ReservationAdsController::class, 'store'])->middleware('profileStudent');
+            Route::delete('delete/{id}', [ReservationAdsController::class, 'destroy']);
+            Route::get('getMyAds', [ReservationAdsController::class, 'getMyAds']);
+            Route::get('getById/{id}', [ReservationAdsController::class, 'show']);
         });
     });
     Route::group(['prefix' => 'notifications'], function () {

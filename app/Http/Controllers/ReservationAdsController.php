@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileStudentAdsRequest;
 use App\Models\Ads;
-use App\Models\ProfileStudentAds;
+use App\Models\ReservationAds;
 use App\Traits\GeneralTrait;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ProfileStudentAdsController extends Controller
+class ReservationAdsController extends Controller
 {
     use GeneralTrait;
 
@@ -19,11 +20,14 @@ class ProfileStudentAdsController extends Controller
 
         try {
             $profile_student=auth()->user()->profile_student()->first();
-            $profile_student_ads=[];
-            if($profile_student)
-                $profile_student_ads=$profile_student->profile_student_ads()->get();
+            $reservation_ads=[];
+            if($profile_student) {
+                $reservation_ads = $profile_student->reservation_ads()->get();
+                if (count($reservation_ads) > 0)
+                    $reservation_ads->loadMissing('ads');
+            }
 
-            return $this->returnData($profile_student_ads,'operation completed successfully');
+            return $this->returnData($reservation_ads,'operation completed successfully');
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
         }
@@ -43,9 +47,9 @@ class ProfileStudentAdsController extends Controller
 
             if(!$ads)
                 return $this->returnError("404", 'Ads not found');
-//            $is_exist=$profile_student->profile_student_ads()->where('ads_id',$request->ads_id)->get();
-//            if(count($is_exist)>0)
-//                return $this->returnError("400", 'ads already exist');
+            $is_exist=$profile_student->reservation_ads()->where('ads_id',$request->ads_id)->first();
+            if($is_exist)
+                return $this->returnError("400", 'ads already exist');
             if ($ads->date <= now()) {
                 return $this->returnError("402", 'ads has begun');
             }
@@ -59,17 +63,16 @@ class ProfileStudentAdsController extends Controller
             $user->wallet->update([
                 'value' => $user->wallet->value - $ads->price
             ]);
-            $user->wallet->save();
-            $profile_student->profile_student_ads()->attach([
-                $request->ads_id
+            $reservation_ads=$profile_student->reservation_ads()->create([
+                'ads_id'=>$request->ads_id,
+                'reserved_at'=>Carbon::now()->format('Y-m-d H:s:i')
             ]);
             $ads->decrement('number_students');
             if($ads->number_students==0)
                 $ads->update(['active'=>0]);
-            $profile_student->loadMissing(['profile_student_ads']);
 
             DB::commit();
-            return $this->returnData($profile_student,'operation completed successfully');
+            return $this->returnData($reservation_ads,'operation completed successfully');
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -82,11 +85,12 @@ class ProfileStudentAdsController extends Controller
         try {
             $profile_student=auth()->user()->profile_student()->first();
             if($profile_student) {
-                $profile_student_ads = $profile_student->profile_student_ads()->where('profile_student_ads.id', $id)->first();
-                if (!$profile_student_ads)
+                $reservation_ads = $profile_student->reservation_ads()->where('id', $id)->first();
+                if (!$reservation_ads)
                     return $this->returnError("404", 'not found');
+                $reservation_ads->loadMissing('ads');
             }
-            return $this->returnData($profile_student_ads,'operation completed successfully');
+            return $this->returnData($reservation_ads,'operation completed successfully');
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
         }
@@ -105,10 +109,10 @@ class ProfileStudentAdsController extends Controller
             DB::beginTransaction();
             $profile_student=auth()->user()->profile_student()->first();
             if($profile_student) {
-                $profile_student_ads = $profile_student->profile_student_ads()->where('profile_student_ads.id', $id)->first();
-                if (!$profile_student_ads)
+                $reservation_ads = $profile_student->reservation_ads()->where('id', $id)->first();
+                if (!$reservation_ads)
                     return $this->returnError("404", 'not found');
-                $profile_student->profile_student_ads()->newPivotStatement()->where('id', $id)->delete();
+                $reservation_ads->delete();
             }
 
             DB::commit();

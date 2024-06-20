@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('teaching_method_users', function (Blueprint $table) {
+        Schema::create('reservation_ads', function (Blueprint $table) {
             $table->id();
+            $table->timestamp('reserved_at');
 
             $table->bigInteger('profile_student_id')->unsigned();
             $table->foreign('profile_student_id')->references('id')->on('profile_students')->onDelete('cascade');
 
-            $table->bigInteger('teaching_method_id')->unsigned();
-            $table->foreign('teaching_method_id')->references('id')->on('teaching_methods')->onDelete('cascade');
-
+            $table->bigInteger('ads_id')->unsigned();
+            $table->foreign('ads_id')->references('id')->on('ads')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('teaching_method_users');
+        Schema::dropIfExists('reservation_ads');
     }
 };
