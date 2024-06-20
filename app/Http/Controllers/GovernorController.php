@@ -135,7 +135,22 @@ class GovernorController extends Controller
         try {
             DB::beginTransaction();
             $userWallet = auth()->user()->wallet->id;
-            $data = Governor::with('wallet')->where('wallet_id', $userWallet)->get();
+            $data = Governor::with('wallet')->where('wallet_id', $userWallet)->where('type', 'charge')
+                ->get();
+            DB::commit();
+            return $this->returnData($data, 'operation completed successfully');
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+    public function showMyRequestRecharge()
+    {
+        try {
+            DB::beginTransaction();
+            $userWallet = auth()->user()->wallet->id;
+            $data = Governor::with('wallet')->where('wallet_id', $userWallet)->where('type', 'recharge')
+                ->get();
             DB::commit();
             return $this->returnData($data, 'operation completed successfully');
         } catch (\Exception $ex) {
