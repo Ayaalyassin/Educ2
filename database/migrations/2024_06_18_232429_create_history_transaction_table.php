@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('history_transaction', function (Blueprint $table) {
             $table->id();
             $table->string("name");
-            $table->string("image")->default(null);
+            $table->string("image")->default('null');
             $table->string("type");
             $table->string("status");
             $table->double("value");
-            $table->string("case")->default(null);
+            $table->string("case")->default('null');
             $table->timestamps();
         });
     }

@@ -246,6 +246,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         // Route::group(['middleware' => ['hasRole:student', 'hasRole:teacher']], function () {
         Route::post('store', [GovernorController::class, 'store']);
         Route::get('show-my-request', [GovernorController::class, 'show']);
+        Route::get('show-my-wallet', [WalletController::class, 'show']);
         Route::get('show-my-history', [HistoryTransactionController::class, 'show']);
         // });
     });
@@ -272,6 +273,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('count-teacher', [AdminController::class, 'count_teacher']);
         Route::delete('delete-teacher/{id}', [AdminController::class, 'destroy_teacher']);
         Route::delete('delete-student/{id}', [AdminController::class, 'destroy_student']);
+        Route::get('get-student', [AdminController::class, 'get_all_student']);
+        Route::get('get-teacher', [AdminController::class, 'get_all_teacher']);
     });
     Route::group(['prefix' => 'block-list', 'middleware' => ['hasRole:admin']], function () {
         Route::get('get', [BlockController::class, 'index']);

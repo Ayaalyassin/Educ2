@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Wallet;
+use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class WalletController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    use GeneralTrait;
     public function index()
     {
         $wallet = Wallet::with('user')->get();
@@ -37,7 +40,17 @@ class WalletController extends Controller
      */
     public function show()
     {
-        //
+        try {
+            $user = Auth::user();
+            $user->load('wallet');
+            $responseData = [
+                'name' => $user->name,
+                'wallet' => $user->wallet 
+            ];
+            return $this->returnData($responseData, 'operation completed successfully');
+        } catch (\Exception $ex) {
+            return $this->returnError("500", $ex->getMessage());
+        }
     }
 
     /**
