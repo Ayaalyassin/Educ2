@@ -9,7 +9,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class GovernorRequest extends FormRequest
 {
-    
+
     use GeneralTrait;
     /**
      * Determine if the user is authorized to make this request.
@@ -28,14 +28,16 @@ class GovernorRequest extends FormRequest
     {
         return [
             'image_transactions' => 'sometimes|image|mimes:jpeg,jpg,png,gif',
-            'type' => 'required|string',
+            'type' => 'string',
             'amount' => 'required|integer|min:1',
+            'phone' => 'string|size:10|nullable',
+            'transferCompany' => 'string|nullable',
+            'address' => 'string|nullable',
         ];
     }
 
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException($this->returnValidationError('422', $validator));
-
     }
 }

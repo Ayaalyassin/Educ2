@@ -244,7 +244,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::get('history_transaction', [HistoryTransactionController::class, 'index']);
         });
         // Route::group(['middleware' => ['hasRole:student', 'hasRole:teacher']], function () {
-        Route::post('store', [GovernorController::class, 'store']);
+        Route::post('add-request-charge', [GovernorController::class, 'addRequestCharge']);
+        Route::post('add-request-recharge', [GovernorController::class, 'addRequestRecharge']);
         Route::get('show-my-request-charge', [GovernorController::class, 'show']);
         Route::get('show-my-request-recharge', [GovernorController::class, 'showMyRequestRecharge']);
         Route::get('show-my-wallet', [WalletController::class, 'show']);

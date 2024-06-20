@@ -90,32 +90,57 @@ class GovernorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(GovernorRequest $request)
+    public function addRequestCharge(GovernorRequest $request)
     {
         try {
             DB::beginTransaction();
-
+            if (!auth()->user()) {
+                return $this->returnError(500, 'the token is not valid ');
+            }
             $image_transactions = null;
             if (isset($request->image_transactions)) {
                 $image_transactions = $this->saveImage($request->image_transactions, $this->uploadPath);
             }
             $user = auth()->user()->wallet;
-            if ($request->type == 'recharge') {
-                if ($request->amount > $user->value) {
-                    return $this->returnError(400, 'not Enough money in wallet');
-                }
-                $user->update([
-                    'value' => $user->value - $request->amount,
-                ]);
-                $user->save();
-            }
-            if ($request->type == 'charge' and $request->image_transactions == null) {
+            if ($request->image_transactions == null) {
                 return $this->returnError(500, 'You must input image transaction');
             }
             $convenor = $user->governor()->create([
                 'amount' => isset($request->amount) ? $request->amount : null,
-                'type' => isset($request->type) ? $request->type : null,
                 'image_transactions' => $image_transactions,
+                'type' => 'charge',
+
+            ]);
+            $convenor->save();
+            DB::commit();
+            return $this->returnData($convenor, 'operation completed successfully');
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    public function addRequestRecharge(GovernorRequest $request)
+    {
+        try {
+            DB::beginTransaction();
+            if (!auth()->user()) {
+                return $this->returnError(500, 'the token is not valid ');
+            }
+            $user = auth()->user()->wallet;
+            if ($request->amount > $user->value) {
+                return $this->returnError(400, 'not Enough money in wallet');
+            }
+            $user->update([
+                'value' => $user->value - $request->amount,
+            ]);
+            $user->save();
+            $convenor = $user->governor()->create([
+                'amount' => isset($request->amount) ? $request->amount : null,
+                'type' => 'recharge',
+                'phone' => isset($request->phone) ? $request->phone : null,
+                'transferCompany' => isset($request->transferCompany) ? $request->transferCompany : null,
+                'address' => isset($request->address) ? $request->address : null,
 
             ]);
             $convenor->save();

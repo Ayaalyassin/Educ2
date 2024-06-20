@@ -17,6 +17,9 @@ return new class extends Migration
             $table->integer('amount');
             $table->string('type');
             $table->string('image_transactions')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('transferCompany')->nullable();
+            $table->string('address')->nullable();
             $table->timestamps();
         });
     }

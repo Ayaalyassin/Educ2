@@ -14,6 +14,9 @@ class Governor extends Model
         'image_transactions',
         'type',
         'amount',
+        'phone',
+        'transferCompany',
+        'address'
     ];
     protected $hidden = ['created_at', 'updated_at'];
 
