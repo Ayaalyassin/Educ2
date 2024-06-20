@@ -32,7 +32,7 @@ class RegisterEmployeeRequest extends FormRequest
             'address'=>'required|string',
             'governorate'=>'required|string',
             'birth_date'=>'required|date',
-            'role_id'=>'required|integer'
+            //'role_id'=>'required|integer'
         ];
     }
     public function failedValidation(Validator $validator)

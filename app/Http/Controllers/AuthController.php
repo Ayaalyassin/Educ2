@@ -31,6 +31,10 @@ class AuthController extends Controller
         if (!$token)
             return $this->returnError(401,'Account Not found');
 
+        $is_block=$exist->whereHas('block')->first();
+        if($is_block)
+            return $this->returnError(401,'You are block');
+
         $user = auth()->user();
         $user->token = $token;
         $user->loadMissing(['roles']);

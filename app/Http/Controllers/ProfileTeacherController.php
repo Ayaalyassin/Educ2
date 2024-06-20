@@ -27,7 +27,7 @@ class ProfileTeacherController extends Controller
             $profile_teacher = ProfileTeacher::where('status',1)//->filter($request)
                 ->get();
             if(count($profile_teacher)>0)
-                $profile_teacher->loadMissing(['user.wallet','domains']);
+                $profile_teacher->loadMissing(['user','domains']);
 
             DB::commit();
             return $this->returnData($profile_teacher, 'operation completed successfully');
@@ -86,7 +86,7 @@ class ProfileTeacherController extends Controller
             DB::beginTransaction();
 
             $user = auth()->user();
-            $user->loadMissing(['profile_teacher.domains,wallet']);
+            $user->loadMissing(['profile_teacher.domains']);
 
             DB::commit();
             return $this->returnData($user, 'operation completed successfully');
@@ -104,7 +104,7 @@ class ProfileTeacherController extends Controller
             $profile_teacher = ProfileTeacher::find($id);
             if (!$profile_teacher)
                 return $this->returnError("404", 'Not found');
-            $profile_teacher->loadMissing(['user.wallet','domains']);
+            $profile_teacher->loadMissing(['user','domains']);
 
             DB::commit();
             return $this->returnData($profile_teacher, 'operation completed successfully');

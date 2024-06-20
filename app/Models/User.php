@@ -166,9 +166,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Wallet::class, 'user_id', 'id');
     }
     //khader
-    public function blocks()
+    public function block()
     {
-        return $this->hasMany(Block::class, 'user_id', 'id');
+        return $this->hasOne(Block::class, 'user_id', 'id');
     }
 
     public function notifications()

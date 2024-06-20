@@ -22,7 +22,7 @@ class ProfileStudentController extends Controller
 
             $profile_student = ProfileStudent::all();
             if(count($profile_student)>0)
-                $profile_student->loadMissing(['user.wallet']);
+                $profile_student->loadMissing(['user']);
 
             DB::commit();
             return $this->returnData($profile_student, 'operation completed successfully');
@@ -68,7 +68,7 @@ class ProfileStudentController extends Controller
             DB::beginTransaction();
 
             $user=auth()->user();
-            $user->loadMissing('profile_student','wallet');
+            $user->loadMissing('profile_student');
 
             DB::commit();
             return $this->returnData($user, 'operation completed successfully');
@@ -88,7 +88,7 @@ class ProfileStudentController extends Controller
             $profile_student = ProfileStudent::find($id);
             if (!$profile_student)
                 return $this->returnError("404", 'Not found');
-            $profile_student->loadMissing(['user.wallet']);
+            $profile_student->loadMissing(['user']);
 
             DB::commit();
             return $this->returnData($profile_student, 'operation completed successfully');
