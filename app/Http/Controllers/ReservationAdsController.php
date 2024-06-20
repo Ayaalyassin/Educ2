@@ -65,7 +65,7 @@ class ReservationAdsController extends Controller
             ]);
             $reservation_ads=$profile_student->reservation_ads()->create([
                 'ads_id'=>$request->ads_id,
-                'reserved_at'=>Carbon::now()->format('Y-m-d H:s:i')
+                'reserved_at'=>Carbon::now()->format('Y-m-d H:i:s')
             ]);
             $ads->decrement('number_students');
             if($ads->number_students==0)

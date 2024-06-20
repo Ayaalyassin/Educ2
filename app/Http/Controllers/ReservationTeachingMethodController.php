@@ -59,7 +59,7 @@ class ReservationTeachingMethodController extends Controller
 
             $reservation_teaching_methods=$profile_student->reservation_teaching_methods()->create([
                 'teaching_method_id'=>$request->teaching_method_id,
-                'reserved_at'=>Carbon::now()->format('Y-m-d H:s:i')
+                'reserved_at'=>Carbon::now()->format('Y-m-d H:i:s')
             ]);
 
             DB::commit();
