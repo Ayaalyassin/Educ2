@@ -27,9 +27,9 @@ class QualificationCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'string',
-            'description' => 'string',
-            'date' => 'date',
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'date' => 'required|date',
             'count_subscribers' => 'required|integer',
             'price' => 'required|integer',
             'place' => 'required|string'

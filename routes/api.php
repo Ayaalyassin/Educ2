@@ -289,19 +289,19 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     //khader
 
-    // Route::group(['middleware' => 'hasRole:admin'], function () {
-    Route::group(['prefix' => 'QualificationCourse'], function () {
-        Route::post('store', [QualificationCourseController::class, 'store']);
-        Route::post('update/{id}', [QualificationCourseController::class, 'update']);
-        Route::delete('delete/{id}', [QualificationCourseController::class, 'destroy']);
+    Route::group(['middleware' => 'hasRole:admin'], function () {
+        Route::group(['prefix' => 'QualificationCourse'], function () {
+            Route::post('store', [QualificationCourseController::class, 'store']);
+            Route::post('update/{id}', [QualificationCourseController::class, 'update']);
+            Route::delete('delete/{id}', [QualificationCourseController::class, 'destroy']);
+            Route::get('getById/{id}', [QualificationCourseController::class, 'show']);
+        });
         Route::get('getall', [QualificationCourseController::class, 'index']);
-        Route::get('getById/{id}', [QualificationCourseController::class, 'show']);
-        // });
     });
 
     Route::group(['middleware' => 'hasRole:teacher'], function () {
         Route::group(['prefix' => 'QualificationCourse'], function () {
-            Route::get('getall', [QualificationCourseController::class, 'index']);
+            // Route::get('getall', [QualificationCourseController::class, 'index']);
             Route::post('insert_into_courses/{id}', [QualificationCourseController::class, 'insert_into_courses']);
             Route::get('show_my_courses', [QualificationCourseController::class, 'show_my_courses'])
                 ->middleware('hasRole:teacher');

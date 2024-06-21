@@ -14,18 +14,12 @@ use Illuminate\Support\Facades\Auth;
 class QualificationCourseController extends Controller
 {
     use GeneralTrait;
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
         try {
-            $QualificationCourses = QualificationCourse::all();
-            $data = [
-                'qualificationCourses' => $QualificationCourses,
-                'additionalVariable' => 2,
-            ];
-            return $this->returnData($data, 200);
+            $qualificationCourses = QualificationCourse::withCount('user')->get();
+            return $this->returnData($qualificationCourses, 200);
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -34,10 +28,6 @@ class QualificationCourseController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -46,7 +36,6 @@ class QualificationCourseController extends Controller
     {
         try {
             DB::beginTransaction();
-
             $qualification_course = QualificationCourse::create([
                 'name' => $request->name,
                 'description' => $request->description,
@@ -56,7 +45,6 @@ class QualificationCourseController extends Controller
                 'place' => $request->place,
                 'remaining_number' => 0
             ]);
-
             DB::commit();
             return $this->returnData($qualification_course, 'operation completed successfully');
         } catch (\Exception $ex) {
@@ -88,7 +76,6 @@ class QualificationCourseController extends Controller
             DB::beginTransaction();
             $user = Auth::user();
             $courses = $user->qualification_users;
-
             DB::commit();
             return $this->returnData($courses, 200);
         } catch (\Exception $ex) {
@@ -107,14 +94,11 @@ class QualificationCourseController extends Controller
             $now = Carbon::now();
             $qualificationUser = QualificationUser::where('qualification_id', '=', $id)
                 ->where('user_id', '=', $userId->id)->first();
-
             $countUser = QualificationUser::where('qualification_id', '=', $id)->count();
-
             if (!$QualificationCourse)
                 return $this->returnError(404, 'Not found Qualification Course');
-
             if ($QualificationCourse->date <= now()) {
-                return $this->returnError(401, 'The course has begun');
+                return $this->returnError(501, 'The course has begun');
             }
             if ($qualificationUser) {
                 return $this->returnError(500, 'already insert');
@@ -129,12 +113,6 @@ class QualificationCourseController extends Controller
             ]);
             $user->user()->wallet->save();
             $user->user()->qualification_users()->attach($id, ['created_at' => $now]);
-            // $insert = QualificationUser::create([
-            //     'user_id' => $user->id(),
-            //     'qualification_id' => $id,
-            // ]);
-
-
             DB::commit();
             return $this->returnData('successfully', 200);
         } catch (\Exception $ex) {
@@ -148,15 +126,11 @@ class QualificationCourseController extends Controller
      */
     public function update(QualificationCourseRequest $request, $id)
     {
-
         try {
             DB::beginTransaction();
-            $user = auth()->user();
-
-            $qualification_course = $user->qualification_courses()->find($id);
+            $qualification_course = QualificationCourse::find($id);
             if (!$qualification_course)
                 return $this->returnError("404", 'not found');
-
             $qualification_course->update([
                 'name' => isset($request->name) ? $request->name : $qualification_course->name,
                 'description' => isset($request->description) ? $request->description : $qualification_course->description,
@@ -165,8 +139,6 @@ class QualificationCourseController extends Controller
                     $request->count_subscribers : $qualification_course->count_subscribers,
                 'price' => isset($request->price) ? $request->price : $qualification_course->price,
             ]);
-
-
             DB::commit();
             return $this->returnData($qualification_course, 'operation completed successfully');
         } catch (\Exception $ex) {
@@ -182,14 +154,19 @@ class QualificationCourseController extends Controller
     {
         try {
             DB::beginTransaction();
-            $user = auth()->user();
-            $qualification_course = $user->qualification_courses()->find($id);
-            if (!$qualification_course)
-                return $this->returnError("404", 'not found');
-            $qualification_course->delete();
-
+            $course = QualificationCourse::find($id);
+            if (!$course) {
+                DB::rollback();
+                return $this->returnError(404, 'not found');
+            }
+            $numberOfUsers = $course->user()->count();
+            if ($numberOfUsers != 0) {
+                DB::rollback();
+                return $this->returnError(501, 'cant delete course because There are users who have joined the course');
+            }
+            $course->delete();
             DB::commit();
-            return $this->returnSuccessMessage('operation completed successfully');
+            return $this->returnSuccessMessage('operation completed successfully', 200);
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), 'Please try again later');

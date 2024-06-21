@@ -24,7 +24,7 @@ class CompleteTeacherController extends Controller
                 $q->select('id', 'user_id');
             }])
                 ->with(['teacher.user' => function ($q) {
-                    $q->select('id', 'name');
+                    $q->select('id', 'name', 'address');
                 }])
                 ->where('status', '=', 0)
                 ->get();
@@ -123,7 +123,7 @@ class CompleteTeacherController extends Controller
             if (!$requestComplete) {
                 return $this->returnError(404, 'request Complete Not found');
             }
-            $request = $user->request_complete()->update([
+            $user->request_complete()->update([
                 'cv' => isset($request->cv) ? $cv : null,
                 'self_identity' => isset($request->self_identity) ? $request->self_identity : null,
                 'phone' => isset($request->phone) ? $request->phone : null,
@@ -147,10 +147,10 @@ class CompleteTeacherController extends Controller
             DB::beginTransaction();
             $requestComplete = CompleteTeacher::find($id);
             if (!$requestComplete) {
-                return $this->returnError('not found request', 404);
+                return $this->returnError(404, 'not found request');
             }
             if ($requestComplete->status == 1) {
-                return $this->returnError('The request is notarized', 500);
+                return $this->returnError(500, 'The request is notarized');
             }
             $requestComplete->delete();
             DB::commit();
@@ -166,11 +166,12 @@ class CompleteTeacherController extends Controller
             DB::beginTransaction();
             $rate = 0;
             $requestComplete = CompleteTeacher::with('teacher')->find($id);
+            // return $requestComplete;
             if (!$requestComplete) {
-                return $this->returnError('not found request', 404);
+                return $this->returnError(404, 'not found request');
             }
             if ($requestComplete->status == 1) {
-                return $this->returnError('The request is notarized', 500);
+                return $this->returnError(500, 'The request is notarized');
             }
             $requestComplete->update([
                 'status' => 1
@@ -185,7 +186,7 @@ class CompleteTeacherController extends Controller
             if ($requestComplete->phone) {
                 $rate = $rate + 1;
             }
-            $requestComplete->update([
+            $requestComplete->teacher->update([
                 'assessing' => $rate
             ]);
             $requestComplete->save();
