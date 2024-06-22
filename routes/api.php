@@ -121,7 +121,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::get('ads/getById/{id}', [AdsController::class, 'getById']);
 
-    Route::group(['middleware' => ['hasRole:student']], function () {
+    Route::group(['middleware' => ['hasRole:student|admin']], function () {
         Route::group(['prefix' => 'ads'], function () {
             Route::get('getAll', [AdsController::class, 'index']);
             Route::get('getAdsTeacher/{id}', [AdsController::class, 'getAdsTeacher']);
@@ -215,6 +215,13 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::post('update/{id}', [TeachingMethodController::class, 'update']);
             Route::delete('delete/{id}', [TeachingMethodController::class, 'destroy']);
             Route::get('getMyTeachingMethod', [TeachingMethodController::class, 'getMyTeachingMethod']);
+        });
+    });
+
+    Route::group(['middleware' => ['hasRole:admin']], function () {
+        Route::group(['prefix' => 'TeachingMethod'], function () {
+            Route::get('getAll', [TeachingMethodController::class, 'getAll']);
+            Route::delete('deleteForAdmin/{id}', [TeachingMethodController::class, 'deleteForAdmin']);
         });
     });
 

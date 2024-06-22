@@ -41,8 +41,7 @@ class PasswordController extends Controller
         try {
             $user =User::where('email',$request->email)->first();
             if($user) {
-                $code = mt_rand(1000, 9999);
-                //$code=mt_rand(100000, 999999);
+                $code = mt_rand(100000, 999999);
                 $user->update([
                     'code' => $code,
                 ]);
@@ -50,8 +49,8 @@ class PasswordController extends Controller
                     'title' => 'Forget Password Email',
                     'code' => $code
                 ];
-//                $job=(new ForgetPasswordJob($mailData,$user))->delay(Carbon::now()->addSeconds(5));
-//                $this->dispatch($job);
+
+//                ForgetPasswordJob::dispatch($mailData,$user)->delay(Carbon::now()->addSeconds(1));
                 //Mail::to($user->email)->send(new ForgetPasswordMail($mailData));
                 return $this->returnSuccessMessage('operation completed successfully');
             }
