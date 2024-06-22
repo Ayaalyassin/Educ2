@@ -94,16 +94,11 @@ class AdsController extends Controller
     {
         try {
             $data = Ads::where('id', $id)
-//->with('profile_students',function ($query){
-//                $query->select('phone');
-//            })->with('profile_students.user',function ($q){
-//                $q->select('name','governorate');
-//            })
                 ->first();
             if (!$data) {
                 return $this->returnError("404", "Not found");
             }
-            //$data->loadMissing(['profile_students.user']);
+            $data->loadMissing(['reservation_ads']);
             return $this->returnData($data, 'operation completed successfully');
         } catch (\Exception $ex) {
             return $this->returnError("500", 'Please try again later');

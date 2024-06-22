@@ -45,7 +45,7 @@ class AdminAuthController extends Controller
         ];
 //        Mail::to($exist->email)->send(new CodeEmail($mailData));
 //        sendCodeEmailJob::dispatch($mailData,$exist)->delay(Carbon::now()->addSeconds(2));
-//        DeleteCodeJob::dispatch($exist)->delay(Carbon::now()->addMinutes(2));
+        DeleteCodeJob::dispatch($exist)->delay(Carbon::now()->addMinutes(2));
 
         return $this->returnSuccessMessage('code send successfully');
     }
