@@ -24,6 +24,13 @@ class JwtMiddleware extends BaseMiddleware
     {
         try {
             $user = JWTAuth::parseToken()->authenticate();
+            $exist=auth()->user();
+            if(!$exist)
+                return $this->returnError(401,'UnAuthorization User');
+            $is_block=$exist->whereHas('block')->first();
+            if($is_block)
+                return $this->returnError("401",'You are block');
+
         } catch (Exception $e) {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){
                 return $this->returnError("500", 'Token is Invalid');

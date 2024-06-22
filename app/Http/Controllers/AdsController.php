@@ -106,7 +106,7 @@ class AdsController extends Controller
             if (!$data) {
                 return $this->returnError("404", "Not found");
             }
-            $data->loadMissing(['profile_students.user']);
+            //$data->loadMissing(['profile_students.user']);
             return $this->returnData($data, 'operation completed successfully');
         } catch (\Exception $ex) {
             return $this->returnError("500", 'Please try again later');
