@@ -20,7 +20,6 @@ class TeachingMethodController extends Controller
     public function index($teacher_id)
     {
         try {
-            //$profile_teacher=User::find($teacher_id)->profile_teacher()->first();
             $profile_teacher=ProfileTeacher::find($teacher_id);
             if (!$profile_teacher) {
                 return $this->returnError("404",'Profile Teacher Not found');

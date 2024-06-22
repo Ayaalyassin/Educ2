@@ -121,6 +121,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::get('ads/getById/{id}', [AdsController::class, 'getById']);
 
+    Route::delete('ads/deleteForAdmin/{id}', [AdsController::class, 'deleteForAdmin'])->middleware('hasRole:admin');
+
     Route::group(['middleware' => ['hasRole:student|admin']], function () {
         Route::group(['prefix' => 'ads'], function () {
             Route::get('getAll', [AdsController::class, 'index']);

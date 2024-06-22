@@ -31,7 +31,7 @@ class AdsController extends Controller
             //$ads = Ads::all();
             $ads=Ads::join('profile_teachers','ads.profile_teacher_id','=','profile_teachers.id')->
             join('users','profile_teachers.user_id','=','users.id')
-            ->select('ads.*','users.name')//->orderBy('created_at','desc')
+            ->select('ads.*','users.name')->orderBy('created_at','desc')
             ->get();
 
             return $this->returnData($ads, 'operation completed successfully');
@@ -43,14 +43,11 @@ class AdsController extends Controller
     public function getAdsTeacher($teacherId)
     {
         try {
-//            $user = User::find($userId);
-//            $profile_teacher=$user->profile_teacher()->first();
-//            $ads=$profile_teacher->ads()->get();
+
             $profile_teacher = ProfileTeacher::find($teacherId);
             if(!$profile_teacher)
                 return $this->returnError("404", "Not found");
             $ads=$profile_teacher->ads()->orderBy('created_at','desc')->get();
-
 
             return $this->returnData($ads, 'operation completed successfully');
         } catch (\Exception $ex) {
@@ -186,6 +183,27 @@ class AdsController extends Controller
             return $this->returnData($ads, 'operation completed successfully');
         } catch (\Exception $ex) {
             return $this->returnError("500", "Please try again later");
+        }
+    }
+
+    public function deleteForAdmin($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $ads = Ads::find($id);
+            if (!$ads)
+                return $this->returnError("404", 'not found');
+            if (isset($ads->file)) {
+                $this->deleteImage($ads->file);
+            }
+
+            $ads->delete();
+            DB::commit();
+            return $this->returnSuccessMessage('operation completed successfully');
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError("500", 'Please try again later');
         }
     }
 }

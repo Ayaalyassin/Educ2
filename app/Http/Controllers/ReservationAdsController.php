@@ -71,7 +71,7 @@ class ReservationAdsController extends Controller
             $ads->decrement('number_students');
             if($ads->number_students==0) {
                 $ads->update(['active' => 0]);
-                //EndAdsJob::dispatch($ads)->delay(Carbon::now()->addSeconds(2));
+                EndAdsJob::dispatch($ads)->delay(Carbon::now()->addSeconds(2));
             }
             DB::commit();
             return $this->returnData($reservation_ads,'operation completed successfully');
@@ -98,11 +98,6 @@ class ReservationAdsController extends Controller
         }
     }
 
-
-//    public function update(UpdateProfileStudentAdsRequest $request,$id)
-//    {
-//        //
-//    }
 
 
     public function destroy($id)
