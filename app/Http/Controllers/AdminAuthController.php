@@ -72,6 +72,7 @@ class AdminAuthController extends Controller
             $token = JWTAuth::fromUser($user);
             if (!$token) return $this->returnError('402', 'Unauthorized');
             $user->token=$token;
+            $user->loadMissing(['roles']);
 
             return $this->returnData($user, 'operation completed successfully');
 

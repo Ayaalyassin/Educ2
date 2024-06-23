@@ -72,7 +72,7 @@ Route::post('refreshToken', [AuthController::class, 'refreshToken']);
 Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::post('test', [AuthController::class, 'test']);
-    Route::post('resetPassword', [AuthController::class, 'resetPassword']);
+    Route::post('resetPassword', [PasswordController::class, 'resetPassword']);
     Route::delete('deleteMyAccount', [AuthController::class, 'deleteMyAccount']);
 
 
@@ -85,7 +85,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         });
     });
 
-    Route::group(['middleware' => ['hasRole:student|admin']], function () {
+    Route::group(['middleware' => ['hasRole:student|admin|employee']], function () {
 
         Route::group(['prefix' => 'profile_teacher'], function () {
             Route::get('getById/{id}', [ProfileTeacherController::class, 'getById']);
@@ -103,7 +103,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         });
     });
 
-    Route::group(['middleware' => ['hasRole:teacher|admin']], function () {
+    Route::group(['middleware' => ['hasRole:teacher|admin|employee']], function () {
         Route::group(['prefix' => 'profile_student'], function () {
             Route::get('getById/{id}', [ProfileStudentController::class, 'getById']);
             Route::get('getAll', [ProfileStudentController::class, 'getAll']);
@@ -125,7 +125,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::delete('ads/deleteForAdmin/{id}', [AdsController::class, 'deleteForAdmin'])->middleware('hasRole:admin');
 
-    Route::group(['middleware' => ['hasRole:student|admin']], function () {
+    Route::group(['middleware' => ['hasRole:student|admin|employee']], function () {
         Route::group(['prefix' => 'ads'], function () {
             Route::get('getAll', [AdsController::class, 'index']);
             Route::get('getAdsTeacher/{id}', [AdsController::class, 'getAdsTeacher']);
@@ -224,7 +224,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         });
     });
 
-    Route::group(['middleware' => ['hasRole:admin']], function () {
+    Route::group(['middleware' => ['hasRole:admin|employee']], function () {
         Route::group(['prefix' => 'TeachingMethod'], function () {
             Route::get('getAll', [TeachingMethodController::class, 'getAll']);
             Route::delete('deleteForAdmin/{id}', [TeachingMethodController::class, 'deleteForAdmin']);
@@ -275,7 +275,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::post('store', [CompleteTeacherController::class, 'store']);
             Route::post('update', [CompleteTeacherController::class, 'update']);
         });
-        Route::group(['middleware' => ['hasRole:admin']], function () {
+        Route::group(['middleware' => ['hasRole:admin|employee']], function () {
             Route::get('get', [CompleteTeacherController::class, 'index']);
             Route::delete('delete-request-complete/{id}', [CompleteTeacherController::class, 'destroy']);
             Route::get('accept-request-complete-teacher/{id}', [CompleteTeacherController::class, 'accept_request_complete_teacher']);
@@ -305,7 +305,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('count-block-student', [AdminController::class, 'count_block_student']);
         Route::get('count-unblock-student', [AdminController::class, 'count_unblock_student']);
     });
-    Route::group(['prefix' => 'block-list', 'middleware' => ['hasRole:admin']], function () {
+    Route::group(['prefix' => 'block-list', 'middleware' => ['hasRole:admin|employee']], function () {
         Route::get('get', [BlockController::class, 'index']);
         Route::post('store/{id}', [BlockController::class, 'store']);
         Route::delete('unblock-user/{id}', [BlockController::class, 'destroy']);
@@ -313,7 +313,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     //khader
 
-    Route::group(['middleware' => 'hasRole:admin'], function () {
+    Route::group(['middleware' => 'hasRole:admin|employee'], function () {
         Route::group(['prefix' => 'QualificationCourse'], function () {
             Route::post('store', [QualificationCourseController::class, 'store']);
             Route::post('update/{id}', [QualificationCourseController::class, 'update']);
