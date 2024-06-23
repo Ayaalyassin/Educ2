@@ -15,7 +15,6 @@ class ForgetPasswordJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-
     protected $mailData,$exist;
 
     public function __construct($mailData,$exist)
