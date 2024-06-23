@@ -13,12 +13,14 @@ use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CodeEmail;
+use Illuminate\Contracts\Bus\Dispatcher;
+use Illuminate\Support\Facades\Artisan;
 
 class AdminAuthController extends Controller
 {
     use GeneralTrait;
 
-    public function login_admin(LoginRequest $request)
+    public function login_admin(LoginRequest $request)//,Dispatcher $dispatcher)
     {
         $credentials = $request->only(['email', 'password']);
         $token = JWTAuth::attempt($credentials);
@@ -46,7 +48,8 @@ class AdminAuthController extends Controller
 //        Mail::to($exist->email)->send(new CodeEmail($mailData));
 //        sendCodeEmailJob::dispatch($mailData,$exist)->delay(Carbon::now()->addSeconds(2));
         //DeleteCodeJob::dispatch($exist)->delay(Carbon::now()->addMinutes(2));
-
+        //$job=(new DeleteCodeJob($exist))->delay(Carbon::now()->addMinutes(2));
+        //$dispatcher->dispatch($job);
         return $this->returnSuccessMessage('code send successfully');
     }
 

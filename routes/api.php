@@ -112,7 +112,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::group(['middleware' => ['hasRole:teacher']], function () {
 
         Route::group(['prefix' => 'ads'], function () {
-            Route::post('store', [AdsController::class, 'store'])->middleware('profileTeacher');
+            Route::post('store', [AdsController::class, 'store']);
             Route::post('update/{id}', [AdsController::class, 'update']);
             Route::delete('delete/{id}', [AdsController::class, 'destroy']);
             Route::get('getMyAds', [AdsController::class, 'getMyAds']);
