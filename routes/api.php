@@ -93,6 +93,12 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         });
     });
 
+    Route::group(['prefix' => 'profile_teacher'], function () {
+        Route::group(['middleware' => 'hasRole:admin|employee'], function () {
+            Route::get('getByIdForAdmin/{id}', [ProfileTeacherController::class, 'getByIdForAdmin']);
+        });
+    });
+
 
     Route::group(['middleware' => ['hasRole:student']], function () {
 
@@ -100,6 +106,12 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::post('store', [ProfileStudentController::class, 'store']);
             Route::post('update', [ProfileStudentController::class, 'update']);
             Route::get('getmyProfile', [ProfileStudentController::class, 'show']);
+        });
+    });
+
+    Route::group(['prefix' => 'profile_student'], function () {
+        Route::group(['middleware' => 'hasRole:admin|employee'], function () {
+            Route::get('getByIdForAdmin/{id}', [ProfileStudentController::class, 'getByIdForAdmin']);
         });
     });
 

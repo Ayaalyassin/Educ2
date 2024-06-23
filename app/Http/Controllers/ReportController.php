@@ -89,18 +89,18 @@ class ReportController extends Controller
                 return $this->returnError("404",'Not found' . ' Profile Teacher Id : ' . $reported_id);
             }
 
-            $services_ids=$profile_teacher->service_teachers()->pluck('id');
-
-            $is_lock=null;
-
-            if($services_ids) {
-                $is_lock = $user->whereHas('hour_lock', function ($query) use ($services_ids) {
-                    $query->whereIn('service_id', $services_ids);
-                })->first();
-            }
-
-            if(!$is_lock)
-                return $this->returnError("403",'You Can’t do it');
+//            $services_ids=$profile_teacher->service_teachers()->pluck('id');
+//
+//            $is_lock=null;
+//
+//            if($services_ids) {
+//                $is_lock = $user->whereHas('hour_lock', function ($query) use ($services_ids) {
+//                    $query->whereIn('service_id', $services_ids);
+//                })->first();
+//            }
+//
+//            if(!$is_lock)
+//                return $this->returnError("403",'You Can’t do it');
 
 
             $report = $user->report_as_reporter()->where('reported_id', $reported_id)->first();

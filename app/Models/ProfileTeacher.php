@@ -44,6 +44,16 @@ class ProfileTeacher extends Model
         return $this->hasMany(TeachingMethod::class, 'profile_teacher_id', 'id');
     }
 
+    public function teaching_methods_free()
+    {
+        return $this->hasMany(TeachingMethod::class, 'profile_teacher_id', 'id')->where('price', 0);
+    }
+
+    public function teaching_methods_paid()
+    {
+        return $this->hasMany(TeachingMethod::class, 'profile_teacher_id', 'id')->where('price','>', 0);
+    }
+
 
     public function evaluation_as_teacher()
     {

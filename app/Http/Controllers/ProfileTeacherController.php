@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProfileTeacherRequest;
-use App\Models\AdsFile;
 use App\Models\Domain;
 use App\Models\ProfileTeacher;
 use App\Traits\GeneralTrait;
@@ -187,4 +186,35 @@ class ProfileTeacherController extends Controller
             return $this->returnError("500", 'Please try again later');
         }
     }
+
+
+    public function getByIdForAdmin($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $profile_teacher = ProfileTeacher::find($id);
+
+            if (!$profile_teacher)
+                return $this->returnError("404", 'not found');
+
+            $profile_teacher->loadMissing(['user.wallet'=> function ($query) {
+                $query->withCount(['governor_charge','governor_recharge']);
+            },'request_complete','teaching_methods','ads','day.hours']);
+            $profile_teacher->loadCount([
+                'report_as_reporter',
+                'report_as_reported',
+                'teaching_methods_free',
+                'teaching_methods_paid'
+            ]);
+
+
+            DB::commit();
+            return $this->returnData($profile_teacher, 'operation completed successfully');
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError("500", 'Please try again later');
+        }
+    }
+
 }

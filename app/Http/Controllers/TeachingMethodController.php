@@ -157,7 +157,12 @@ class TeachingMethodController extends Controller
     public function getAll()
     {
         try {
-            $teaching_methods=TeachingMethod::all();
+        //$teaching_methods = TeachingMethod::with('profile_teacher.user:id,name')->get();
+
+        $teaching_methods=TeachingMethod::join('profile_teachers','teaching_methods.profile_teacher_id','=','profile_teachers.id')->
+        join('users','profile_teachers.user_id','=','users.id')
+            ->select('teaching_methods.*','users.name')->orderBy('created_at','desc')
+            ->get();
 
             return $this->returnData($teaching_methods, 'operation completed successfully');
         } catch (\Exception $ex) {

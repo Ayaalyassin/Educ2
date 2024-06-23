@@ -21,7 +21,7 @@ class ProfileStudentController extends Controller
             DB::beginTransaction();
 
             $profile_student = ProfileStudent::all();
-            if(count($profile_student)>0)
+            if (count($profile_student) > 0)
                 $profile_student->loadMissing(['user']);
 
             DB::commit();
@@ -118,4 +118,34 @@ class ProfileStudentController extends Controller
             return $this->returnError("500", 'Please try again later');
         }
     }
+
+    public function getByIdForAdmin($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $profile_student = ProfileStudent::find($id);
+
+            if (!$profile_student)
+                return $this->returnError("404", 'not found');
+
+            $profile_student->loadMissing(['user.wallet', 'note_as_student', 'reservation_ads.ads' => function ($query) {
+                $query->select('ads.id','ads.title');
+            }]);
+            $profile_student->loadCount([
+                'report_as_reporter',
+                'report_as_reported',
+                'reservation_teaching_methods_free' ,
+                'reservation_teaching_methods_paid'
+            ]);
+
+
+            DB::commit();
+            return $this->returnData($profile_student, 'operation completed successfully');
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError("500", 'Please try again later');
+        }
+    }
+
 }

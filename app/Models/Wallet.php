@@ -20,4 +20,14 @@ class Wallet extends Model
     {
         return $this->hasMany(Governor::class);
     }
+
+    public function governor_charge()
+    {
+        return $this->hasMany(Governor::class)->where('type',"charge");
+    }
+
+    public function governor_recharge()
+    {
+        return $this->hasMany(Governor::class)->where('type',"recharge");
+    }
 }

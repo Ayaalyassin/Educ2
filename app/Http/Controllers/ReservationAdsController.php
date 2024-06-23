@@ -51,8 +51,8 @@ class ReservationAdsController extends Controller
             $is_exist=$profile_student->reservation_ads()->where('ads_id',$request->ads_id)->first();
             if($is_exist)
                 return $this->returnError("400", 'ads already exist');
-            if ($ads->date <= now()) {
-                return $this->returnError("402", 'ads has begun');
+            if ($ads->start_date <= now()) {
+                return $this->returnError("400", 'ads has begun');
             }
 
             if ($ads->number_students ==0) {
