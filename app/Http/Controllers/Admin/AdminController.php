@@ -277,18 +277,35 @@ class AdminController extends Controller
     {
         try {
             DB::beginTransaction();
-            //$user = User::where('role_id', 'teacher')->find($id);
-            $user = User::where('id', $id)->whereHas('roles', function ($query) {
-                $query->where('name', "teacher");
-            })->first();
-            if (!$user) {
-                return $this->returnError(404, 'not Found teacher');
+
+            $teacher = ProfileTeacher::find($id);
+            if (!$teacher) {
+                return $this->returnError(404, 'Student not found');
             }
-            $user->profile_teacher()->delete();
-            $user->block()->delete();
-            $user->delete();
+            $teacher->domains()->each(function ($domain) {
+                $domain->delete();
+            });
+            $user = $teacher->user;
+            $teacher->day()->each(function ($day) {
+                $day->hours()->each(function ($hour) {
+                    $hour->delete();
+                });
+                $day->delete();
+            });
+            if ($teacher->request_complete) {
+                $teacher->request_complete->delete();
+            }
+            if ($user) {
+                $block = $user->block;
+                if ($block) {
+                    $block->delete();
+                }
+                $user->delete();
+            }
+
+            $teacher->delete();
             DB::commit();
-            return $this->returnData($msg = "delete successfully", 200);
+            return $this->returnData(200, "Delete successfully");
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -298,23 +315,28 @@ class AdminController extends Controller
     {
         try {
             DB::beginTransaction();
-            //$user = User::where('role_id', 'student')->find($id);
-            $user = User::where('id', $id)->whereHas('roles', function ($query) {
-                $query->where('name', "student");
-            })->first();
-            if (!$user) {
-                return $this->returnError(404, 'not Found student');
+
+            $student = ProfileStudent::find($id);
+            if (!$student) {
+                return $this->returnError(404, 'Student not found');
             }
-            $user->profile_student()->delete();
-            $user->block()->delete();
-            $user->delete();
+            $user = $student->user;
+            if ($user) {
+                $block = $user->block;
+                if ($block) {
+                    $block->delete();
+                }
+                $user->delete();
+            }
+            $student->delete();
             DB::commit();
-            return $this->returnData($msg = "delete successfully", 200);
+            return $this->returnData(200, "Delete successfully");
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
+
 
     public function searchByName(Request $request)
     {

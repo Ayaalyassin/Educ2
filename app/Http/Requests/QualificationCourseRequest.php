@@ -30,9 +30,10 @@ class QualificationCourseRequest extends FormRequest
             'name' => 'required|string',
             'description' => 'required|string',
             'date' => 'required|date',
+            'end_date' => 'required|date',
             'count_subscribers' => 'required|integer',
             'price' => 'required|integer',
-            'place' => 'required|string'
+            'place' => 'required|string',
         ];
     }
 

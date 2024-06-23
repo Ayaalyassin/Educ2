@@ -40,10 +40,11 @@ class QualificationCourseController extends Controller
                 'name' => $request->name,
                 'description' => $request->description,
                 'date' => $request->date,
+                'end_date' => $request->end_date,
                 'count_subscribers' => $request->count_subscribers,
                 'price' => $request->price,
                 'place' => $request->place,
-                'remaining_number' => 0
+                'status' => 0
             ]);
             DB::commit();
             return $this->returnData($qualification_course, 'operation completed successfully');

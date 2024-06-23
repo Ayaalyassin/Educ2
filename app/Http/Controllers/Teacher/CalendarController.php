@@ -146,7 +146,6 @@ class CalendarController extends Controller
 
             $studentsToNotify = [];
 
-            // التحقق من الساعات الموجودة في الجدول الأسبوعي والتي حالتها status = 1
             foreach ($days as $ind => $day) {
                 $calendarDay = $teacher->day()->where('day', $day)->first();
                 if ($calendarDay) {
@@ -186,10 +185,8 @@ class CalendarController extends Controller
                             ->first();
 
                         if ($existingHour) {
-                            // المحافظة على الحالة (status) إذا كانت موجودة مسبقًا
                             $existingHour->update(['status' => $existingHour->status]);
                         } else {
-                            // تحديد الحالة (status) بناءً على وجود الساعة مسبقًا في الطلب أو حالتها الحالية
                             $originalHour = CalendarHour::where('day_id', $calendarDay->id)
                                 ->where('hour', $value)
                                 ->first();
@@ -204,7 +201,6 @@ class CalendarController extends Controller
                     }
                 }
 
-                // حذف الساعات التي لم يتم إرسالها في الطلب وحالتها 0
                 $calendarHours = $calendarDay->hours;
                 foreach ($calendarHours as $calendarHour) {
                     $hourFound = false;
@@ -217,14 +213,12 @@ class CalendarController extends Controller
                         }
                     }
                     if (!$hourFound && $calendarHour->status == 0) {
-                        // جلب جميع الطلاب الذين قدموا طلبات لحجز هذه الساعة من جدول lock_hour
                         $students = LockHour::with('student.user.wallet')
                             ->with('service')
                             ->where('hour_id', $calendarHour->id)
                             ->get();
 
                         foreach ($students as $student) {
-                            // التحقق من نوع الخدمة
                             if ($student->service && $student->service->type == 'video call') {
                                 if ($student->student && $student->student->user && $student->student->user->wallet) {
                                     $student->student->user->wallet->update([
@@ -259,7 +253,6 @@ class CalendarController extends Controller
 
             DB::commit();
 
-            // إرجاع بيانات الطلاب الذين قدموا طلبات لحجز الساعات المحذوفة
             return $this->returnData($studentsToNotify, 200, 'Operation completed successfully');
         } catch (\Exception $ex) {
             DB::rollback();

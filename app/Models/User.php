@@ -15,7 +15,7 @@ use Spatie\Permission\Traits\HasPermissions;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;//,HasFilter;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles; //,HasFilter;
 
     /**
      * The attributes that are mass assignable.
@@ -90,7 +90,12 @@ class User extends Authenticatable implements JWTSubject
 
     public function qualification_users()
     {
-        return $this->belongsToMany(QualificationCourse::class, 'qualification_users','user_id','qualification_id');
+        return $this->belongsToMany(
+            QualificationCourse::class,
+            'qualification_users',
+            'user_id',
+            'qualification_id'
+        )->withPivot('created_at');
     }
 
     public function evaluation_as_student()
@@ -113,15 +118,15 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Note::class, 'teacher_id', 'id');
     }
 
-//    public function report_as_reporter()
-//    {
-//        return $this->morphMany(Report::class, 'reporter');
-//    }
-//
-//    public function report_as_reported()
-//    {
-//        return $this->morphMany(Report::class, 'reported');
-//    }
+    //    public function report_as_reporter()
+    //    {
+    //        return $this->morphMany(Report::class, 'reporter');
+    //    }
+    //
+    //    public function report_as_reported()
+    //    {
+    //        return $this->morphMany(Report::class, 'reported');
+    //    }
 
     // public function appointment_available()
     // {
@@ -195,5 +200,4 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
-
 }

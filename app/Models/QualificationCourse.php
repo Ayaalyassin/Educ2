@@ -16,7 +16,8 @@ class QualificationCourse extends Model
         'count_subscribers',
         'price',
         'place',
-        'remaining_number'
+        'end_date',
+        'status'
     ];
 
     public function user()
@@ -26,6 +27,6 @@ class QualificationCourse extends Model
             'qualification_users',
             'qualification_id',
             'user_id',
-        );
+        )->withPivot('created_at');
     }
 }

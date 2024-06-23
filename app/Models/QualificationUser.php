@@ -11,6 +11,4 @@ class QualificationUser extends Model
         'user_id',
         'qualification_id'
     ];
-
-   
 }

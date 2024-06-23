@@ -16,10 +16,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->date('date');
+            $table->date('end_date');
             $table->integer('price');
             $table->integer('count_subscribers');
-            $table->integer('remaining_number')->default(0);
             $table->string('place');
+            $table->integer('status');
             $table->timestamps();
         });
     }

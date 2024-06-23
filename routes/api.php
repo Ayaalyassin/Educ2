@@ -337,7 +337,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['middleware' => 'hasRole:teacher'], function () {
         Route::group(['prefix' => 'QualificationCourse'], function () {
-            // Route::get('getall', [QualificationCourseController::class, 'index']);
+            Route::get('getallcourse', [QualificationCourseController::class, 'index']);
             Route::post('insert_into_courses/{id}', [QualificationCourseController::class, 'insert_into_courses']);
             Route::get('show_my_courses', [QualificationCourseController::class, 'show_my_courses'])
                 ->middleware('hasRole:teacher');
