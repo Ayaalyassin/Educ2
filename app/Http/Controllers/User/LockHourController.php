@@ -5,8 +5,10 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LockHourRequest;
 use App\Models\CalendarHour;
+use App\Models\HistoryLockHours;
 use App\Models\LockHour;
 use App\Traits\GeneralTrait;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -165,6 +167,32 @@ class LockHourController extends Controller
             $lock_hour = LockHour::find($id);
             if (!$lock_hour) {
                 return $this->returnError(404, 'Not found Request');
+            }
+            $deleteWallets = LockHour::where('id', '!=', $id)->get();
+            foreach ($deleteWallets as $deleteWallet) {
+                $timeOnly = Carbon::parse($lock_hour->created_at)->format('Y-m-d');
+                $service = $deleteWallet->load('service');
+                if ($service->service->type == 'private lesson') {
+                    $wallet = $deleteWallet->load('student.user.wallet');
+                    $wallet->student->user->wallet->update([
+                        'value' => $wallet->student->user->wallet->value + (10 / 100) * $service->service->price
+                    ]);
+                } else {
+                    $wallet = $deleteWallet->load('student.user.wallet');
+                    $wallet->student->user->wallet->update([
+                        'value' => $wallet->student->user->wallet->value + $service->service->price
+                    ]);
+                }
+                $historyLock = HistoryLockHours::create([
+                    'type' => $service->service->type,
+                    'nameStudent' => $deleteWallet->student->user->name,
+                    'hour' => $deleteWallet->hour->hour,
+                    'date' => $timeOnly,
+                    'day' => $deleteWallet->hour->day->day,
+                    'price' => $service->service->price,
+                    'status' => "unacceptable"
+                ]);
+                
             }
             $wallet = Auth::user()->wallet;
             if ($lock_hour->service->type == 'video call') {
