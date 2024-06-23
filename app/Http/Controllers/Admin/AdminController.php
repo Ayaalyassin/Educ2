@@ -88,6 +88,7 @@ class AdminController extends Controller
                     $query->whereDoesntHave('block');
                 })
                 ->with('domains')
+                ->with('user.wallet')
                 ->where('status', 1)
                 ->get();
 
@@ -106,6 +107,7 @@ class AdminController extends Controller
             $teacher = User::whereHas('block')
                 ->whereHas('profile_teacher')
                 ->with('profile_teacher')
+                ->with('wallet')
                 ->get();
             DB::commit();
             return $this->returnData($teacher, 200);
@@ -118,7 +120,9 @@ class AdminController extends Controller
     {
         try {
             DB::beginTransaction();
-            $teachers = ProfileTeacher::with('user')->with('domains')->where('status', 1)->get();
+            $teachers = ProfileTeacher::with('user')->with('domains')
+                ->with('user.wallet')
+                ->where('status', 1)->get();
             DB::commit();
             return $this->returnData($teachers, 200);
         } catch (\Exception $ex) {
@@ -185,7 +189,9 @@ class AdminController extends Controller
             $users = ProfileStudent::with('user')
                 ->whereHas('user', function ($query) {
                     $query->whereDoesntHave('block');
-                })->get();
+                })
+                ->with('user.wallet')
+                ->get();
             DB::commit();
             return $this->returnData($users, 200);
         } catch (\Exception $ex) {
@@ -200,6 +206,7 @@ class AdminController extends Controller
             $users = User::whereHas('block')
                 ->whereHas('profile_student')
                 ->with('profile_student')
+                ->with('wallet')
                 ->get();
             DB::commit();
             return $this->returnData($users, 200);
@@ -213,7 +220,7 @@ class AdminController extends Controller
     {
         try {
             DB::beginTransaction();
-            $teachers = ProfileStudent::with('user')->get();
+            $teachers = ProfileStudent::with('user')->with('user.wallet')->get();
             DB::commit();
             return $this->returnData($teachers, 200);
         } catch (\Exception $ex) {

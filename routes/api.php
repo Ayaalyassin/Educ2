@@ -315,8 +315,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::post('update/{id}', [QualificationCourseController::class, 'update']);
             Route::delete('delete/{id}', [QualificationCourseController::class, 'destroy']);
             Route::get('getById/{id}', [QualificationCourseController::class, 'show']);
+            Route::get('getall', [QualificationCourseController::class, 'index']);
         });
-        Route::get('getall', [QualificationCourseController::class, 'index']);
     });
 
     Route::group(['middleware' => 'hasRole:teacher'], function () {

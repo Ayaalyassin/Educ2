@@ -184,7 +184,6 @@ class LockHourController extends Controller
                         'status' => 1
                     ]);
                 } else {
-                    return $deleteHour;
                     $deleteHour->delete();
                 }
             }
