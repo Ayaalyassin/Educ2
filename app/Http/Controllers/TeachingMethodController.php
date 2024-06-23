@@ -20,7 +20,6 @@ class TeachingMethodController extends Controller
     public function index($teacher_id)
     {
         try {
-            //$profile_teacher=User::find($teacher_id)->profile_teacher()->first();
             $profile_teacher=ProfileTeacher::find($teacher_id);
             if (!$profile_teacher) {
                 return $this->returnError("404",'Profile Teacher Not found');
@@ -152,6 +151,41 @@ class TeachingMethodController extends Controller
             return $this->returnData($teaching_methods, 'operation completed successfully');
         } catch (\Exception $ex) {
             return $this->returnError("500", "Please try again later");
+        }
+    }
+
+    public function getAll()
+    {
+        try {
+            $teaching_methods=TeachingMethod::all();
+
+            return $this->returnData($teaching_methods, 'operation completed successfully');
+        } catch (\Exception $ex) {
+            return $this->returnError("500", "Please try again later");
+        }
+    }
+
+
+    public function deleteForAdmin($id)
+    {
+        try {
+            DB::beginTransaction();
+            $teaching_method=TeachingMethod::find($id);
+
+            if (!$teaching_method) {
+                return $this->returnError("404",'teaching_method Not found');
+            }
+            if (isset($teaching_method->file)) {
+                $this->deleteImage($teaching_method->file);
+            }
+
+            $teaching_method->delete();
+
+            DB::commit();
+            return $this->returnSuccessMessage('operation completed successfully');
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError("500", 'Please try again later');
         }
     }
 }

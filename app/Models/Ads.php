@@ -29,4 +29,8 @@ class Ads extends Model
         return $this->belongsTo(ProfileTeacher::class, 'profile_teacher_id');
     }
 
+    public function reservation_ads()
+    {
+        return $this->hasMany(ReservationAds::class,'ads_id','id');
+    }
 }

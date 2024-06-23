@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateAdsRequest;
+use App\Jobs\DeleteAds;
 use App\Models\Ads;
 use App\Models\ProfileTeacher;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests\AdsRequest;
 use App\Traits\GeneralTrait;
@@ -31,7 +33,7 @@ class AdsController extends Controller
             //$ads = Ads::all();
             $ads=Ads::join('profile_teachers','ads.profile_teacher_id','=','profile_teachers.id')->
             join('users','profile_teachers.user_id','=','users.id')
-            ->select('ads.*','users.name')//->orderBy('created_at','desc')
+            ->select('ads.*','users.name')->orderBy('created_at','desc')
             ->get();
 
             return $this->returnData($ads, 'operation completed successfully');
@@ -43,14 +45,11 @@ class AdsController extends Controller
     public function getAdsTeacher($teacherId)
     {
         try {
-//            $user = User::find($userId);
-//            $profile_teacher=$user->profile_teacher()->first();
-//            $ads=$profile_teacher->ads()->get();
+
             $profile_teacher = ProfileTeacher::find($teacherId);
             if(!$profile_teacher)
                 return $this->returnError("404", "Not found");
             $ads=$profile_teacher->ads()->orderBy('created_at','desc')->get();
-
 
             return $this->returnData($ads, 'operation completed successfully');
         } catch (\Exception $ex) {
@@ -97,16 +96,11 @@ class AdsController extends Controller
     {
         try {
             $data = Ads::where('id', $id)
-//->with('profile_students',function ($query){
-//                $query->select('phone');
-//            })->with('profile_students.user',function ($q){
-//                $q->select('name','governorate');
-//            })
                 ->first();
             if (!$data) {
                 return $this->returnError("404", "Not found");
             }
-            $data->loadMissing(['profile_students.user']);
+            $data->loadMissing(['reservation_ads']);
             return $this->returnData($data, 'operation completed successfully');
         } catch (\Exception $ex) {
             return $this->returnError("500", 'Please try again later');
@@ -165,7 +159,7 @@ class AdsController extends Controller
                 $this->deleteImage($ads->file);
             }
 
-            $ads->delete();
+            DeleteAds::dispatch($id)->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnSuccessMessage('operation completed successfully');
         } catch (\Exception $ex) {
@@ -186,6 +180,26 @@ class AdsController extends Controller
             return $this->returnData($ads, 'operation completed successfully');
         } catch (\Exception $ex) {
             return $this->returnError("500", "Please try again later");
+        }
+    }
+
+    public function deleteForAdmin($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $ads = Ads::find($id);
+            if (!$ads)
+                return $this->returnError("404", 'not found');
+            if (isset($ads->file)) {
+                $this->deleteImage($ads->file);
+            }
+            DeleteAds::dispatch($id)->delay(Carbon::now()->addSeconds(2));
+            DB::commit();
+            return $this->returnSuccessMessage('operation completed successfully');
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError("500", 'Please try again later');
         }
     }
 }

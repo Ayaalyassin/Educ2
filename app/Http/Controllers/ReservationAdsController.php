@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileStudentAdsRequest;
+use App\Jobs\EndAdsJob;
 use App\Models\Ads;
 use App\Models\ReservationAds;
 use App\Traits\GeneralTrait;
@@ -68,9 +69,10 @@ class ReservationAdsController extends Controller
                 'reserved_at'=>Carbon::now()->format('Y-m-d H:i:s')
             ]);
             $ads->decrement('number_students');
-            if($ads->number_students==0)
-                $ads->update(['active'=>0]);
-
+            if($ads->number_students==0) {
+                $ads->update(['active' => 0]);
+                EndAdsJob::dispatch($ads)->delay(Carbon::now()->addSeconds(2));
+            }
             DB::commit();
             return $this->returnData($reservation_ads,'operation completed successfully');
         } catch (\Exception $ex) {
@@ -96,11 +98,6 @@ class ReservationAdsController extends Controller
         }
     }
 
-
-//    public function update(UpdateProfileStudentAdsRequest $request,$id)
-//    {
-//        //
-//    }
 
 
     public function destroy($id)

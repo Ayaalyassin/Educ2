@@ -49,13 +49,15 @@ class ReservationTeachingMethodController extends Controller
             $is_exist=$profile_student->reservation_teaching_methods()->where('teaching_method_id',$request->teaching_method_id)->first();
             if($is_exist)
                 return $this->returnError("400", 'teaching method already exist');
+            if($teaching_method->price>0) {
 
-            if ($user->wallet->value < $teaching_method->price)
-                return $this->returnError("402", 'not Enough money in wallet');
-            $user->wallet->update([
-                'value' => $user->wallet->value - $teaching_method->price
-            ]);
-            $user->wallet->save();
+                if ($user->wallet->value < $teaching_method->price)
+                    return $this->returnError("402", 'not Enough money in wallet');
+                $user->wallet->update([
+                    'value' => $user->wallet->value - $teaching_method->price
+                ]);
+                $user->wallet->save();
+            }
 
             $reservation_teaching_methods=$profile_student->reservation_teaching_methods()->create([
                 'teaching_method_id'=>$request->teaching_method_id,

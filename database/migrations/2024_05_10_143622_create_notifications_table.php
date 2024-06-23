@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('body');
             $table->boolean('seen')->default(0);
-            $table->text('url');
+            $table->text('url')->nullable();
 
             $table->bigInteger('user_id')->unsigned()->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
