@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CalenderDayRequest;
 use App\Models\CalendarHour;
 use App\Models\CalenderDay;
+use App\Models\LockHour;
 use App\Models\ProfileTeacher;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
@@ -138,24 +139,44 @@ class CalendarController extends Controller
             $days = $request->input('day', []);
             $hours = $request->input('hour', []);
             $teacher = auth()->user()->profile_teacher;
+
             if (!$teacher) {
                 return response()->json(['error' => 'Teacher not found'], 404);
             }
+
+            $studentsToNotify = [];
+
+            // التحقق من الساعات الموجودة في الجدول الأسبوعي والتي حالتها status = 1
+            foreach ($days as $ind => $day) {
+                $calendarDay = $teacher->day()->where('day', $day)->first();
+                if ($calendarDay) {
+                    $calendarHours = $calendarDay->hours()->where('status', 1)->get();
+                    foreach ($calendarHours as $calendarHour) {
+                        $hourFound = false;
+                        foreach ($hours as $id => $hour) {
+                            $key = array_keys($hour)[0];
+                            $value = $hour[$key];
+                            if ($ind == $key && $value == $calendarHour->hour) {
+                                $hourFound = true;
+                                break;
+                            }
+                        }
+                        if (!$hourFound) {
+                            return response()->json(['error' => "Hour {$calendarHour->hour} on day {$day} with status 1 is missing from request"], 400);
+                        }
+                    }
+                }
+            }
+
             foreach ($days as $ind => $day) {
                 $calendarDay = $teacher->day()->where('day', $day)->first();
                 if (!$calendarDay) {
-                    $newDay = $teacher->day()->create([
+                    $calendarDay = $teacher->day()->create([
                         'day' => $day
                     ]);
-                    $alternativeDayId = $newDay->id;
-                } else {
-                    $calendarHours = $calendarDay->hours;
-                    $des = $calendarDay->hours;
-                    // return $calendarDay->hours;
-                    $calendarDay->hours()->delete();
-                    $alternativeDayId = $calendarDay->id;
                 }
-                $dayHasHours = false;
+                $alternativeDayId = $calendarDay->id;
+
                 foreach ($hours as $id => $hour) {
                     $key = array_keys($hour)[0];
                     $value = $hour[$key];
@@ -163,18 +184,68 @@ class CalendarController extends Controller
                         $existingHour = CalendarHour::where('day_id', $alternativeDayId)
                             ->where('hour', $value)
                             ->first();
-                        if (!$existingHour) {
+
+                        if ($existingHour) {
+                            // المحافظة على الحالة (status) إذا كانت موجودة مسبقًا
+                            $existingHour->update(['status' => $existingHour->status]);
+                        } else {
+                            // تحديد الحالة (status) بناءً على وجود الساعة مسبقًا في الطلب أو حالتها الحالية
+                            $originalHour = CalendarHour::where('day_id', $calendarDay->id)
+                                ->where('hour', $value)
+                                ->first();
+                            $status = $originalHour && $originalHour->status == 1 ? 1 : 0;
+
                             CalendarHour::create([
-                                'day_id' => isset($alternativeDayId) ? $alternativeDayId : $calendarDay->id,
+                                'day_id' => $alternativeDayId,
                                 'hour' => $value,
-                                'status' => 0
+                                'status' => $status
                             ]);
-                            $dayHasHours = true;
                         }
                     }
                 }
-                if (!$dayHasHours) {
-                    $teacher->day()->where('id', $alternativeDayId)->delete();
+
+                // حذف الساعات التي لم يتم إرسالها في الطلب وحالتها 0
+                $calendarHours = $calendarDay->hours;
+                foreach ($calendarHours as $calendarHour) {
+                    $hourFound = false;
+                    foreach ($hours as $id => $hour) {
+                        $key = array_keys($hour)[0];
+                        $value = $hour[$key];
+                        if ($ind == $key && $value == $calendarHour->hour) {
+                            $hourFound = true;
+                            break;
+                        }
+                    }
+                    if (!$hourFound && $calendarHour->status == 0) {
+                        // جلب جميع الطلاب الذين قدموا طلبات لحجز هذه الساعة من جدول lock_hour
+                        $students = LockHour::with('student.user.wallet')
+                            ->with('service')
+                            ->where('hour_id', $calendarHour->id)
+                            ->get();
+
+                        foreach ($students as $student) {
+                            // التحقق من نوع الخدمة
+                            if ($student->service && $student->service->type == 'video call') {
+                                if ($student->student && $student->student->user && $student->student->user->wallet) {
+                                    $student->student->user->wallet->update([
+                                        'value' => $student->student->user->wallet->value + $student->service->price
+                                    ]);
+                                    $student->student->user->wallet->save();
+                                }
+                            } else {
+                                if ($student->student && $student->student->user && $student->student->user->wallet) {
+                                    $student->student->user->wallet->update([
+                                        'value' => $student->student->user->wallet->value + (10 / 100) * $student->service->price
+                                    ]);
+                                    $student->student->user->wallet->save();
+                                }
+                            }
+                            $student->delete();
+                        }
+
+                        $studentsToNotify = array_merge($studentsToNotify, $students->toArray());
+                        $calendarHour->delete();
+                    }
                 }
             }
             $existingDays = $teacher->day()->pluck('day');
@@ -185,12 +256,23 @@ class CalendarController extends Controller
                     $calendarDay->delete();
                 }
             }
-            return $this->returnData(200, 'operation completed successfully');
+
+            DB::commit();
+
+            // إرجاع بيانات الطلاب الذين قدموا طلبات لحجز الساعات المحذوفة
+            return $this->returnData($studentsToNotify, 200, 'Operation completed successfully');
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
+
+
+
+
+
+
+
 
     /**
      * Remove the specified resource from storage.

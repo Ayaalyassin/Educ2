@@ -347,6 +347,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::group(['prefix' => 'calender'], function () {
         Route::group(['middleware' => ['hasRole:teacher']], function () {
             Route::post('store', [CalendarController::class, 'store']);
+            Route::post('update', [CalendarController::class, 'update']);
             Route::get('get', [CalendarController::class, 'index']);
             Route::get('accept-request/{id}', [LockHourController::class, 'accept_request']);
             Route::get('user_lock', [LockHourController::class, 'index']);
