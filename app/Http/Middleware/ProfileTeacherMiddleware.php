@@ -7,7 +7,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class HasProfileStudentMiddleware
+class ProfileTeacherMiddleware
 {
     use GeneralTrait;
 
@@ -16,8 +16,8 @@ class HasProfileStudentMiddleware
 
         try {
             $user = auth()->user();
-            $profile_student=$user->profile_student()->first();
-            if (!$profile_student) {
+            $profile_teacher=$user->profile_teacher()->first();
+            if (!$profile_teacher) {
                 return $this->returnError('511', "Please complete all personal information");
             }
             else{

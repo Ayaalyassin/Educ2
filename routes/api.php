@@ -112,9 +112,11 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::group(['middleware' => ['hasRole:teacher']], function () {
 
         Route::group(['prefix' => 'ads'], function () {
-            Route::post('store', [AdsController::class, 'store']);
-            Route::post('update/{id}', [AdsController::class, 'update']);
-            Route::delete('delete/{id}', [AdsController::class, 'destroy']);
+            Route::group(['middleware' => ['teacher']], function () {
+                Route::post('store', [AdsController::class, 'store']);
+                Route::post('update/{id}', [AdsController::class, 'update']);
+                Route::delete('delete/{id}', [AdsController::class, 'destroy']);
+            });
             Route::get('getMyAds', [AdsController::class, 'getMyAds']);
         });
     });
@@ -197,9 +199,11 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::group(['middleware' => ['hasRole:teacher']], function () {
 
         Route::group(['prefix' => 'ServiceTeacher'], function () {
-            Route::post('store', [ServiceTeacherController::class, 'store']); //->middleware('profileTeacher');;
-            Route::post('update/{id}', [ServiceTeacherController::class, 'update']);
-            Route::delete('delete/{id}', [ServiceTeacherController::class, 'destroy']);
+            Route::group(['middleware' => ['teacher']], function () {
+                Route::post('store', [ServiceTeacherController::class, 'store']);
+                Route::post('update/{id}', [ServiceTeacherController::class, 'update']);
+                Route::delete('delete/{id}', [ServiceTeacherController::class, 'destroy']);
+            });
             Route::get('getMyService', [ServiceTeacherController::class, 'getMyService']);
         });
     });
