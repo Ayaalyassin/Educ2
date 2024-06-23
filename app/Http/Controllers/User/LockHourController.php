@@ -128,7 +128,6 @@ class LockHourController extends Controller
     }
     public function get_my_request()
     {
-
         try {
             $user = Auth::user()->profile_student;
             if (!$user) {
@@ -158,19 +157,16 @@ class LockHourController extends Controller
 
     public function accept_request($id)
     {
-
         try {
             $user = Auth::user()->profile_teacher;
             if (!$user) {
                 return $this->returnError(400, 'Token is Invalid');
             }
-
             $lock_hour = LockHour::find($id);
             if (!$lock_hour) {
                 return $this->returnError(404, 'Not found Request');
             }
             $wallet = Auth::user()->wallet;
-
             if ($lock_hour->service->type == 'video call') {
                 $wallet->update([
                     'value' => $wallet->value + $lock_hour->service->price
@@ -188,6 +184,7 @@ class LockHourController extends Controller
                         'status' => 1
                     ]);
                 } else {
+                    return $deleteHour;
                     $deleteHour->delete();
                 }
             }

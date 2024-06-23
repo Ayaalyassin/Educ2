@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Block;
 use App\Models\ProfileStudent;
 use App\Models\ProfileTeacher;
 use App\Models\User;
@@ -78,11 +79,17 @@ class AdminController extends Controller
         }
     }
 
-    public function get_all_teacher()
+    public function get_all_teacher_unblock()
     {
         try {
             DB::beginTransaction();
-            $teacher = ProfileTeacher::with('user')->whereDoesntHave('user.blocks')->get();
+            $teacher = ProfileTeacher::with('user')
+                ->whereHas('user', function ($query) {
+                    $query->whereDoesntHave('block');
+                })
+                ->with('domains')
+                ->where('status', 1)
+                ->get();
 
             DB::commit();
             return $this->returnData($teacher, 200);
@@ -91,11 +98,77 @@ class AdminController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-    public function get_all_student()
+
+    public function get_all_teacher_block()
     {
         try {
             DB::beginTransaction();
-            $users = ProfileStudent::with('user')->whereDoesntHave('user.blocks')->get();
+            $teacher = User::whereHas('block')
+                ->whereHas('profile_teacher')
+                ->with('profile_teacher')
+                ->get();
+            DB::commit();
+            return $this->returnData($teacher, 200);
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+    public function get_all_teacher()
+    {
+        try {
+            DB::beginTransaction();
+            $teachers = ProfileTeacher::with('user')->with('domains')->where('status', 1)->get();
+            DB::commit();
+            return $this->returnData($teachers, 200);
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+
+    public function count_all_teacher()
+    {
+        try {
+            DB::beginTransaction();
+            $users = User::whereHas('roles', function ($q) {
+                $q->where('name', "teacher");
+            })->whereHas('profile_teacher', function ($qu) {
+                $qu->where('status', 1);
+            })->count();
+            DB::commit();
+            return $this->returnData($users, 200);
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+    public function count_unblock_teacher()
+    {
+        try {
+            DB::beginTransaction();
+            $users = User::whereHas('roles', function ($q) {
+                $q->where('name', "teacher");
+            })->whereHas('profile_teacher', function ($qu) {
+                $qu->where('status', 1);
+            })->whereDoesntHave('block')->count();
+            DB::commit();
+            return $this->returnData($users, 200);
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+    public function count_block_teacher()
+    {
+        try {
+            DB::beginTransaction();
+            $users = User::whereHas('roles', function ($q) {
+                $q->where('name', "teacher");
+            })->whereHas('profile_teacher', function ($qu) {
+                $qu->where('status', 1);
+            })->whereHas('block')->count();
             DB::commit();
             return $this->returnData($users, 200);
         } catch (\Exception $ex) {
@@ -104,49 +177,90 @@ class AdminController extends Controller
         }
     }
 
-    public function count_student()
+    //Student
+    public function get_all_student_unblock()
     {
         try {
             DB::beginTransaction();
-            //$users = User::where('role_id', 'student')->whereDoesntHave('blocks')->get();
-            $users = User::whereHas('roles', function ($q) {
-                $q->where('name', "student");
-            })->whereHas('profile_teacher', function ($qu) {
-                $qu->where('status', 1);
-            })->whereDoesntHave('blocks')->count();
-            //            $data = [];
-            //            foreach ($users as $user) {
-            //                if ($user->profile_student) {
-            //                    $data[] = $user;
-            //                }
-            //            }
+            $users = ProfileStudent::with('user')
+                ->whereHas('user', function ($query) {
+                    $query->whereDoesntHave('block');
+                })->get();
             DB::commit();
-            return $this->returnData(200, $users);
+            return $this->returnData($users, 200);
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-    public function count_teacher()
+    public function get_all_student_block()
     {
         try {
             DB::beginTransaction();
-            //$users = User::where('role_id', 'teacher')->whereDoesntHave('blocks')->get();
-            $users = User::whereHas('roles', function ($q) {
-                $q->where('name', "teacher");
-            })->whereHas('profile_teacher', function ($qu) {
-                $qu->where('status', 1);
-            })->whereDoesntHave('blocks')->count();
-            //            $data = [];
-            //            foreach ($users as $user) {
-            //                if ($user->profile_teacher) {
-            //                    if ($user->profile_teacher->status == 1) {
-            //                        $data[] = $user;
-            //                    }
-            //                }
-            //            }
+            $users = User::whereHas('block')
+                ->whereHas('profile_student')
+                ->with('profile_student')
+                ->get();
             DB::commit();
-            return $this->returnData(200, $users);
+            return $this->returnData($users, 200);
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    public function get_all_student()
+    {
+        try {
+            DB::beginTransaction();
+            $teachers = ProfileStudent::with('user')->get();
+            DB::commit();
+            return $this->returnData($teachers, 200);
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+    public function count_student()
+    {
+        try {
+            DB::beginTransaction();
+            $users = User::whereHas('roles', function ($q) {
+                $q->where('name', "student");
+            })->whereHas('profile_student', function ($qu) {
+            })->count();
+            DB::commit();
+            return $this->returnData($users, 200);
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+    public function count_block_student()
+    {
+        try {
+            DB::beginTransaction();
+            $users = User::whereHas('roles', function ($q) {
+                $q->where('name', "student");
+            })->whereHas('profile_student', function ($qu) {
+            })->whereHas('block')->count();
+            DB::commit();
+            return $this->returnData($users, 200);
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+    public function count_unblock_student()
+    {
+        try {
+            DB::beginTransaction();
+            $users = User::whereHas('roles', function ($q) {
+                $q->where('name', "student");
+            })->whereHas('profile_student', function ($qu) {
+            })->whereDoesntHave('block')->count();
+            DB::commit();
+            return $this->returnData($users, 200);
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -164,7 +278,7 @@ class AdminController extends Controller
                 return $this->returnError(404, 'not Found teacher');
             }
             $user->profile_teacher()->delete();
-            $user->blocks()->delete();
+            $user->block()->delete();
             $user->delete();
             DB::commit();
             return $this->returnData($msg = "delete successfully", 200);
@@ -185,7 +299,7 @@ class AdminController extends Controller
                 return $this->returnError(404, 'not Found student');
             }
             $user->profile_student()->delete();
-            $user->blocks()->delete();
+            $user->block()->delete();
             $user->delete();
             DB::commit();
             return $this->returnData($msg = "delete successfully", 200);

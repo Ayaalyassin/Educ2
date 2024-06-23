@@ -274,12 +274,21 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('get', [AdminController::class, 'index']);
         Route::delete('delete-request-join/{id}', [AdminController::class, 'destroy']);
         Route::get('accept-request-join/{id}', [AdminController::class, 'accept_request_teacher']);
-        Route::get('count-student', [AdminController::class, 'count_student']);
-        Route::get('count-teacher', [AdminController::class, 'count_teacher']);
         Route::delete('delete-teacher/{id}', [AdminController::class, 'destroy_teacher']);
         Route::delete('delete-student/{id}', [AdminController::class, 'destroy_student']);
-        Route::get('get-student', [AdminController::class, 'get_all_student']);
+        Route::get('get-teacher-unblock', [AdminController::class, 'get_all_teacher_unblock']);
+        Route::get('get-teacher-block', [AdminController::class, 'get_all_teacher_block']);
         Route::get('get-teacher', [AdminController::class, 'get_all_teacher']);
+        Route::get('count-teacher', [AdminController::class, 'count_all_teacher']);
+        Route::get('count-block-teacher', [AdminController::class, 'count_block_teacher']);
+        Route::get('count-unblock-teacher', [AdminController::class, 'count_unblock_teacher']);
+
+        Route::get('get-student-unblock', [AdminController::class, 'get_all_student_unblock']);
+        Route::get('get-student-block', [AdminController::class, 'get_all_student_block']);
+        Route::get('get-student', [AdminController::class, 'get_all_student']);
+        Route::get('count-student', [AdminController::class, 'count_student']);
+        Route::get('count-block-student', [AdminController::class, 'count_block_student']);
+        Route::get('count-unblock-student', [AdminController::class, 'count_unblock_student']);
     });
     Route::group(['prefix' => 'block-list', 'middleware' => ['hasRole:admin']], function () {
         Route::get('get', [BlockController::class, 'index']);
@@ -314,6 +323,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::get('get', [CalendarController::class, 'index']);
             Route::get('accept-request/{id}', [LockHourController::class, 'accept_request']);
             Route::get('user_lock', [LockHourController::class, 'index']);
+            Route::post('update', [CalendarController::class, 'update']);
             Route::delete('delete/{id}', [LockHourController::class, 'destroy']);
         });
         Route::group(['middleware' => 'hasRole:student'], function () {

@@ -132,13 +132,15 @@ class CalendarController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
         try {
             $days = $request->input('day', []);
             $hours = $request->input('hour', []);
             $teacher = auth()->user()->profile_teacher;
-
+            if (!$teacher) {
+                return response()->json(['error' => 'Teacher not found'], 404);
+            }
             foreach ($days as $ind => $day) {
                 $calendarDay = $teacher->day()->where('day', $day)->first();
                 if (!$calendarDay) {
@@ -148,10 +150,11 @@ class CalendarController extends Controller
                     $alternativeDayId = $newDay->id;
                 } else {
                     $calendarHours = $calendarDay->hours;
+                    $des = $calendarDay->hours;
+                    // return $calendarDay->hours;
                     $calendarDay->hours()->delete();
                     $alternativeDayId = $calendarDay->id;
                 }
-
                 $dayHasHours = false;
                 foreach ($hours as $id => $hour) {
                     $key = array_keys($hour)[0];
@@ -170,13 +173,10 @@ class CalendarController extends Controller
                         }
                     }
                 }
-
-                // Remove the day if it has no hours
                 if (!$dayHasHours) {
                     $teacher->day()->where('id', $alternativeDayId)->delete();
                 }
             }
-
             $existingDays = $teacher->day()->pluck('day');
             foreach ($existingDays as $existingDay) {
                 if (!in_array($existingDay, $days)) {
@@ -185,7 +185,6 @@ class CalendarController extends Controller
                     $calendarDay->delete();
                 }
             }
-
             return $this->returnData(200, 'operation completed successfully');
         } catch (\Exception $ex) {
             DB::rollback();
