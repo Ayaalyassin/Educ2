@@ -29,10 +29,11 @@ class AdsRequest extends FormRequest
             'title'=>'required',
             'description'=>'required|string',
             'price'=>'required|numeric|gt:0',
-            'number_students'=>'required|integer',
+            'number_students'=>'required|integer|min:1',
             'file'=>'required|file',
             'place'=>'required|string',
-            'date'=>'required|date'
+            'start_date'=>'required|date',
+            'end_date'=>'required|date|after:start_date'
         ];
     }
 

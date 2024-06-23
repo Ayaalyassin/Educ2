@@ -19,8 +19,8 @@ class Ads extends Model
         'profile_teacher_id',
         'status',
         'place',//
-        'date',//
-        //'offer'
+        'start_date',//
+        'end_date',
         'active'
     ];
 

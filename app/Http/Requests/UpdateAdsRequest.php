@@ -23,10 +23,11 @@ class UpdateAdsRequest extends FormRequest
             'title'=>'sometimes',
             'description'=>'string',
             'price'=>'numeric|gt:0',
-            'number_students'=>'integer',
+            'number_students'=>'integer|min:1',
             'file'=>'file',
             'place'=>'string',
-            'date'=>'date'
+            'start_date'=>'sometimes|date',
+            'end_date'=>'sometimes|date'
         ];
     }
 

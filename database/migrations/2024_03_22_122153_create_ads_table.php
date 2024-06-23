@@ -19,7 +19,8 @@ return new class extends Migration
             $table->integer('number_students');
             $table->string('file');
             $table->string('place');
-            $table->timestamp('date');
+            $table->timestamp('start_date');
+            $table->timestamp('end_date')->nullable();
             $table->boolean('active')->default(true);
             $table->bigInteger('profile_teacher_id')->unsigned();
             $table->foreign('profile_teacher_id')->references('id')->on('profile_teachers')->onDelete('cascade');

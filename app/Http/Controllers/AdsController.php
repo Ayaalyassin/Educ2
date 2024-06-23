@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateAdsRequest;
 use App\Jobs\DeleteAds;
+use App\Jobs\EndAdsJob;
+use App\Jobs\EndDateAdsJob;
 use App\Models\Ads;
 use App\Models\ProfileTeacher;
 use App\Models\User;
@@ -68,7 +70,6 @@ class AdsController extends Controller
             if (isset($request->file)) {
                 $file = $this->saveImage($request->file, $this->uploadPath);
             }
-            $date=new \DateTime($request->date);
 
             $profile_teacher=$user->profile_teacher()->first();
             $ads =$profile_teacher->ads()->create([
@@ -78,9 +79,11 @@ class AdsController extends Controller
                 'number_students' => $request->number_students,
                 'file' => $file,
                 'place'=>$request->place,
-                'date'=>$date,
+                'start_date'=>$request->start_date,
+                'end_date'=>$request->end_date,
             ]);
 
+            //EndDateAdsJob::dispatch($user->id,$ads->id)->;
 
             DB::commit();
             return $this->returnData($ads, 'operation completed successfully');
@@ -133,7 +136,8 @@ class AdsController extends Controller
                 'number_students' => isset($request->number_students) ? $request->number_students : $ads->number_students,
                 'file' => isset($request->file) ? $file : $ads->file,
                 'place'=> isset($request->place) ? $request->place : $ads->place,
-                'date'=> isset($request->date) ? new \DateTime($request->date) : $ads->date,
+                'start_date'=> isset($request->start_date) ? $request->start_date : $ads->start_date,
+                'end_date'=> isset($request->end_date) ? $request->end_date : $ads->end_date,
             ]);
 
             DB::commit();
