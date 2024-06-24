@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GovernorRequest;
+use App\Jobs\NotificationJobProfile;
+use App\Jobs\NotificationJobUser;
 use App\Models\Governor;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Http\Requests\TransactionsRequest;
@@ -247,6 +250,10 @@ class GovernorController extends Controller
                 'value' => $history->amount,
                 'status' => 'accepted'
             ]);
+            $wallet=$convenor->wallet()->first();
+            $user=$wallet->user()->first();
+
+            NotificationJobUser::dispatch($user,'was accepted','Your request to charge has been accepted')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData(200, 'charge successfully');
         } catch (\Exception $ex) {
@@ -271,6 +278,10 @@ class GovernorController extends Controller
                 'value' => $history->amount,
                 'status' => 'accepted'
             ]);
+            $wallet=$convenor->wallet()->first();
+            $user=$wallet->user()->first();
+
+            NotificationJobUser::dispatch($user,'was accepted','Your request to recharge has been accepted')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData(200, 'recharge successfully');
         } catch (\Exception $ex) {

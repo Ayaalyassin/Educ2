@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\NotificationJobProfile;
 use App\Models\Block;
 use App\Models\ProfileStudent;
 use App\Models\ProfileTeacher;
@@ -71,6 +72,7 @@ class AdminController extends Controller
                 'status' => 1
             ]);
             $teacher->save();
+
             DB::commit();
             return $this->returnData($msg = "accept request successfully", 200);
         } catch (\Exception $ex) {
