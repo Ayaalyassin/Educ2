@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Evaluation;
 use App\Models\ProfileStudent;
 use App\Models\ProfileTeacher;
 use App\Models\Report;
@@ -20,11 +21,10 @@ class ReportController extends Controller
     {
         try {
             DB::beginTransaction();
-            $reports = Report::with(['reporter' => function ($q) {
-                //$q->select('id', 'name');
-
-            }])->with(['reported' => function ($q) {
-                //$q->select('id', 'name');
+            $reports = Report::with(['reporter.user'=>function($query){
+                $query->select('users.id','users.name');
+            },'reported.user'=>function($query){
+                $query->select('users.id','users.name');
             }])->orderBy('created_at','desc')->get();
 
             DB::commit();
@@ -48,26 +48,18 @@ class ReportController extends Controller
                 return $this->returnError("404", 'Not found' . ' Profile student Id : ' . $request->reported_id);
 
             }
-
-            $report = $user->report_as_reporter()->where('reported_id', $request->reported_id)->first();
-            if ($report) {
-                $user->report_as_reporter()->update([
-                    'reason' => $request->reason,
-                    'date'=>Carbon::now()->format('Y-m-d H:i:s')
-                ]);
-            }
-            else {
-                $user->report_as_reporter()->create([
-                    'reason' => $request->reason,
-                    'reported_id' => $request->reported_id,
-                    'reported_type' => "App\Models\ProfileStudent",
-                    'date'=>Carbon::now()->format('Y-m-d H:i:s')
-                ]);
-            }
-            $profile_student->loadMissing(['report_as_reported']);
+            $report = Report::firstOrNew(
+                ['reported_id' =>  $request->reported_id],
+                ['reported_type' => "App\Models\ProfileStudent"]
+            );
+            $report->update([
+                'reason' => $request->reason,
+                'date'=>Carbon::now()->format('Y-m-d H:i:s')
+            ]);
+            $user->loadMissing(['report_as_reporter']);
 
             DB::commit();
-            return $this->returnData($profile_student, 'operation completed successfully');
+            return $this->returnData($user, 'operation completed successfully');
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -103,26 +95,19 @@ class ReportController extends Controller
 //                return $this->returnError("403",'You Can’t do it');
 
 
-            $report = $user->report_as_reporter()->where('reported_id', $reported_id)->first();
-            if ($report) {
-                $report = $user->report_as_reporter()->update([
-                    'reason' => $request->reason,
-                    'date'=>Carbon::now()->format('Y-m-d H:i:s')
-                ]);
-            }
-            else {
-                $report = $user->report_as_reporter()->create([
-                    'reason' => $request->reason,
-                    'reported_id' => $reported_id,
-                    'reported_type' => "App\Models\ProfileTeacher",
-                    'date'=>Carbon::now()->format('Y-m-d H:i:s')
-                ]);
-            }
+            $report = Report::firstOrNew(
+                ['reported_id' =>  $request->reported_id],
+                ['reported_type' => "App\Models\ProfileStudent"]
+            );
+            $report->update([
+                'reason' => $request->reason,
+                'date'=>Carbon::now()->format('Y-m-d H:i:s')
+            ]);
 
-            $profile_teacher->loadMissing('report_as_reported');
+            $user->loadMissing('report_as_reporter');
 
             DB::commit();
-            return $this->returnData($profile_teacher, 'operation completed successfully');
+            return $this->returnData($user, 'operation completed successfully');
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());

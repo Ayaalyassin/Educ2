@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CompleteRequest;
+use App\Jobs\NotificationJobProfile;
 use App\Models\CompleteTeacher;
 use App\Traits\GeneralTrait;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -190,6 +192,7 @@ class CompleteTeacherController extends Controller
                 'assessing' => $rate
             ]);
             $requestComplete->save();
+            NotificationJobProfile::dispatch($requestComplete->teacher,'was accepted','Your request to complete information has been accepted')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData(200, 'accept request complete successfully');
         } catch (\Exception $ex) {
