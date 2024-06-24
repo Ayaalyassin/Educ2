@@ -34,6 +34,7 @@ class LockHourController extends Controller
                 ->join('profile_students', 'profile_students.id', '=', 'lock_hours.student_id')
                 ->join('users', 'users.id', '=', 'profile_students.user_id')
                 ->select(
+                    'lock_hours.id',
                     'users.name',
                     'users.address',
                     'users.governorate',
@@ -186,13 +187,13 @@ class LockHourController extends Controller
                 $historyLock = HistoryLockHours::create([
                     'type' => $service->service->type,
                     'nameStudent' => $deleteWallet->student->user->name,
+                    'idProfileTeacher' => $user->id,
                     'hour' => $deleteWallet->hour->hour,
                     'date' => $timeOnly,
                     'day' => $deleteWallet->hour->day->day,
                     'price' => $service->service->price,
                     'status' => "unacceptable"
                 ]);
-                
             }
             $wallet = Auth::user()->wallet;
             if ($lock_hour->service->type == 'video call') {

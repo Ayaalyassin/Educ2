@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string("day");
             $table->string("status");
             $table->float('price');
+            $table->float('idProfileTeacher');
             $table->timestamps();
         });
     }
