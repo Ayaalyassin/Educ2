@@ -109,9 +109,12 @@ class EmployeeController extends Controller
     public function getAll()
     {
         try {
+//            $data = User::whereHas('roles',function ($query){
+//                $query->where('id','!=',1)->where('id','!=',2)
+//                ->where('id','!=',3);
+//            })->get();
             $data = User::whereHas('roles',function ($query){
-                $query->where('id','!=',1)->where('id','!=',2)
-                ->where('id','!=',3);
+                $query->where('id',4);
             })->get();
             if(count($data)>0)
                 $data->loadMissing('roles');

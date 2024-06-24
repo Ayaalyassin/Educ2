@@ -32,11 +32,11 @@ class EvaluationController extends Controller
             if(!$teacher)
                 return $this->returnError("404", 'teacher not found');
 
-            $evaluation= $profile_student->evaluation_as_student()->create([
-                'rate' => $request->rate,
-                'profile_teacher_id'=>$request->teacher_id
-            ]);
-
+            $evaluation = Evaluation::firstOrNew(
+                ['profile_teacher_id' =>  $request->teacher_id],
+                ['profile_student_id' => $profile_student->id]
+            );
+            $evaluation->update(['rate' => $request->rate]);
             DB::commit();
             return $this->returnData($evaluation,'operation completed successfully');
         } catch (\Exception $ex) {

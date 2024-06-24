@@ -57,7 +57,7 @@ class ProfileTeacher extends Model
 
     public function evaluation_as_teacher()
     {
-        return $this->hasMany(Evaluation::class, 'teacher_id', 'id');
+        return $this->hasMany(Evaluation::class, 'profile_teacher_id', 'id');
     }
 
 

@@ -42,14 +42,14 @@ class AdminAuthController extends Controller
 
             'title' => 'Code login',
 
-            'code' => $code
+            'code' => $code,
+            //'email'=>$exist->email
 
         ];
+
 //        Mail::to($exist->email)->send(new CodeEmail($mailData));
-//        sendCodeEmailJob::dispatch($mailData,$exist)->delay(Carbon::now()->addSeconds(2));
+        //sendCodeEmailJob::dispatch($mailData,$exist)->delay(Carbon::now()->addSeconds(2));
         //DeleteCodeJob::dispatch($exist)->delay(Carbon::now()->addMinutes(2));
-        //$job=(new DeleteCodeJob($exist))->delay(Carbon::now()->addMinutes(2));
-        //$dispatcher->dispatch($job);
         return $this->returnSuccessMessage('code send successfully');
     }
 
@@ -81,6 +81,24 @@ class AdminAuthController extends Controller
             return $this->returnError("500", 'Please try again later');
         }
 
+    }
+
+    public function test()
+    {
+        $exist=auth()->user();
+        $code=mt_rand(100000, 999999);
+        $exist->update([
+            'code' => $code,
+        ]);
+        $mailData = [
+
+            'title' => 'Code login',
+
+            'code' => $code
+
+        ];
+        Mail::to($exist->email)->send(new CodeEmail($mailData));
+        DeleteCodeJob::dispatch($exist)->delay(Carbon::now()->addMinutes(2));
     }
 
 }

@@ -16,7 +16,6 @@ class AdminSeed extends Seeder
      */
     public function run(): void
     {
-//        $admin=User::create([
         DB::table('users')->insert([
             'name' => 'admin',
             'email' => 'admin0@gmail.com',
