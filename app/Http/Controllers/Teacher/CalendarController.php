@@ -29,11 +29,11 @@ class CalendarController extends Controller
                 return [
                     "id" => $day->id,
                     "teacher_id" => $day->teacher_id,
+                    "day" =>  $day->day,
                     $day->day => $day->hours->map(function ($hour) use ($day) {
                         return [
                             "id" => $hour->id,
                             "day_id" => $hour->day_id,
-                            "day" =>  $day->day,
                             "status" => $hour->status,
                             "hour" => $hour->hour
                         ];
@@ -104,11 +104,11 @@ class CalendarController extends Controller
                 return [
                     "id" => $day->id,
                     "teacher_id" => $day->teacher_id,
+                    "day" =>  $day->day,
                     $day->day => $day->hours->map(function ($hour) use ($day) {
                         return [
                             "id" => $hour->id,
                             "day_id" => $hour->day_id,
-                            "day" =>  $day->day,
                             "status" => $hour->status,
                             "hour" => $hour->hour
                         ];
