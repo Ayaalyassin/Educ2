@@ -29,10 +29,11 @@ class CalendarController extends Controller
                 return [
                     "id" => $day->id,
                     "teacher_id" => $day->teacher_id,
-                    $day->day => $day->hours->map(function ($hour) {
+                    $day->day => $day->hours->map(function ($hour) use ($day) {
                         return [
                             "id" => $hour->id,
                             "day_id" => $hour->day_id,
+                            "day" =>  $day->day,
                             "status" => $hour->status,
                             "hour" => $hour->hour
                         ];
@@ -99,23 +100,22 @@ class CalendarController extends Controller
                 return $this->returnError(404, 'not found teacher');
             }
             $calender_day = $teacher->day()->with('hours')->get();
-            // DB::commit();
             $calendar_data = $calender_day->map(function ($day) {
                 return [
                     "id" => $day->id,
                     "teacher_id" => $day->teacher_id,
-                    $day->day => $day->hours->map(function ($hour) {
+                    $day->day => $day->hours->map(function ($hour) use ($day) {
                         return [
                             "id" => $hour->id,
                             "day_id" => $hour->day_id,
+                            "day" =>  $day->day,
                             "status" => $hour->status,
-                            "hour" => date("H:i", strtotime($hour->hour))
+                            "hour" => $hour->hour
                         ];
                     })
                 ];
             });
             return $this->returnData($calendar_data, 'operation completed successfully');
-            // return $this->returnData($calender_day, 'operation completed successfully');
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
