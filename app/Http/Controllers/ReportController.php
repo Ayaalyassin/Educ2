@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Evaluation;
+use App\Models\HistoryLockHours;
 use App\Models\ProfileStudent;
 use App\Models\ProfileTeacher;
 use App\Models\Report;
@@ -46,8 +46,10 @@ class ReportController extends Controller
             $profile_student = ProfileStudent::find($request->reported_id);
             if (!$profile_student) {
                 return $this->returnError("404", 'Not found' . ' Profile student Id : ' . $request->reported_id);
-
             }
+//            $is_lock=HistoryLockHours::where('',$profile_student)->where('',$user)->first();
+//            if(!$is_lock)
+//                return $this->returnError("403",'You Can’t do it');
             $report = Report::firstOrNew(
                 ['reported_id' =>  $request->reported_id],
                 ['reported_type' => "App\Models\ProfileStudent"]
@@ -80,7 +82,7 @@ class ReportController extends Controller
             if (!$profile_teacher) {
                 return $this->returnError("404",'Not found' . ' Profile Teacher Id : ' . $reported_id);
             }
-
+//
 //            $services_ids=$profile_teacher->service_teachers()->pluck('id');
 //
 //            $is_lock=null;
@@ -94,6 +96,9 @@ class ReportController extends Controller
 //            if(!$is_lock)
 //                return $this->returnError("403",'You Can’t do it');
 
+//            $is_lock=HistoryLockHours::where('',$profile_teacher)->where('',$$user)->first();
+//            if(!$is_lock)
+//                return $this->returnError("403",'You Can’t do it');
 
             $report = Report::firstOrNew(
                 ['reported_id' =>  $request->reported_id],

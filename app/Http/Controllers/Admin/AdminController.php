@@ -73,6 +73,8 @@ class AdminController extends Controller
             ]);
             $teacher->save();
 
+            NotificationJobProfile::dispatch($teacher,'was accepted','Your request has been accepted')->delay(Carbon::now()->addSeconds(2));
+
             DB::commit();
             return $this->returnData($msg = "accept request successfully", 200);
         } catch (\Exception $ex) {
