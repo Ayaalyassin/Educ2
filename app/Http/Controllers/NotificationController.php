@@ -23,7 +23,8 @@ class NotificationController extends Controller
     public function getNotificationsViewed(){
         try {
             $user = auth('api')->user();
-            $notifications=$user->notifications()->where('seen',1)->get();
+            $notifications=$user->notifications()->where('seen',1)
+                ->orderBy('created_at','desc')->get();
             return $this->returnData($notifications,'operation completed successfully');
         } catch (\Exception $ex) {
             return $this->returnError("500", 'Please try again later');
@@ -32,7 +33,8 @@ class NotificationController extends Controller
     public function getNotificationsNotViewed(){
         try {
             $user = auth('api')->user();
-            $notifications=$user->notifications()->where('seen',0)->get();
+            $notifications=$user->notifications()->where('seen',0)
+                ->orderBy('created_at','desc')->get();
             return $this->returnData($notifications,'operation completed successfully');
         } catch (\Exception $ex) {
             return $this->returnError("500",'Please try again later');

@@ -24,7 +24,7 @@ class ServiceTeacherController extends Controller
             if (!$profile_teacher) {
                 return $this->returnError("404",'Profile Teacher Not found');
             }
-            $service_teachers=$profile_teacher->service_teachers()->get();
+            $service_teachers=$profile_teacher->service_teachers()->orderBy('created_at','desc')->get();
             return $this->returnData($service_teachers,'operation completed successfully');
         } catch (\Exception $ex) {
             return $this->returnError("500", "Please try again later");
@@ -143,7 +143,7 @@ class ServiceTeacherController extends Controller
 
             $service_teachers=[];
             if($profile_teacher)
-                $service_teachers=$profile_teacher->service_teachers()->get();
+                $service_teachers=$profile_teacher->service_teachers()->orderBy('created_at','desc')->get();
 
             return $this->returnData($service_teachers, 'operation completed successfully');
         } catch (\Exception $ex) {

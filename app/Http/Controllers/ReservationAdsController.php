@@ -23,7 +23,7 @@ class ReservationAdsController extends Controller
             $profile_student=auth()->user()->profile_student()->first();
             $reservation_ads=[];
             if($profile_student) {
-                $reservation_ads = $profile_student->reservation_ads()->get();
+                $reservation_ads = $profile_student->reservation_ads()->orderBy('created_at','desc')->get();
                 if (count($reservation_ads) > 0)
                     $reservation_ads->loadMissing('ads');
             }

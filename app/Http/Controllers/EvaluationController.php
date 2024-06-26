@@ -32,7 +32,7 @@ class EvaluationController extends Controller
             if(!$teacher)
                 return $this->returnError("404", 'teacher not found');
 
-            $evaluation = Evaluation::firstOrNew(
+            $evaluation = Evaluation::firstOrCreate(
                 ['profile_teacher_id' =>  $request->teacher_id],
                 ['profile_student_id' => $profile_student->id]
             );

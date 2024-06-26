@@ -10,11 +10,11 @@ class Intrest extends Model
     use HasFactory;
     protected $fillable = [
         'type',
-        'user_id'
+        'profile_student_id'
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(ProfileStudent::class, 'profile_student_id');
     }
 }

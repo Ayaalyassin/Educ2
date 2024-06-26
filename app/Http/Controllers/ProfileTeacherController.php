@@ -24,7 +24,7 @@ class ProfileTeacherController extends Controller
             DB::beginTransaction();
 
             $profile_teacher = ProfileTeacher::where('status',1)//->filter($request)
-                ->get();
+            ->orderBy('created_at','desc')->get();
             if(count($profile_teacher)>0)
                 $profile_teacher->loadMissing(['user','domains']);
 

@@ -24,7 +24,8 @@ class AdsController extends Controller
     public function getSimilar()
     {
         $user=auth()->user();
-        $desiredData=Ads::whereRaw("INSTR(place, ?) > 0", [$user->governorate])->get();
+        $desiredData=Ads::whereRaw("INSTR(place, ?) > 0", [$user->governorate])
+            ->orderBy('created_at','desc')->get();
 
         return $this->returnData($desiredData, 'operation completed successfully');
     }

@@ -98,7 +98,7 @@ class ReportController extends Controller
 //            if(!$is_lock)
 //                return $this->returnError("403",'You Can’t do it');
 
-//            $is_lock=HistoryLockHours::where('idProfileTeacher',$profile_teacher)->where('nameStudent',$user->name)->first();
+//            $is_lock=HistoryLockHours::where('idProfileTeacher',$profile_teacher->id)->where('nameStudent',$user->name)->first();
 //            if(!$is_lock)
 //                return $this->returnError("403",'You Can’t do it');
 

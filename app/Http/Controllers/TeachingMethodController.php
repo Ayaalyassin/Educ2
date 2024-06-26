@@ -24,7 +24,7 @@ class TeachingMethodController extends Controller
             if (!$profile_teacher) {
                 return $this->returnError("404",'Profile Teacher Not found');
             }
-            $teaching_methods=$profile_teacher->teaching_methods()->get();
+            $teaching_methods=$profile_teacher->teaching_methods()->orderBy('created_at','desc')->get();
             return $this->returnData($teaching_methods,'operation completed successfully');
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
@@ -146,7 +146,7 @@ class TeachingMethodController extends Controller
             $profile_teacher =auth()->user()->profile_teacher()->first();
             $teaching_methods=[];
             if($profile_teacher)
-                $teaching_methods=$profile_teacher->teaching_methods()->get();
+                $teaching_methods=$profile_teacher->teaching_methods()->orderBy('created_at','desc')->get();
 
             return $this->returnData($teaching_methods, 'operation completed successfully');
         } catch (\Exception $ex) {

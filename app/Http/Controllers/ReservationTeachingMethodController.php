@@ -22,7 +22,8 @@ class ReservationTeachingMethodController extends Controller
             $profile_student=auth()->user()->profile_student()->first();
             $reservation_teaching_methods=[];
             if($profile_student) {
-                $reservation_teaching_methods = $profile_student->reservation_teaching_methods()->get();
+                $reservation_teaching_methods = $profile_student->reservation_teaching_methods()
+                    ->orderBy('created_at','desc')->get();
                 if (count($reservation_teaching_methods) > 0)
                     $reservation_teaching_methods->loadMissing('teaching_method');
             }
