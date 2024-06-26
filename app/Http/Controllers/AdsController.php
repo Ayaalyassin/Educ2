@@ -82,8 +82,10 @@ class AdsController extends Controller
                 'start_date'=>$request->start_date,
                 'end_date'=>$request->end_date,
             ]);
+            $today = date('Y-m-d');
+            $diff = (strtotime($ads->end_date) - strtotime($today)) / (60 * 60 * 24);
 
-            //EndDateAdsJob::dispatch($user->id,$ads->id)->;
+            //EndDateAdsJob::dispatch($user->id,$ads->id)->delay(Carbon::now()->addDays($diff));
 
             DB::commit();
             return $this->returnData($ads, 'operation completed successfully');
@@ -139,6 +141,11 @@ class AdsController extends Controller
                 'start_date'=> isset($request->start_date) ? $request->start_date : $ads->start_date,
                 'end_date'=> isset($request->end_date) ? $request->end_date : $ads->end_date,
             ]);
+            if(isset($request->end_date)) {
+                $today = date('Y-m-d');
+                $diff = (strtotime($ads->end_date) - strtotime($today)) / (60 * 60 * 24);
+                //EndDateAdsJob::dispatch($user->id, $ads->id)->delay(Carbon::now()->addDays($diff));
+            }
 
             DB::commit();
             return $this->returnData($ads, 'operation completed successfully');

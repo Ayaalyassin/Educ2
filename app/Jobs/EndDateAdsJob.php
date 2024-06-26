@@ -26,6 +26,7 @@ class EndDateAdsJob implements ShouldQueue
     public function handle(): void
     {
         $ads=Ads::find($this->ads_id);
+        $ads->update(['active' => 0]);
         $user=User::find($this->user_id);
         $today=Carbon::today()->toDateString();
         if($ads->end_date==$today){
@@ -33,14 +34,6 @@ class EndDateAdsJob implements ShouldQueue
             $reservation_ads = $ads->reservation_ads()->get();
             $count = $reservation_ads->count();
 
-            foreach ($reservation_ads as $item) {
-                $profile_student = $item->profile_student()->first();
-                $user = $profile_student->user()->first();
-                $wallet = $user->wallet()->first();
-                $wallet->update([
-                    'value' => $wallet->value + $ads->price
-                ]);
-            }
             $wallet = $user->wallet()->first();
             $wallet->update([
                 'value' => $count * $ads->price

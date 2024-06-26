@@ -155,6 +155,7 @@ class CompleteTeacherController extends Controller
                 return $this->returnError(500, 'The request is notarized');
             }
             $requestComplete->delete();
+            NotificationJobProfile::dispatch($requestComplete->teacher,'was rejected','Your request to complete information has been rejected')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData(200, 'delete order successfully');
         } catch (\Exception $ex) {
