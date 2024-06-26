@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BlockRequest;
+use App\Jobs\NotificationJobUser;
 use App\Models\Block;
 use App\Models\User;
 use App\Traits\GeneralTrait;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -53,6 +55,7 @@ class BlockController extends Controller
                 'reason' => isset($request->reason) ? $request->reason : null,
             ]);
             $block->save();
+            NotificationJobUser::dispatch($user,'You have been blocked','You have been blocked because ' . $block->reason)->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData($block, 200);
         } catch (\Exception $ex) {

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
 
-            $table->text('reason');
-            $table->date('date');
+            $table->text('reason')->nullable();
+            $table->date('date')->nullable();
 
             $table->unsignedBigInteger('reporter_id')->nullable();
             $table->string('reporter_type')->nullable();

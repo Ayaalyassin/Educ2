@@ -27,7 +27,6 @@ class ForgetPasswordJob implements ShouldQueue
     public function handle(): void
     {
         Mail::to($this->exist->email)->send(new ForgetPasswordMail($this->mailData));
-        $job=(new DeleteCodeJob($this->exist))->delay(Carbon::now()->addMinutes(2));
-        $this->dispatch($job);
+        DeleteCodeJob::dispatch($this->exist)->delay(Carbon::now()->addMinutes(2));
     }
 }
