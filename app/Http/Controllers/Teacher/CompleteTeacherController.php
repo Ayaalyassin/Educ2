@@ -28,13 +28,6 @@ class CompleteTeacherController extends Controller
                 },
                 'teacher.user' => function ($q) {
                     $q->select('id', 'name', 'address');
-                },
-                'teacher.domains' => function ($q) {
-                    $q->select(
-                        'id',
-                        'profile_teacher_id',
-                        'type',
-                    );
                 }
             ])->where('status', '=', 0)->get();
             DB::commit();
