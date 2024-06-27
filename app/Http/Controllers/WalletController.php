@@ -16,7 +16,7 @@ class WalletController extends Controller
     public function index()
     {
         $wallet = Wallet::with('user')->get();
-        return $this->returnData($wallet, 'operation completed successfully');
+        return $this->returnData($wallet, __('backend.operation completed successfully', [], app()->getLocale()));
     }
 
     /**
@@ -45,7 +45,7 @@ class WalletController extends Controller
             $user->load('wallet');
             $responseData = [
                 'name' => $user->name,
-                'wallet' => $user->wallet 
+                'wallet' => $user->wallet
             ];
             return $this->returnData($responseData, 'operation completed successfully');
         } catch (\Exception $ex) {

@@ -21,7 +21,7 @@ class IntrestController extends Controller
             if ($profile_student)
                 $intrests=$profile_student->intrests()->get();
 
-            return $this->returnData($intrests,'operation completed successfully');
+            return $this->returnData($intrests, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
         }
@@ -40,7 +40,7 @@ class IntrestController extends Controller
             ]);
 
             DB::commit();
-            return $this->returnData($intrest,'operation completed successfully');
+            return $this->returnData($intrest, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -68,7 +68,7 @@ class IntrestController extends Controller
             ]);
 
             DB::commit();
-            return $this->returnData($intrest,'operation completed successfully');
+            return $this->returnData($intrest, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');

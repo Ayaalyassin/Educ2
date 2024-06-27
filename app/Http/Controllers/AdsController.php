@@ -27,7 +27,7 @@ class AdsController extends Controller
         $desiredData=Ads::whereRaw("INSTR(place, ?) > 0", [$user->governorate])
             ->orderBy('created_at','desc')->get();
 
-        return $this->returnData($desiredData, 'operation completed successfully');
+        return $this->returnData($desiredData, __('backend.operation completed successfully', [], app()->getLocale()));
     }
 
     public function index()
@@ -36,10 +36,10 @@ class AdsController extends Controller
             //$ads = Ads::all();
             $ads=Ads::join('profile_teachers','ads.profile_teacher_id','=','profile_teachers.id')->
             join('users','profile_teachers.user_id','=','users.id')
-            ->select('ads.*','users.name')->orderBy('created_at','desc')
-            ->get();
+                ->select('ads.*','users.name')->orderBy('created_at','desc')
+                ->get();
 
-            return $this->returnData($ads, 'operation completed successfully');
+            return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", "Please try again later");
         }
@@ -54,7 +54,7 @@ class AdsController extends Controller
                 return $this->returnError("404", "Not found");
             $ads=$profile_teacher->ads()->orderBy('created_at','desc')->get();
 
-            return $this->returnData($ads, 'operation completed successfully');
+            return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", "Please try again later");
         }
@@ -89,7 +89,7 @@ class AdsController extends Controller
             //EndDateAdsJob::dispatch($user->id,$ads->id)->delay(Carbon::now()->addDays($diff));
 
             DB::commit();
-            return $this->returnData($ads, 'operation completed successfully');
+            return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -107,7 +107,7 @@ class AdsController extends Controller
                 return $this->returnError("404", "Not found");
             }
             $data->loadMissing(['reservation_ads']);
-            return $this->returnData($data, 'operation completed successfully');
+            return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", 'Please try again later');
         }
@@ -149,7 +149,7 @@ class AdsController extends Controller
             }
 
             DB::commit();
-            return $this->returnData($ads, 'operation completed successfully');
+            return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -174,6 +174,8 @@ class AdsController extends Controller
             DeleteAds::dispatch($id)->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnSuccessMessage('operation completed successfully');
+
+
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -189,7 +191,7 @@ class AdsController extends Controller
             if($profile_teacher)
                 $ads=$profile_teacher->ads()->get();
 
-            return $this->returnData($ads, 'operation completed successfully');
+            return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", "Please try again later");
         }

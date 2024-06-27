@@ -28,7 +28,7 @@ class ReservationAdsController extends Controller
                     $reservation_ads->loadMissing('ads');
             }
 
-            return $this->returnData($reservation_ads,'operation completed successfully');
+            return $this->returnData($reservation_ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
         }
@@ -74,7 +74,7 @@ class ReservationAdsController extends Controller
                 EndAdsJob::dispatch($ads)->delay(Carbon::now()->addSeconds(2));
             }
             DB::commit();
-            return $this->returnData($reservation_ads,'operation completed successfully');
+            return $this->returnData($reservation_ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -92,7 +92,7 @@ class ReservationAdsController extends Controller
                     return $this->returnError("404", 'not found');
                 $reservation_ads->loadMissing('ads');
             }
-            return $this->returnData($reservation_ads,'operation completed successfully');
+            return $this->returnData($reservation_ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
         }

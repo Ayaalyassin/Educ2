@@ -39,7 +39,7 @@ class AuthController extends Controller
         $user->token = $token;
         $user->loadMissing(['roles']);
 
-        return $this->returnData($user, 'operation completed successfully');
+        return $this->returnData($user, __('backend.operation completed successfully', [], app()->getLocale()));
     }
 
 
@@ -72,7 +72,7 @@ class AuthController extends Controller
             'number' => random_int(1000000000000, 9000000000000),
             'value' => 0,
         ]);
-        return $this->returnData($user, 'operation completed successfully');
+        return $this->returnData($user, __('backend.operation completed successfully', [], app()->getLocale()));
     }
 
 
@@ -116,7 +116,8 @@ class AuthController extends Controller
             $user->update([
                 'fcm_token' => $fcm_token
             ]);
-            return $this->returnData($user, 'operation completed successfully');
+
+            return $this->returnData($user, __('backend.operation completed successfully', [], app()->getLocale()));
         }
         catch (\Exception $e)
         {

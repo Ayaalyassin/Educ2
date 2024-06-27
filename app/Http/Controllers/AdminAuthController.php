@@ -20,7 +20,7 @@ class AdminAuthController extends Controller
 {
     use GeneralTrait;
 
-    public function login_admin(LoginRequest $request)//,Dispatcher $dispatcher)
+    public function login_admin(LoginRequest $request)
     {
         $credentials = $request->only(['email', 'password']);
         $token = JWTAuth::attempt($credentials);

@@ -28,7 +28,7 @@ class ReportController extends Controller
             }])->orderBy('created_at','desc')->get();
 
             DB::commit();
-            return $this->returnData($reports,'operation completed successfully');
+            return $this->returnData($reports, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -62,7 +62,7 @@ class ReportController extends Controller
             $profile_teacher->loadMissing(['report_as_reporter']);
 
             DB::commit();
-            return $this->returnData($profile_teacher, 'operation completed successfully');
+            return $this->returnData($profile_teacher, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -114,7 +114,7 @@ class ReportController extends Controller
             $profile_student->loadMissing('report_as_reporter');
 
             DB::commit();
-            return $this->returnData($profile_student, 'operation completed successfully');
+            return $this->returnData($profile_student, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());

@@ -55,7 +55,7 @@ use GuzzleHttp\Middleware;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
+Route::group(['middleware' => ['jwt.verify']], function () {
 Route::get('/login/google', [GoogleController::class, 'redirectToGoogle']);
 Route::get('/login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
@@ -388,4 +388,5 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get("{id}", [NotificationController::class, 'getById']);
         Route::delete("{id}", [NotificationController::class, 'delete']);
     });
+});
 });
