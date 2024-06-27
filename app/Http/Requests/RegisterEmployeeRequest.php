@@ -10,19 +10,13 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 class RegisterEmployeeRequest extends FormRequest
 {
     use GeneralTrait;
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
+
     public function rules(): array
     {
         return [
@@ -31,8 +25,7 @@ class RegisterEmployeeRequest extends FormRequest
             'password' => 'required|string|min:6',
             'address'=>'required|string',
             'governorate'=>'required|string',
-            'birth_date'=>'required|date',
-            //'role_id'=>'required|integer'
+            'birth_date'=>'required|date|before:today',
         ];
     }
     public function failedValidation(Validator $validator)

@@ -28,6 +28,13 @@ class CompleteTeacherController extends Controller
                 },
                 'teacher.user' => function ($q) {
                     $q->select('id', 'name', 'address');
+                },
+                'teacher.domains' => function ($q) {
+                    $q->select(
+                        'id',
+                        'profile_teacher_id',
+                        'type',
+                    );
                 }
             ])->where('status', '=', 0)->get();
             DB::commit();
@@ -147,7 +154,7 @@ class CompleteTeacherController extends Controller
         try {
             DB::beginTransaction();
             $cases = $request->input('cases');
-            
+
             $requestComplete = CompleteTeacher::find($id);
             if (!$requestComplete) {
                 return $this->returnError(404, 'not found request');
