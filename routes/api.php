@@ -268,6 +268,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::get('get-request-charge-teacher', [GovernorController::class, 'get_request_charge_teacher']);
             Route::get('get-request-recharge-student', [GovernorController::class, 'get_request_recharge_student']);
             Route::get('get-request-recharge-teacher', [GovernorController::class, 'get_request_recharge_teacher']);
+
+            Route::get('get-request-recharge-student', [GovernorController::class, 'get_request_recharge_student']);
+            Route::get('get-request-recharge-teacher', [GovernorController::class, 'get_request_recharge_teacher']);
             Route::post('delete-request/{id}', [GovernorController::class, 'destroy']);
             Route::get('accept_request_charge/{id}', [GovernorController::class, 'accept_request_charge']);
             Route::get('accept_request_recharge/{id}', [GovernorController::class, 'accept_request_recharge']);

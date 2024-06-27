@@ -28,53 +28,29 @@ class GovernorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function get_request_charge()
-    {
-        try {
-            // DB::beginTransaction();
-            // return Auth::user();
-            $convenors = DB::table('governors')
-                ->join('wallets', 'governors.wallet_id', '=', 'wallets.id')
-                ->join('users', 'users.id', '=', 'wallets.user_id')
-                ->where('governors.type', 'charge')
-                ->select(
-                    'governors.id',
-                    'governors.amount',
-                    'governors.image_transactions',
-                    'wallets.value as walletsValue',
-                    'users.name',
-                    'users.email',
-                    'users.address',
-                    'users.governorate',
-                    // 'users.roles as userRole '
-                )
-                ->get();
-            DB::commit();
-            return $this->returnData($convenors, 'Request recharge');
-        } catch (\Exception $ex) {
-            DB::rollback();
-            return $this->returnError($ex->getCode(), $ex->getMessage());
-        }
-    }
-    public function get_request_recharge()
+
+    public function get_request_charge_student()
     {
         try {
             DB::beginTransaction();
-            $convenor = DB::table('governors')
-                ->join('wallets', 'governors.wallet_id', '=', 'wallets.id')
-                ->join('users', 'users.id', '=', 'wallets.user_id')
-                ->where('governors.type', 'recharge')
-                ->select(
-                    'governors.id',
-                    'governors.amount',
-                    'wallets.value as walletsValue',
-                    'users.name',
-                    'users.email',
-                    'users.address',
-                    'users.governorate',
-                    // 'users.role_id as userRole '
-                )
-                ->get();
+            $convenor = Governor::where('type', 'charge')
+                ->whereHas('wallet.user.roles', function ($query) {
+                    $query->where('name', 'student');
+                })
+                ->with(['wallet.user' => function ($query) {
+                    $query->select('id', 'name', 'address', 'governorate');
+                }])
+                ->get()
+                ->map(function ($governor) {
+                    return [
+                        'id' => $governor->id,
+                        'amount' => $governor->amount,
+                        'walletsValue' => $governor->wallet->value,
+                        'name' => $governor->wallet->user->name,
+                        'address' => $governor->wallet->user->address,
+                        'governorate' => $governor->wallet->user->governorate,
+                    ];
+                });
             DB::commit();
             return $this->returnData($convenor, 'Request recharge');
         } catch (\Exception $ex) {
@@ -83,16 +59,28 @@ class GovernorController extends Controller
         }
     }
 
-    public function get_request_recharge2()
+    public function get_request_recharge_student()
     {
         try {
-
             DB::beginTransaction();
-            $convenor = User::whereHas('roles',function($query){
-                $query->where('id',1);
-            })
-                ->get();
-            $convenor->loadMissing('wallet.governor');
+            $convenor = Governor::where('type', 'recharge')
+                ->whereHas('wallet.user.roles', function ($query) {
+                    $query->where('name', 'student');
+                })
+                ->with(['wallet.user' => function ($query) {
+                    $query->select('id', 'name', 'address', 'governorate');
+                }])
+                ->get()
+                ->map(function ($governor) {
+                    return [
+                        'id' => $governor->id,
+                        'amount' => $governor->amount,
+                        'walletsValue' => $governor->wallet->value,
+                        'name' => $governor->wallet->user->name,
+                        'address' => $governor->wallet->user->address,
+                        'governorate' => $governor->wallet->user->governorate,
+                    ];
+                });
             DB::commit();
             return $this->returnData($convenor, 'Request recharge');
         } catch (\Exception $ex) {
@@ -100,6 +88,67 @@ class GovernorController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
+    public function get_request_charge_teacher()
+    {
+        try {
+            DB::beginTransaction();
+            $convenor = Governor::where('type', 'charge')
+                ->whereHas('wallet.user.roles', function ($query) {
+                    $query->where('name', 'teacher');
+                })
+                ->with(['wallet.user' => function ($query) {
+                    $query->select('id', 'name', 'address', 'governorate');
+                }])
+                ->get()
+                ->map(function ($governor) {
+                    return [
+                        'id' => $governor->id,
+                        'amount' => $governor->amount,
+                        'walletsValue' => $governor->wallet->value,
+                        'name' => $governor->wallet->user->name,
+                        'address' => $governor->wallet->user->address,
+                        'governorate' => $governor->wallet->user->governorate,
+                    ];
+                });
+            DB::commit();
+            return $this->returnData($convenor, 'Request recharge');
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+    public function get_request_recharge_teacher()
+    {
+        try {
+            DB::beginTransaction();
+            $convenor = Governor::where('type', 'recharge')
+                ->whereHas('wallet.user.roles', function ($query) {
+                    $query->where('name', 'teacher');
+                })
+                ->with(['wallet.user' => function ($query) {
+                    $query->select('id', 'name', 'address', 'governorate');
+                }])
+                ->get()
+                ->map(function ($governor) {
+                    return [
+                        'id' => $governor->id,
+                        'amount' => $governor->amount,
+                        'walletsValue' => $governor->wallet->value,
+                        'name' => $governor->wallet->user->name,
+                        'address' => $governor->wallet->user->address,
+                        'governorate' => $governor->wallet->user->governorate,
+                    ];
+                });
+            DB::commit();
+            return $this->returnData($convenor, 'Request recharge');
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+
+
     /**
      * Show the form for creating a new resource.
      */
@@ -268,10 +317,10 @@ class GovernorController extends Controller
                 'value' => $history->amount,
                 'status' => 'accepted'
             ]);
-            $wallet=$convenor->wallet()->first();
-            $user=$wallet->user()->first();
+            $wallet = $convenor->wallet()->first();
+            $user = $wallet->user()->first();
 
-            NotificationJobUser::dispatch($user,'was accepted','Your request to charge has been accepted')->delay(Carbon::now()->addSeconds(2));
+            NotificationJobUser::dispatch($user, 'was accepted', 'Your request to charge has been accepted')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData(200, 'charge successfully');
         } catch (\Exception $ex) {
@@ -296,10 +345,10 @@ class GovernorController extends Controller
                 'value' => $history->amount,
                 'status' => 'accepted'
             ]);
-            $wallet=$convenor->wallet()->first();
-            $user=$wallet->user()->first();
+            $wallet = $convenor->wallet()->first();
+            $user = $wallet->user()->first();
 
-            NotificationJobUser::dispatch($user,'was accepted','Your request to recharge has been accepted')->delay(Carbon::now()->addSeconds(2));
+            NotificationJobUser::dispatch($user, 'was accepted', 'Your request to recharge has been accepted')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData(200, 'recharge successfully');
         } catch (\Exception $ex) {
