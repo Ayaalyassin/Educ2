@@ -12,7 +12,7 @@ return [
     | as the size rules. Feel free to tweak each of these messages here.
     |
     */
-
+    'today'=>'اليوم',
     'accepted' => 'يجب قبول :attribute',
     'active_url' => ':attribute لا يُمثّل رابطًا صحيحًا',
     'after' => 'يجب على :attribute أن يكون تاريخًا لاحقًا للتاريخ :date.',
@@ -172,5 +172,9 @@ return [
         'time' => 'الوقت',
         'available' => 'مُتاح',
         'size' => 'الحجم',
+        'start_date'=>'بداية التاريخ',
+        'end_date'=>'نهاية التاريخ',
+        'today'=>'اليوم',
+
     ],
 ];
