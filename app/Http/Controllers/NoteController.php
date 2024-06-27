@@ -21,10 +21,12 @@ class NoteController extends Controller
             $profile_teacher=auth()->user()->profile_teacher()->first();
             $services_ids=$profile_teacher->service_teachers()->pluck('id');
             $profile_students=[];
-            if($services_ids && $profile_teacher)
-                $profile_students=ProfileStudent::whereHas('hour_lock',function ($query)use ($services_ids){
-                    $query->where('status',1)->whereIn('service_id',$services_ids);
-                })->with('note_as_student')->get();
+            //if($services_ids && $profile_teacher)
+                $profile_students=ProfileStudent::
+//                whereHas('hour_lock',function ($query)use ($services_ids){
+//                    $query->where('status',1)->whereIn('service_id',$services_ids);
+//                })->
+                with('note_as_student')->get();
 
             return $this->returnData($profile_students,'operation completed successfully');
         } catch (\Exception $ex) {
