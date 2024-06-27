@@ -82,6 +82,24 @@ class GovernorController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
+
+    public function get_request_recharge2()
+    {
+        try {
+
+            DB::beginTransaction();
+            $convenor = User::whereHas('roles',function($query){
+                $query->where('id',1);
+            })
+                ->get();
+            $convenor->loadMissing('wallet.governor');
+            DB::commit();
+            return $this->returnData($convenor, 'Request recharge');
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
     /**
      * Show the form for creating a new resource.
      */
