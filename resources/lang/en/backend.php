@@ -591,5 +591,12 @@ return array (
     'The password is wrong'=>'The password is wrong',
     'Account Not found'=>'Account Not found',
     'You are block'=>'You are block',
-    'code send successfully'=>'code send successfully'
+    'code send successfully'=>'code send successfully',
+    'Delete successfully'=>'Delete successfully',
+    'unblock successfully'=>'unblock successfully',
+    'delete order successfully'=>'delete order successfully',
+    'accept request complete successfully'=>'accept request complete successfully',
+    'can not delete because the request is accept'=>'can not delete because the request is accept',
+    'can not delete Request'=>'can not delete Request',
+    'already request hour lock'=>'already request hour lock'
 );

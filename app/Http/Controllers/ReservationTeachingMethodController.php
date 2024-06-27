@@ -88,7 +88,7 @@ class ReservationTeachingMethodController extends Controller
                 $reservation_teaching_methods->delete();
             }
             DB::commit();
-            return $this->returnSuccessMessage(__('operation completed successfully', [], app()->getLocale()));
+            return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());

@@ -100,7 +100,7 @@ class EmployeeController extends Controller
                 return $this->returnError("404",'Not found');
             }
             $data->delete();
-            return $this->returnSuccessMessage(__('operation completed successfully', [], app()->getLocale()));
+            return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(),'Please try again later');
 

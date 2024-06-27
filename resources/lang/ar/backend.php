@@ -591,6 +591,13 @@ return array (
     'The password is wrong'=>'كلمة السر خاطئة',
     'Account Not found'=>'الحساب غير موجود',
     'You are block'=>'أنت محظور',
-    'code send successfully'=>'تم ارسال الكود بنجاح'
+    'code send successfully'=>'تم ارسال الكود بنجاح',
+    'Delete successfully'=>'تم الحذف بنجاح',
+    'unblock successfully'=>'تم فك الحظر بنجاح',
+    'delete order successfully'=>'تم حذف الطلب بنجاح',
+    'accept request complete successfully'=>'تم الموافقة على طلب الاستكمال بنجاح',
+    'can not delete because the request is accept'=>'لا يمكن حذف الطلب لانه تم الموافقة عليه',
+    'can not delete Request'=>'لا يمكن حذف الطلب',
+    'already request hour lock'=>'لقد تم الطلب سابقا'
 
 );

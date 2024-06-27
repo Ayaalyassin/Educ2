@@ -74,7 +74,7 @@ class AdminAuthController extends Controller
             $user->token=$token;
             $user->loadMissing(['roles']);
 
-            return $this->returnData($user, 'operation completed successfully');
+            return $this->returnData($user, __('backend.operation completed successfully', [], app()->getLocale()));
 
 
         } catch (\Exception $ex) {

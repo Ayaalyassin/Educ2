@@ -74,7 +74,7 @@ class BlockController extends Controller
             }
             $block->delete();
             DB::commit();
-            return $this->returnData('unblock successfully', 200);
+            return $this->returnData(__('backend.unblock successfully', [], app()->getLocale()), 200);
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());

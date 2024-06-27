@@ -318,7 +318,7 @@ class AdminController extends Controller
 
             $teacher->delete();
             DB::commit();
-            return $this->returnData(200, "Delete successfully");
+            return $this->returnData(200, __("backend.Delete successfully", [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -343,7 +343,7 @@ class AdminController extends Controller
             }
             $student->delete();
             DB::commit();
-            return $this->returnData(200, "Delete successfully");
+            return $this->returnData(200, __("backend.Delete successfully", [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
