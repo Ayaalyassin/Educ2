@@ -22,9 +22,11 @@ class ProfileTeacherController extends Controller
     {
         try {
             DB::beginTransaction();
+            $user=auth()->user();
 
             $profile_teacher = ProfileTeacher::where('status',1)//->filter($request)
-            ->orderBy('created_at','desc')->get();
+                ->orderByRaw("CASE WHEN (SELECT address FROM users WHERE users.id = profile_teachers.user_id) = '{$user->address}' THEN 0 ELSE 1 END")
+                ->get();
             if(count($profile_teacher)>0)
                 $profile_teacher->loadMissing(['user','domains']);
 
@@ -52,7 +54,6 @@ class ProfileTeacherController extends Controller
                 'certificate' => $certificate,
                 'description' => isset($request->description) ? $request->description : null,
                 'jurisdiction' => isset($request->jurisdiction) ? $request->jurisdiction : null,
-                //'domain' => isset($request->domain) ? $request->domain : null,
                 'status' => 0,
                 'assessing' => 0
             ]);

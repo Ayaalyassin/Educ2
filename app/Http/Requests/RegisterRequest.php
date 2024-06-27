@@ -10,19 +10,13 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 class RegisterRequest extends FormRequest
 {
     use GeneralTrait;
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
+
     public function rules(): array
     {
         return [
@@ -31,13 +25,13 @@ class RegisterRequest extends FormRequest
             'password' => 'required|string|min:6|regex:/[a-zA-Z]/',
             'address' => 'required|string',
             'governorate' => 'required|string',
-            'birth_date' => 'required|date',
+            'birth_date' => 'required|date|before:today',
             'role_id' => 'required|integer'
         ];
     }
 
     public function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException($this->returnValidationError('400', $validator));
+        throw new HttpResponseException($this->returnValidationError('422', $validator));
     }
 }

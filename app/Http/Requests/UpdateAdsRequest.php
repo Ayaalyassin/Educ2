@@ -26,7 +26,7 @@ class UpdateAdsRequest extends FormRequest
             'number_students'=>'integer|min:1',
             'file'=>'file',
             'place'=>'string',
-            'start_date'=>'sometimes|date',
+            'start_date'=>'sometimes|date|after:today',
             'end_date'=>'sometimes|date'
         ];
     }
