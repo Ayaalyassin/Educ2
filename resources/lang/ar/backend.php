@@ -579,5 +579,16 @@ return array (
   'sendTestMail' => 'إرسال إيميل تجريبي',
   'sendTestMailError' => 'بريد إلكتروني غير صحيح!',
   'sendTestMailTo' => ' ( يجب حفظ الإعدادات قبل تجربة الارسال ) \\n اكتب الإيميل الذي تود الإرسال',
+    'ads already exist'=>'الدورة موجودة مسبقا',
+    'ads has begun'=>'لقد بدأت الدورة',
+    'The number is complete'=>'لقد اكتمل العدد',
+    'not Enough money in wallet'=>'لا يوجد المال الكافي في محفظتك',
+    'teaching method already exist'=>'الوسيلة التعليمية موجودة مسبقا',
+    'You Can’t do it'=>'لا يمكنك فعل ذلك',
+    'Please request the code again'=>'الرجاء طلب الكود مرة أخرى',
+    'The entered verification code is incorrect'=>'الكود المدخل غير صحيح',
+    'The Email Not Found'=>'البريد الالكتروني غير موجود',
+    'The password is wrong'=>'كلمة السر خاطئة',
+    'Account Not found'=>'الحساب غير موجود'
 
 );

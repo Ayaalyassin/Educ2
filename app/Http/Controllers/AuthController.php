@@ -26,10 +26,10 @@ class AuthController extends Controller
 
         $exist=User::where('email',$request->email)->first();
         if($exist && !$token)
-            return $this->returnError(401,'The password is wrong');
+            return $this->returnError(401,__('backend.The password is wrong', [], app()->getLocale()));
 
         if (!$token)
-            return $this->returnError(401,'Account Not found');
+            return $this->returnError(401,__('backend.Account Not found', [], app()->getLocale()));
 
         $is_block=$exist->whereHas('block')->first();
         if($is_block)

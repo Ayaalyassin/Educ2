@@ -47,14 +47,14 @@ class ReservationTeachingMethodController extends Controller
             $teaching_method=TeachingMethod::find($request->teaching_method_id);
 
             if(!$teaching_method)
-                return $this->returnError("404", 'teaching method not found');
+                return $this->returnError("404", __('backend.teaching method not found', [], app()->getLocale()));
             $is_exist=$profile_student->reservation_teaching_methods()->where('teaching_method_id',$request->teaching_method_id)->first();
             if($is_exist)
-                return $this->returnError("400", 'teaching method already exist');
+                return $this->returnError("400", __('backend.teaching method already exist', [], app()->getLocale()));
             if($teaching_method->price>0) {
 
                 if ($user->wallet->value < $teaching_method->price)
-                    return $this->returnError("402", 'not Enough money in wallet');
+                    return $this->returnError("402", __('backend.not Enough money in wallet', [], app()->getLocale()));
                 $user->wallet->update([
                     'value' => $user->wallet->value - $teaching_method->price
                 ]);

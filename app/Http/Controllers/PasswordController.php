@@ -74,14 +74,14 @@ class PasswordController extends Controller
 
             $user = User::where('email',$request->email)->first();
             if(!$user)
-                return $this->returnError('404', 'The Email Not Found');
+                return $this->returnError('404', __('backend.The Email Not Found', [], app()->getLocale()));
             if (!$user->code)
-                return $this->returnError("401", 'Please request the code again');
+                return $this->returnError("401", __('backend.Please request the code again', [], app()->getLocale()));
 
             if ($user->code != $code)
-                return $this->returnError("400", 'The entered verification code is incorrect');
+                return $this->returnError("400", __('backend.The entered verification code is incorrect', [], app()->getLocale()));
 
-            return $this->returnSuccessMessage('operation completed successfully');
+            return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));
 
 
         } catch (\Exception $ex) {
@@ -96,7 +96,7 @@ class PasswordController extends Controller
 
             $user = User::where('email', $request->email)->first();
             if (!$user)
-                return $this->returnError('404', 'The Email Not Found');
+                return $this->returnError('404', __('backend.The Email Not Found', [], app()->getLocale()));
 
             $user->update([
                 'password' => $request->password,

@@ -579,5 +579,15 @@ return array (
   'sent' => 'Sent',
   'sent succesfully' => 'تم الارسال بنجاح',
   'signIn' => 'Sign in',
-
+    'ads already exist'=>'ads already exist',
+    'ads has begun'=>'ads has begun',
+    'The number is complete'=>'The number is complete',
+    'not Enough money in wallet'=>'not Enough money in wallet',
+    'teaching method already exist'=>'teaching method already exist',
+    'You Can’t do it'=>'You Can’t do it',
+    'Please request the code again'=>'Please request the code again',
+    'The entered verification code is incorrect'=>'The entered verification code is incorrect',
+    'The Email Not Found'=>'The Email Not Found',
+    'The password is wrong'=>'The password is wrong',
+    'Account Not found'=>'Account Not found'
 );
