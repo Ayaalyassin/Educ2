@@ -20,6 +20,6 @@ class CompleteTeacher extends Model
 
     public function teacher()
     {
-        return $this->belongsTo(ProfileTeacher::class,'teacher_id');
+        return $this->belongsTo(ProfileTeacher::class);
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CompleteRequest;
 use App\Jobs\NotificationJobProfile;
 use App\Models\CompleteTeacher;
+use App\Models\RejectRequest;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,16 +22,14 @@ class CompleteTeacherController extends Controller
     public function index()
     {
         try {
-            DB::beginTransaction();
-            $requestCompletes = CompleteTeacher::with(['teacher' => function ($q) {
-                $q->select('id', 'user_id');
-            }])
-                ->with(['teacher.user' => function ($q) {
+            $requestCompletes = CompleteTeacher::with([
+                'teacher' => function ($q) {
+                    $q->select('id', 'user_id');
+                },
+                'teacher.user' => function ($q) {
                     $q->select('id', 'name', 'address');
-                }])
-                ->where('status', '=', 0)
-                ->get();
-
+                }
+            ])->where('status', '=', 0)->get();
             DB::commit();
             return $this->returnData($requestCompletes, 'operation completed successfully');
         } catch (\Exception $ex) {
@@ -143,10 +142,12 @@ class CompleteTeacherController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
             DB::beginTransaction();
+            $cases = $request->input('cases');
+            
             $requestComplete = CompleteTeacher::find($id);
             if (!$requestComplete) {
                 return $this->returnError(404, 'not found request');
@@ -154,8 +155,13 @@ class CompleteTeacherController extends Controller
             if ($requestComplete->status == 1) {
                 return $this->returnError(500, 'The request is notarized');
             }
+            $reject_requests = RejectRequest::create([
+                'name' => $requestComplete->teacher->user->name,
+                'case' => $cases,
+                'type' => 'complete Request'
+            ]);
             $requestComplete->delete();
-            NotificationJobProfile::dispatch($requestComplete->teacher,'was rejected','Your request to complete information has been rejected')->delay(Carbon::now()->addSeconds(2));
+            NotificationJobProfile::dispatch($requestComplete->teacher, 'was rejected', 'Your request to complete information has been rejected')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData(200, 'delete order successfully');
         } catch (\Exception $ex) {
@@ -193,7 +199,7 @@ class CompleteTeacherController extends Controller
                 'assessing' => $rate
             ]);
             $requestComplete->save();
-            NotificationJobProfile::dispatch($requestComplete->teacher,'was accepted','Your request to complete information has been accepted')->delay(Carbon::now()->addSeconds(2));
+            NotificationJobProfile::dispatch($requestComplete->teacher, 'was accepted', 'Your request to complete information has been accepted')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData(200, 'accept request complete successfully');
         } catch (\Exception $ex) {

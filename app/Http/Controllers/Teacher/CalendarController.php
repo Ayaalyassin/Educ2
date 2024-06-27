@@ -253,7 +253,7 @@ class CalendarController extends Controller
 
             DB::commit();
 
-            return $this->returnData($studentsToNotify, 200, 'Operation completed successfully');
+            return $this->returnData(200, 'Operation completed successfully');
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());

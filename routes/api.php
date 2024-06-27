@@ -289,7 +289,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         });
         Route::group(['middleware' => ['hasRole:admin|employee']], function () {
             Route::get('get', [CompleteTeacherController::class, 'index']);
-            Route::delete('delete-request-complete/{id}', [CompleteTeacherController::class, 'destroy']);
+            Route::post('delete-request-complete/{id}', [CompleteTeacherController::class, 'destroy']);
             Route::get('accept-request-complete-teacher/{id}', [CompleteTeacherController::class, 'accept_request_complete_teacher']);
         });
     });
@@ -297,7 +297,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     // Admin khader
     Route::group(['prefix' => 'request-join', 'middleware' => ['hasRole:admin']], function () {
         Route::get('get', [AdminController::class, 'index']);
-        Route::delete('delete-request-join/{id}', [AdminController::class, 'destroy']);
+        Route::post('delete-request-join/{id}', [AdminController::class, 'destroy']);
         Route::get('accept-request-join/{id}', [AdminController::class, 'accept_request_teacher']);
         Route::get('count-student', [AdminController::class, 'count_student']);
         Route::get('count-teacher', [AdminController::class, 'count_teacher']);
@@ -316,6 +316,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('count-student', [AdminController::class, 'count_student']);
         Route::get('count-block-student', [AdminController::class, 'count_block_student']);
         Route::get('count-unblock-student', [AdminController::class, 'count_unblock_student']);
+
+        Route::get('reject-join-request', [AdminController::class, 'get_all_reject_join_request']);
+        Route::get('reject-complete-request', [AdminController::class, 'get_all_reject_complete_request']);
     });
     Route::group(['prefix' => 'block-list', 'middleware' => ['hasRole:admin|employee']], function () {
         Route::get('get', [BlockController::class, 'index']);

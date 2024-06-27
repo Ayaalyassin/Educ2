@@ -7,6 +7,7 @@ use App\Jobs\NotificationJobProfile;
 use App\Models\Block;
 use App\Models\ProfileStudent;
 use App\Models\ProfileTeacher;
+use App\Models\RejectRequest;
 use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
@@ -36,10 +37,12 @@ class AdminController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
             DB::beginTransaction();
+
+            $cases = $request->input('case');
             $teacher = ProfileTeacher::find($id);
             if (!$teacher) {
                 return $this->returnError(404, 'not Found teacher');
@@ -47,6 +50,12 @@ class AdminController extends Controller
             if ($teacher->status == 1) {
                 return $this->returnError(500, 'The teacher is accept');
             }
+
+            $reject_requests = RejectRequest::create([
+                'name' => $teacher->user->name,
+                'case' => $cases,
+                'type' => 'join Request'
+            ]);
             $teacher->user()->delete();
             $teacher->delete();
             DB::commit();
@@ -73,7 +82,7 @@ class AdminController extends Controller
             ]);
             $teacher->save();
 
-            NotificationJobProfile::dispatch($teacher,'was accepted','Your request has been accepted')->delay(Carbon::now()->addSeconds(2));
+            NotificationJobProfile::dispatch($teacher, 'was accepted', 'Your request has been accepted')->delay(Carbon::now()->addSeconds(2));
 
             DB::commit();
             return $this->returnData($msg = "accept request successfully", 200);
@@ -377,8 +386,34 @@ class AdminController extends Controller
         }
         return response()->json(['users' => $users], 200);
     }
-}
 
+    public function get_all_reject_join_request()
+    {
+        try {
+            DB::beginTransaction();
+            $teacher = RejectRequest::where('type', 'join Request')->get();
+
+            DB::commit();
+            return $this->returnData($teacher, 200);
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+    public function get_all_reject_complete_request()
+    {
+        try {
+            DB::beginTransaction();
+            $teacher = RejectRequest::where('type', 'complete Request')->get();
+
+            DB::commit();
+            return $this->returnData($teacher, 200);
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+}
 
 
     //public function insert_teacher()
