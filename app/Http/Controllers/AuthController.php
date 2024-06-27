@@ -33,7 +33,7 @@ class AuthController extends Controller
 
         $is_block=$exist->whereHas('block')->first();
         if($is_block)
-            return $this->returnError(401,'You are block');
+            return $this->returnError(401,__('backend.You are block', [], app()->getLocale()));
 
         $user = auth()->user();
         $user->token = $token;

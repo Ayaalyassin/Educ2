@@ -589,6 +589,8 @@ return array (
     'The entered verification code is incorrect'=>'الكود المدخل غير صحيح',
     'The Email Not Found'=>'البريد الالكتروني غير موجود',
     'The password is wrong'=>'كلمة السر خاطئة',
-    'Account Not found'=>'الحساب غير موجود'
+    'Account Not found'=>'الحساب غير موجود',
+    'You are block'=>'أنت محظور',
+    'code send successfully'=>'تم ارسال الكود بنجاح'
 
 );

@@ -589,5 +589,7 @@ return array (
     'The entered verification code is incorrect'=>'The entered verification code is incorrect',
     'The Email Not Found'=>'The Email Not Found',
     'The password is wrong'=>'The password is wrong',
-    'Account Not found'=>'Account Not found'
+    'Account Not found'=>'Account Not found',
+    'You are block'=>'You are block',
+    'code send successfully'=>'code send successfully'
 );

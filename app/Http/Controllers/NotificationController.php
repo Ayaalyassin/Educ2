@@ -62,7 +62,7 @@ class NotificationController extends Controller
                 return $this->returnError("404", 'Not found');
             }
             $notification->delete();
-            return $this->returnSuccessMessage('operation completed successfully');
+            return $this->returnSuccessMessage(__('operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",'Please try again later');
         }

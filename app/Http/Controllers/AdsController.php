@@ -173,7 +173,7 @@ class AdsController extends Controller
 
             DeleteAds::dispatch($id)->delay(Carbon::now()->addSeconds(2));
             DB::commit();
-            return $this->returnSuccessMessage('operation completed successfully');
+            return $this->returnSuccessMessage(__('operation completed successfully', [], app()->getLocale()));
 
 
         } catch (\Exception $ex) {
@@ -210,7 +210,7 @@ class AdsController extends Controller
             }
             DeleteAds::dispatch($id)->delay(Carbon::now()->addSeconds(2));
             DB::commit();
-            return $this->returnSuccessMessage('operation completed successfully');
+            return $this->returnSuccessMessage(__('operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');

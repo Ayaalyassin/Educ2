@@ -27,7 +27,7 @@ class PasswordController extends Controller
                 $user->update([
                     'password' => $request->password,
                 ]);
-                return $this->returnSuccessMessage('operation completed successfully');
+                return $this->returnSuccessMessage(__('operation completed successfully', [], app()->getLocale()));
             } else {
                 return $this->returnError("400",'failed');
             }
@@ -54,11 +54,11 @@ class PasswordController extends Controller
 //                ForgetPasswordJob::dispatch($mailData,$user)->delay(Carbon::now()->addSeconds(2));
                 //Mail::to($user->email)->send(new ForgetPasswordMail($mailData));
                 //DeleteCodeJob::dispatch($this->exist)->delay(Carbon::now()->addMinutes(2));
-                return $this->returnSuccessMessage('operation completed successfully');
+                return $this->returnSuccessMessage(__('operation completed successfully', [], app()->getLocale()));
             }
             else
             {
-                return $this->returnError("404", 'The Email Not Found');
+                return $this->returnError('404', __('backend.The Email Not Found', [], app()->getLocale()));
             }
 
         } catch (\Exception $ex) {
