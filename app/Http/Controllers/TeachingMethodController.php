@@ -164,7 +164,7 @@ class TeachingMethodController extends Controller
                 ->select('teaching_methods.*','users.name')->orderBy('created_at','desc')
                 ->get();
 
-            return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
+            return $this->returnData($teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", "Please try again later");
         }
