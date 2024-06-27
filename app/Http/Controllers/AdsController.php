@@ -36,8 +36,8 @@ class AdsController extends Controller
             //$ads = Ads::all();
             $ads=Ads::join('profile_teachers','ads.profile_teacher_id','=','profile_teachers.id')->
             join('users','profile_teachers.user_id','=','users.id')
-            ->select('ads.*','users.name')->orderBy('created_at','desc')
-            ->get();
+                ->select('ads.*','users.name')->orderBy('created_at','desc')
+                ->get();
 
             return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {

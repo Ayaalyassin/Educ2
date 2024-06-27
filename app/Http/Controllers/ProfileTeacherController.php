@@ -24,7 +24,7 @@ class ProfileTeacherController extends Controller
             $user=auth()->user();
 
             $profile_teacher = ProfileTeacher::where('status',1)//->filter($request)
-                ->orderByRaw("CASE WHEN (SELECT address FROM users WHERE users.id = profile_teachers.user_id) = '{$user->address}' THEN 0 ELSE 1 END")
+            ->orderByRaw("CASE WHEN (SELECT address FROM users WHERE users.id = profile_teachers.user_id) = '{$user->address}' THEN 0 ELSE 1 END")
                 ->get();
             if(count($profile_teacher)>0)
                 $profile_teacher->loadMissing(['user','domains']);
