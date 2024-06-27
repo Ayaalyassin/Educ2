@@ -124,7 +124,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::group(['middleware' => ['hasRole:teacher']], function () {
 
         Route::group(['prefix' => 'ads'], function () {
-            Route::group(['middleware' => ['teacher']], function () {
+            Route::group(['middleware' => ['profileTeacher']], function () {
                 Route::post('store', [AdsController::class, 'store']);
                 Route::post('update/{id}', [AdsController::class, 'update']);
                 Route::delete('delete/{id}', [AdsController::class, 'destroy']);
@@ -190,7 +190,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     });
 
     Route::group(['prefix' => 'report'], function () {
-        Route::get('get', [ReportController::class, 'index']);
+        Route::get('get', [ReportController::class, 'index'])->middleware('hasRole:admin|employee');
         Route::post('report_student', [ReportController::class, 'report_student'])->middleware(['hasRole:teacher', 'profileTeacher']);;
         Route::post('report_teacher', [ReportController::class, 'report_teacher'])->middleware(['hasRole:student', 'profileStudent']);
     });
