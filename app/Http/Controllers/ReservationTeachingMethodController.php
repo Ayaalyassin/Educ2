@@ -27,7 +27,7 @@ class ReservationTeachingMethodController extends Controller
                 if (count($reservation_teaching_methods) > 0)
                     $reservation_teaching_methods->loadMissing('teaching_method');
             }
-            return $this->returnData($reservation_teaching_methods,'operation completed successfully');
+            return $this->returnData($reservation_teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
         }
@@ -68,7 +68,7 @@ class ReservationTeachingMethodController extends Controller
             AddWalletTeacherJob::dispatch($teaching_method->id)->delay(Carbon::now()->addSeconds(2));
 
             DB::commit();
-            return $this->returnData($reservation_teaching_methods,'operation completed successfully');
+            return $this->returnData($reservation_teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -105,7 +105,7 @@ class ReservationTeachingMethodController extends Controller
                     return $this->returnError("404", 'not found');
                 $reservation_teaching_methods->loadMissing('teaching_method');
             }
-            return $this->returnData($reservation_teaching_methods,'operation completed successfully');
+            return $this->returnData($reservation_teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
         }

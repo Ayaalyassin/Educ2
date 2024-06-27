@@ -25,7 +25,7 @@ class TeachingMethodController extends Controller
                 return $this->returnError("404",'Profile Teacher Not found');
             }
             $teaching_methods=$profile_teacher->teaching_methods()->orderBy('created_at','desc')->get();
-            return $this->returnData($teaching_methods,'operation completed successfully');
+            return $this->returnData($teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
         }
@@ -45,7 +45,7 @@ class TeachingMethodController extends Controller
             $teaching_method->increment('views');
 
             DB::commit();
-            return $this->returnData($teaching_method,'operation completed successfully');
+            return $this->returnData($teaching_method, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -73,7 +73,7 @@ class TeachingMethodController extends Controller
 
 
             DB::commit();
-            return $this->returnData($teaching_method,'operation completed successfully');
+            return $this->returnData($teaching_method, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -108,7 +108,7 @@ class TeachingMethodController extends Controller
             ]);
 
             DB::commit();
-            return $this->returnData($teaching_method,'operation completed successfully');
+            return $this->returnData($teaching_method, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -148,7 +148,7 @@ class TeachingMethodController extends Controller
             if($profile_teacher)
                 $teaching_methods=$profile_teacher->teaching_methods()->orderBy('created_at','desc')->get();
 
-            return $this->returnData($teaching_methods, 'operation completed successfully');
+            return $this->returnData($teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", "Please try again later");
         }
@@ -164,7 +164,7 @@ class TeachingMethodController extends Controller
             ->select('teaching_methods.*','users.name')->orderBy('created_at','desc')
             ->get();
 
-            return $this->returnData($teaching_methods, 'operation completed successfully');
+            return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", "Please try again later");
         }

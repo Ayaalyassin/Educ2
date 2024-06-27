@@ -28,7 +28,7 @@ class NoteController extends Controller
 //                })->
                 with('note_as_student')->get();
 
-            return $this->returnData($profile_students,'operation completed successfully');
+            return $this->returnData($profile_students, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
         }
@@ -52,7 +52,7 @@ class NoteController extends Controller
             ]);
 
             DB::commit();
-            return $this->returnData($note, 'operation completed successfully');
+            return $this->returnData($note, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());

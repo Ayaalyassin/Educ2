@@ -24,7 +24,7 @@ class RoleController extends Controller
             ]);
             $data->syncPermissions($permissions);
             DB::commit();
-            return $this->returnData($data,'operation completed successfully');
+            return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollBack();
             return $this->returnError($ex->getCode(),'Please try again later');
@@ -47,7 +47,7 @@ class RoleController extends Controller
             ]);
             $data->syncPermissions($permissions);
             DB::commit();
-            return $this->returnData($data,'operation completed successfully');
+            return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollBack();
             return $this->returnError($ex->getCode(),'Please try again later');
@@ -74,7 +74,7 @@ class RoleController extends Controller
     {
         try {
             $data = Role::all();
-            return $this->returnData($data,'operation completed successfully');
+            return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(),'Please try again later');
         }
@@ -88,7 +88,7 @@ class RoleController extends Controller
             if (!$data)
                 return $this->returnError("404",'Not found');
 
-            return $this->returnData($data,'operation completed successfully');
+            return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(),'Please try again later');
         }

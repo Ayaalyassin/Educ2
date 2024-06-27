@@ -16,7 +16,7 @@ class PermissionController extends Controller
     {
         try {
             $data = Permission::all();
-            return $this->returnData($data,'operation completed successfully');
+            return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
                  return $this->returnError($ex->getCode(),'Please try again later');
         }
@@ -29,7 +29,7 @@ class PermissionController extends Controller
             if (!$data)
                 return $this->returnError("404",'Not found');
 
-            return $this->returnData($data,'operation completed successfully');
+            return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
                  return $this->returnError($ex->getCode(),'Please try again later');
         }
@@ -47,7 +47,7 @@ class PermissionController extends Controller
                 'name'=>$request->name,
             ]);
 
-            return $this->returnData($data,'operation completed successfully');
+            return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(),'Please try again later');
         }
@@ -60,7 +60,7 @@ class PermissionController extends Controller
             $data=Permission::create([
                 'name'=>$request->name,
             ]);
-            return $this->returnData($data,'operation completed successfully');
+            return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(),'Please try again later');
         }

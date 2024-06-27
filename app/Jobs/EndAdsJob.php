@@ -28,8 +28,8 @@ class EndAdsJob implements ShouldQueue
         $user=$profile_teacher->user()->first();
 
         DB::table('notifications')->insert([
-            'title' => 'End Ad',
-            'body' => 'The number of students in your ad has been completed',
+            'title' => 'تم الاكتمال',
+            'body' => 'تم اكتمال عدد الطلاب في الاعلان الخاص بك',
             'user_id' => $user->id,
             'created_at'=>Carbon::now()->format('Y-m-d H:i:s')
         ]);

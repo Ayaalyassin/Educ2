@@ -34,7 +34,8 @@ class EmployeeController extends Controller
             $data->assignRole($role);
             $data->loadMissing('roles');
             DB::commit();
-            return $this->returnData($data,'operation completed successfully');
+
+            return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         }
         catch (\Exception $ex) {
             DB::rollBack();
@@ -63,7 +64,7 @@ class EmployeeController extends Controller
             ]);
             $data->loadMissing('roles');
             DB::commit();
-            return $this->returnData($data,'operation completed successfully');
+            return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollBack();
             return $this->returnError("500",'Please try again later');
@@ -81,7 +82,7 @@ class EmployeeController extends Controller
                 return $this->returnError("404",'Not found');
             }
             $data->loadMissing(['roles']);
-            return $this->returnData($data,'operation completed successfully');
+            return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(),'Please try again later');
 
@@ -118,7 +119,7 @@ class EmployeeController extends Controller
             })->get();
             if(count($data)>0)
                 $data->loadMissing('roles');
-            return $this->returnData($data,'operation completed successfully');
+            return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(),'Please try again later');
         }

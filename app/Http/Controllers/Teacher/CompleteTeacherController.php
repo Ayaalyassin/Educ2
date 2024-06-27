@@ -168,7 +168,7 @@ class CompleteTeacherController extends Controller
                 'type' => 'complete Request'
             ]);
             $requestComplete->delete();
-            NotificationJobProfile::dispatch($requestComplete->teacher, 'was rejected', 'Your request to complete information has been rejected')->delay(Carbon::now()->addSeconds(2));
+            NotificationJobProfile::dispatch($requestComplete->teacher, 'تم الرفض', 'لقد تم رفض رفض طلب الاستكمال الخاص بك')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData(200, 'delete order successfully');
         } catch (\Exception $ex) {
@@ -206,7 +206,7 @@ class CompleteTeacherController extends Controller
                 'assessing' => $rate
             ]);
             $requestComplete->save();
-            NotificationJobProfile::dispatch($requestComplete->teacher, 'was accepted', 'Your request to complete information has been accepted')->delay(Carbon::now()->addSeconds(2));
+            NotificationJobProfile::dispatch($requestComplete->teacher, 'تم الموافقة', 'لقد تم الموافقة على طلب الاستكمال الخاص بك')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData(200, 'accept request complete successfully');
         } catch (\Exception $ex) {

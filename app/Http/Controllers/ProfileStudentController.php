@@ -25,7 +25,7 @@ class ProfileStudentController extends Controller
                 $profile_student->loadMissing(['user']);
 
             DB::commit();
-            return $this->returnData($profile_student, 'operation completed successfully');
+            return $this->returnData($profile_student, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -53,7 +53,7 @@ class ProfileStudentController extends Controller
             }
 
             DB::commit();
-            return $this->returnData($profile_student, 'operation completed successfully');
+            return $this->returnData($profile_student, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -71,7 +71,7 @@ class ProfileStudentController extends Controller
             $user->loadMissing('profile_student');
 
             DB::commit();
-            return $this->returnData($user, 'operation completed successfully');
+            return $this->returnData($user, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -91,7 +91,7 @@ class ProfileStudentController extends Controller
             $profile_student->loadMissing(['user']);
 
             DB::commit();
-            return $this->returnData($profile_student, 'operation completed successfully');
+            return $this->returnData($profile_student, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -141,7 +141,7 @@ class ProfileStudentController extends Controller
 
 
             DB::commit();
-            return $this->returnData($profile_student, 'operation completed successfully');
+            return $this->returnData($profile_student, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');

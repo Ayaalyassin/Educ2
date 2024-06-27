@@ -38,7 +38,7 @@ class EvaluationController extends Controller
             );
             $evaluation->update(['rate' => $request->rate]);
             DB::commit();
-            return $this->returnData($evaluation,'operation completed successfully');
+            return $this->returnData($evaluation, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');

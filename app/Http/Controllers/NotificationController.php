@@ -15,7 +15,8 @@ class NotificationController extends Controller
         try {
             $user = auth('api')->user();
             $notifications=$user->notifications()->orderBy('created_at','desc')->get();
-            return $this->returnData($notifications,'operation completed successfully');
+
+            return $this->returnData($notifications, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", 'Please try again later');
         }
@@ -25,7 +26,7 @@ class NotificationController extends Controller
             $user = auth('api')->user();
             $notifications=$user->notifications()->where('seen',1)
                 ->orderBy('created_at','desc')->get();
-            return $this->returnData($notifications,'operation completed successfully');
+            return $this->returnData($notifications, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", 'Please try again later');
         }
@@ -35,7 +36,7 @@ class NotificationController extends Controller
             $user = auth('api')->user();
             $notifications=$user->notifications()->where('seen',0)
                 ->orderBy('created_at','desc')->get();
-            return $this->returnData($notifications,'operation completed successfully');
+            return $this->returnData($notifications, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",'Please try again later');
         }
@@ -48,7 +49,7 @@ class NotificationController extends Controller
                 return $this->returnError("404", 'Not found');
             }
             $notification->update(['seen'=>1]);
-            return $this->returnData($notification,'operation completed successfully');
+            return $this->returnData($notification, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",'Please try again later');
         }
