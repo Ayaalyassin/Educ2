@@ -304,23 +304,17 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('get', [AdminController::class, 'index']);
         Route::post('delete-request-join/{id}', [AdminController::class, 'destroy']);
         Route::get('accept-request-join/{id}', [AdminController::class, 'accept_request_teacher']);
-        Route::get('count-student', [AdminController::class, 'count_student']);
         Route::get('count-teacher', [AdminController::class, 'count_teacher']);
         Route::delete('delete-teacher/{id}', [AdminController::class, 'destroy_teacher']);
         Route::delete('delete-student/{id}', [AdminController::class, 'destroy_student']);
         Route::get('get-teacher-unblock', [AdminController::class, 'get_all_teacher_unblock']);
         Route::get('get-teacher-block', [AdminController::class, 'get_all_teacher_block']);
         Route::get('get-teacher', [AdminController::class, 'get_all_teacher']);
-        Route::get('count-teacher', [AdminController::class, 'count_all_teacher']);
-        Route::get('count-block-teacher', [AdminController::class, 'count_block_teacher']);
-        Route::get('count-unblock-teacher', [AdminController::class, 'count_unblock_teacher']);
 
         Route::get('get-student-unblock', [AdminController::class, 'get_all_student_unblock']);
         Route::get('get-student-block', [AdminController::class, 'get_all_student_block']);
         Route::get('get-student', [AdminController::class, 'get_all_student']);
         Route::get('count-student', [AdminController::class, 'count_student']);
-        Route::get('count-block-student', [AdminController::class, 'count_block_student']);
-        Route::get('count-unblock-student', [AdminController::class, 'count_unblock_student']);
 
         Route::get('reject-join-request', [AdminController::class, 'get_all_reject_join_request']);
         Route::get('reject-complete-request', [AdminController::class, 'get_all_reject_complete_request']);
