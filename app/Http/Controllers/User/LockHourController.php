@@ -30,6 +30,7 @@ class LockHourController extends Controller
                 ->where('calendar_days.teacher_id', '=', $teacher->id)
                 ->join('calendar_hours', 'calendar_days.id', '=', 'calendar_hours.day_id')
                 ->join('lock_hours', 'calendar_hours.id', '=', 'lock_hours.hour_id')
+                ->join('service_teachers', 'service_teachers.id', '=', 'lock_hours.service_id')
                 ->where('lock_hours.status', '=', 0)
                 ->join('profile_students', 'profile_students.id', '=', 'lock_hours.student_id')
                 ->join('users', 'users.id', '=', 'profile_students.user_id')
@@ -40,14 +41,47 @@ class LockHourController extends Controller
                     'users.governorate',
                     'calendar_days.day',
                     'calendar_hours.hour',
+                    'service_teachers.type'
                 )
                 ->get();
-            return $this->returnData($lock_hour, __('backend.operation completed successfully', [], app()->getLocale()));
+            return $this->returnData($lock_hour, 'operation completed successfully');
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
 
+
+    public function get_all_accept_request()
+    {
+        try {
+            $user = Auth::user();
+            $teacher = $user->profile_teacher;
+            if (!$teacher) {
+                return $this->returnError(400, 'Token is Invalid');
+            }
+            $lock_hour = DB::table('calendar_days')
+                ->where('calendar_days.teacher_id', '=', $teacher->id)
+                ->join('calendar_hours', 'calendar_days.id', '=', 'calendar_hours.day_id')
+                ->join('lock_hours', 'calendar_hours.id', '=', 'lock_hours.hour_id')
+                ->join('service_teachers', 'service_teachers.id', '=', 'lock_hours.service_id')
+                ->where('lock_hours.status', '=', 1)
+                ->join('profile_students', 'profile_students.id', '=', 'lock_hours.student_id')
+                ->join('users', 'users.id', '=', 'profile_students.user_id')
+                ->select(
+                    'lock_hours.id',
+                    'users.name',
+                    'users.address',
+                    'users.governorate',
+                    'calendar_days.day',
+                    'calendar_hours.hour',
+                    'service_teachers.type'
+                )
+                ->get();
+            return $this->returnData($lock_hour, 'operation completed successfully');
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
 
     public function store(LockHourRequest $request)
     {

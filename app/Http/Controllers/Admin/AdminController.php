@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\NotificationJobProfile;
+use App\Models\Ads;
 use App\Models\Block;
 use App\Models\ProfileStudent;
 use App\Models\ProfileTeacher;
+use App\Models\QualificationCourse;
 use App\Models\RejectRequest;
+use App\Models\TeachingMethod;
 use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
@@ -28,7 +31,7 @@ class AdminController extends Controller
     {
         try {
             DB::beginTransaction();
-            $teacher = ProfileTeacher::with('user')->where('status', 0)->get();
+            $teacher = ProfileTeacher::with('user')->with('domains')->where('status', 0)->get();
             DB::commit();
             return $this->returnData($teacher, 200);
         } catch (\Exception $ex) {
@@ -145,49 +148,45 @@ class AdminController extends Controller
     }
 
 
-    public function count_all_teacher()
+    public function count_teacher()
     {
         try {
             DB::beginTransaction();
-            $users = User::whereHas('roles', function ($q) {
+            $totalTeachers = User::whereHas('roles', function ($q) {
                 $q->where('name', "teacher");
             })->whereHas('profile_teacher', function ($qu) {
                 $qu->where('status', 1);
             })->count();
-            DB::commit();
-            return $this->returnData($users, 200);
-        } catch (\Exception $ex) {
-            DB::rollback();
-            return $this->returnError($ex->getCode(), $ex->getMessage());
-        }
-    }
-    public function count_unblock_teacher()
-    {
-        try {
-            DB::beginTransaction();
-            $users = User::whereHas('roles', function ($q) {
+            $unblockTeachers = User::whereHas('roles', function ($q) {
                 $q->where('name', "teacher");
             })->whereHas('profile_teacher', function ($qu) {
                 $qu->where('status', 1);
             })->whereDoesntHave('block')->count();
-            DB::commit();
-            return $this->returnData($users, 200);
-        } catch (\Exception $ex) {
-            DB::rollback();
-            return $this->returnError($ex->getCode(), $ex->getMessage());
-        }
-    }
-    public function count_block_teacher()
-    {
-        try {
-            DB::beginTransaction();
-            $users = User::whereHas('roles', function ($q) {
+
+            $blockTeachers = User::whereHas('roles', function ($q) {
                 $q->where('name', "teacher");
             })->whereHas('profile_teacher', function ($qu) {
                 $qu->where('status', 1);
             })->whereHas('block')->count();
+            $teaching_methods_free = TeachingMethod::where('price', 0)->count();
+            $teaching_methods = TeachingMethod::count();
+            $courses = QualificationCourse::count();
+            $ads_free = Ads::where('price', 0)->count();
+            $ads = Ads::count();
             DB::commit();
-            return $this->returnData($users, 200);
+
+            $data = [
+                'total_teachers' => $totalTeachers,
+                'unblock_teachers' => $unblockTeachers,
+                'block_teachers' => $blockTeachers,
+                'teaching_methods' => $teaching_methods,
+                'teaching_methods_free' => $teaching_methods_free,
+                'courses' => $courses,
+                'ads' => $ads,
+                'ads_free' => $ads_free,
+            ];
+
+            return $this->returnData($data, 'Counts retrieved successfully');
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -245,47 +244,36 @@ class AdminController extends Controller
     {
         try {
             DB::beginTransaction();
-            $users = User::whereHas('roles', function ($q) {
+
+            $totalStudents = User::whereHas('roles', function ($q) {
                 $q->where('name', "student");
-            })->whereHas('profile_student', function ($qu) {
-            })->count();
+            })->whereHas('profile_student')->count();
+
+            $unblockStudents = User::whereHas('roles', function ($q) {
+                $q->where('name', "student");
+            })->whereHas('profile_student')
+                ->whereDoesntHave('block')->count();
+
+            $blockStudents = User::whereHas('roles', function ($q) {
+                $q->where('name', "student");
+            })->whereHas('profile_student')
+                ->whereHas('block')->count();
+
             DB::commit();
-            return $this->returnData($users, 200);
+
+            $data = [
+                'total_students' => $totalStudents,
+                'unblock_students' => $unblockStudents,
+                'block_students' => $blockStudents
+            ];
+
+            return $this->returnData($data, 'Counts retrieved successfully');
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-    public function count_block_student()
-    {
-        try {
-            DB::beginTransaction();
-            $users = User::whereHas('roles', function ($q) {
-                $q->where('name', "student");
-            })->whereHas('profile_student', function ($qu) {
-            })->whereHas('block')->count();
-            DB::commit();
-            return $this->returnData($users, 200);
-        } catch (\Exception $ex) {
-            DB::rollback();
-            return $this->returnError($ex->getCode(), $ex->getMessage());
-        }
-    }
-    public function count_unblock_student()
-    {
-        try {
-            DB::beginTransaction();
-            $users = User::whereHas('roles', function ($q) {
-                $q->where('name', "student");
-            })->whereHas('profile_student', function ($qu) {
-            })->whereDoesntHave('block')->count();
-            DB::commit();
-            return $this->returnData($users, 200);
-        } catch (\Exception $ex) {
-            DB::rollback();
-            return $this->returnError($ex->getCode(), $ex->getMessage());
-        }
-    }
+
     public function destroy_teacher($id)
     {
         try {
