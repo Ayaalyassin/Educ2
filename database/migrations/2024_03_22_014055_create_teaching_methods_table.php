@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('type');
-            $table->string('description');
+            $table->text('description');
             $table->string('file');
             $table->boolean('status');
             $table->double('price');

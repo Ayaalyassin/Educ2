@@ -22,7 +22,7 @@ class TeachingMethodRequest extends FormRequest
         return [
             'title'=>'required|string',
             'type'=>'required|string',
-            'description'=>'required|string',
+            'description'=>'required',
             'file'=>'required|file',
             'status'=>'required|boolean',
             'price'=>'required|numeric|min:0'

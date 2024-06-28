@@ -134,7 +134,7 @@ class GovernorController extends Controller
             ]);
             $convenor->save();
             DB::commit();
-            return $this->returnData($convenor, 'operation completed successfully');
+            return $this->returnData($convenor, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -150,7 +150,7 @@ class GovernorController extends Controller
             }
             $user = auth()->user()->wallet;
             if ($request->amount > $user->value) {
-                return $this->returnError(400, 'not Enough money in wallet');
+                return $this->returnError(400, __('backend.not Enough money in wallet', [], app()->getLocale()));
             }
             $user->update([
                 'value' => $user->value - $request->amount,
@@ -166,7 +166,7 @@ class GovernorController extends Controller
             ]);
             $convenor->save();
             DB::commit();
-            return $this->returnData($convenor, 'operation completed successfully');
+            return $this->returnData($convenor, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -184,7 +184,7 @@ class GovernorController extends Controller
             $data = Governor::with('wallet')->where('wallet_id', $userWallet)->where('type', 'charge')
                 ->get();
             DB::commit();
-            return $this->returnData($data, 'operation completed successfully');
+            return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -198,7 +198,7 @@ class GovernorController extends Controller
             $data = Governor::with('wallet')->where('wallet_id', $userWallet)->where('type', 'recharge')
                 ->get();
             DB::commit();
-            return $this->returnData($data, 'operation completed successfully');
+            return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -240,7 +240,7 @@ class GovernorController extends Controller
                 'case' => $request->case
             ]);
             DB::commit();
-            return $this->returnData(200, 'delete order successfully');
+            return $this->returnData(200, __('backend.delete order successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -271,9 +271,9 @@ class GovernorController extends Controller
             $wallet=$convenor->wallet()->first();
             $user=$wallet->user()->first();
 
-            NotificationJobUser::dispatch($user,'was accepted','Your request to charge has been accepted')->delay(Carbon::now()->addSeconds(2));
+            NotificationJobUser::dispatch($user,'تم الموافقة','تم الموافقة على طلب الشحن الخاص بك')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
-            return $this->returnData(200, 'charge successfully');
+            return $this->returnData(200, __ ('backend.charge successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -299,9 +299,9 @@ class GovernorController extends Controller
             $wallet=$convenor->wallet()->first();
             $user=$wallet->user()->first();
 
-            NotificationJobUser::dispatch($user,'was accepted','Your request to recharge has been accepted')->delay(Carbon::now()->addSeconds(2));
+            NotificationJobUser::dispatch($user,'تم الموافقة','تم الموافقة على طلب التفريغ الخاص بك')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
-            return $this->returnData(200, 'recharge successfully');
+            return $this->returnData(200, __('backend.recharge successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getMessage(), $ex->getCode());

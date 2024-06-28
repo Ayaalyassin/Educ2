@@ -106,7 +106,7 @@ class PasswordController extends Controller
             if (!$token) return $this->returnError('401', 'Unauthorized');
 
             $user->token = $token;
-            return $this->returnData($user, 'Logged in successfully');
+            return $this->returnData($user, __('backend.Logged in successfully', [], app()->getLocale()));
 
         } catch (\Exception $ex) {
             return $this->returnError("500", 'Please try again later');

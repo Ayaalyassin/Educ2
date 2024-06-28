@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('phone')->unique()->nullable();
             $table->string('educational_level')->nullable();
-            //$table->integer('assessing'); //درجة تحقيق وثقية الشخص
+
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 

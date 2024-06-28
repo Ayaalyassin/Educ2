@@ -598,6 +598,12 @@ return array (
     'accept request complete successfully'=>'تم الموافقة على طلب الاستكمال بنجاح',
     'can not delete because the request is accept'=>'لا يمكن حذف الطلب لانه تم الموافقة عليه',
     'can not delete Request'=>'لا يمكن حذف الطلب',
-    'already request hour lock'=>'لقد تم الطلب سابقا'
+    'already request hour lock'=>'لقد تم الطلب سابقا',
+    'recharge successfully'=>'تم التفريغ بنجاح',
+    'charge successfully'=>'تم الشحن بنجاح',
+    'The course has begun'=>'لقد بدأت الدورة',
+    'already insert'=>'لقم تم الطلب مسبقا',
+    'cant delete course because There are users who have joined the course'=>'لا يمكن حذف الدورة لأنه هناك منضمين',
+    'Logged in successfully'=>'تم تسجيل الدخول بنجاح'
 
 );

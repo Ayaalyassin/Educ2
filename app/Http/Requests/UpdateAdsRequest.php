@@ -21,7 +21,7 @@ class UpdateAdsRequest extends FormRequest
     {
         return [
             'title'=>'sometimes',
-            'description'=>'string',
+            'description'=>'sometimes',
             'price'=>'numeric|gt:0',
             'number_students'=>'integer|min:1',
             'file'=>'file',

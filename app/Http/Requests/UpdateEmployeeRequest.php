@@ -24,7 +24,7 @@ class UpdateEmployeeRequest extends FormRequest
             'password' => 'sometimes|string|min:6',
             'address'=>'sometimes|string',
             'governorate'=>'sometimes|string',
-            'birth_date'=>'date',
+            'birth_date'=>'date|before:today',
         ];
     }
     public function failedValidation(Validator $validator)

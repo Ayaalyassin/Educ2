@@ -20,8 +20,8 @@ class ReportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'reason'=>'string',
-            'reported_id'=>'integer',
+            'reason'=>'required|string',
+            'reported_id'=>'required|integer',
 
         ];
     }

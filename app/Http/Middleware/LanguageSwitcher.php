@@ -10,11 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class LanguageSwitcher
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
+
     public function handle(Request $request, Closure $next): Response
     {
         App::setLocale($request->hasHeader("lang") ?  $request->header("lang") : Config::get('app.locale'));

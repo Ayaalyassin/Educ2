@@ -133,7 +133,7 @@ class TeachingMethodController extends Controller
             $teaching_method->delete();
 
             DB::commit();
-            return $this->returnSuccessMessage('operation completed successfully');
+            return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');

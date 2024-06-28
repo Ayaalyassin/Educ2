@@ -598,5 +598,11 @@ return array (
     'accept request complete successfully'=>'accept request complete successfully',
     'can not delete because the request is accept'=>'can not delete because the request is accept',
     'can not delete Request'=>'can not delete Request',
-    'already request hour lock'=>'already request hour lock'
+    'already request hour lock'=>'already request hour lock',
+    'recharge successfully'=>'recharge successfully',
+    'charge successfully'=>'charge successfully',
+    'The course has begun'=>'The course has begun',
+    'already insert'=>'already insert',
+    'cant delete course because There are users who have joined the course'=>'cant delete course because There are users who have joined the course',
+    'Logged in successfully'=>'Logged in successfully'
 );

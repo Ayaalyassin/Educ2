@@ -20,7 +20,7 @@ class UpdateProfileStudentRequest extends FormRequest
     {
         return [
             'educational_level'=>'sometimes|string',
-            'description'=>'sometimes|string',
+            'description'=>'sometimes',
         ];
     }
 

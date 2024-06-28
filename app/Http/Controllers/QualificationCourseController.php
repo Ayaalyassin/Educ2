@@ -47,7 +47,7 @@ class QualificationCourseController extends Controller
                 'status' => 0
             ]);
             DB::commit();
-            return $this->returnData($qualification_course, 'operation completed successfully');
+            return $this->returnData($qualification_course, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -99,16 +99,16 @@ class QualificationCourseController extends Controller
             if (!$QualificationCourse)
                 return $this->returnError(404, 'Not found Qualification Course');
             if ($QualificationCourse->date <= now()) {
-                return $this->returnError(501, 'The course has begun');
+                return $this->returnError(501, __('backend.The course has begun', [], app()->getLocale()));
             }
             if ($qualificationUser) {
-                return $this->returnError(500, 'already insert');
+                return $this->returnError(500, __('backend.already insert', [], app()->getLocale()));
             }
             if ($countUser >= $QualificationCourse->count_subscribers) {
-                return $this->returnError(401, 'The number is complete');
+                return $this->returnError(401, __('backend.The number is complete', [], app()->getLocale()));
             }
             if ($user->user()->wallet->value < $QualificationCourse->price)
-                return $this->returnError(500, 'not Enough money in wallet');
+                return $this->returnError(500, __('backend.not Enough money in wallet', [], app()->getLocale()));
             $user->user()->wallet->update([
                 'value' => $user->user()->wallet->value - $QualificationCourse->price
             ]);
@@ -141,7 +141,7 @@ class QualificationCourseController extends Controller
                 'price' => isset($request->price) ? $request->price : $qualification_course->price,
             ]);
             DB::commit();
-            return $this->returnData($qualification_course, 'operation completed successfully');
+            return $this->returnData($qualification_course, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), 'Please try again later');
@@ -163,11 +163,11 @@ class QualificationCourseController extends Controller
             $numberOfUsers = $course->user()->count();
             if ($numberOfUsers != 0) {
                 DB::rollback();
-                return $this->returnError(501, 'cant delete course because There are users who have joined the course');
+                return $this->returnError(501, __('backend.cant delete course because There are users who have joined the course', [], app()->getLocale()));
             }
             $course->delete();
             DB::commit();
-            return $this->returnSuccessMessage('operation completed successfully', 200);
+            return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()), 200);
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), 'Please try again later');

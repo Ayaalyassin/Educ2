@@ -22,7 +22,7 @@ class UpdateTeachingMethodRequest extends FormRequest
         return [
             'title'=>'string',
             'type'=>'string',
-            'description'=>'string',
+            'description'=>'sometimes',
             'file'=>'file',
             'status'=>'boolean',
             'price'=>'numeric|min:0'

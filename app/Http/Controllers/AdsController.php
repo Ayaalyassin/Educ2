@@ -173,7 +173,7 @@ class AdsController extends Controller
 
             DeleteAds::dispatch($id)->delay(Carbon::now()->addSeconds(2));
             DB::commit();
-            return $this->returnSuccessMessage(__('operation completed successfully', [], app()->getLocale()));
+            return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));
 
 
         } catch (\Exception $ex) {
