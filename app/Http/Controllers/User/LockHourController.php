@@ -218,6 +218,9 @@ class LockHourController extends Controller
                         'value' => $wallet->student->user->wallet->value + $service->service->price
                     ]);
                 }
+                $lock_hour->hour->update([
+                    'status' => 1
+                ]);
                 $historyLock = HistoryLockHours::create([
                     'type' => $service->service->type,
                     'nameStudent' => $deleteWallet->student->user->name,
