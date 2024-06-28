@@ -42,7 +42,7 @@ class LockHourController extends Controller
                     'calendar_hours.hour',
                 )
                 ->get();
-            return $this->returnData($lock_hour, 'operation completed successfully');
+            return $this->returnData($lock_hour, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -66,7 +66,7 @@ class LockHourController extends Controller
                     $lock->service_id == $request->service_id and
                     $lock->hour_id == $request->hour_id
                 ) {
-                    return $this->returnError(400, 'already request hour lock');
+                    return $this->returnError(400, __('backend.already request hour lock', [], app()->getLocale()));
                 }
             }
 
@@ -79,7 +79,7 @@ class LockHourController extends Controller
             foreach ($hours as $hour) {
                 if ($hour->id == $request->service_id) {
                     if ($wallet->value < $hour->price) {
-                        return $this->returnError(501, 'not Enough money in wallet');
+                        return $this->returnError(501, __('backend.not Enough money in wallet', [], app()->getLocale()));
                     }
                     if ($hour->type == 'private lesson') {
                         $wallet->update([
@@ -95,7 +95,7 @@ class LockHourController extends Controller
                         'service_id' => $request->service_id,
                         'status' => 0
                     ]);
-                    return $this->returnData(200, 'operation completed successfully');
+                    return $this->returnData(200, __('backend.operation completed successfully', [], app()->getLocale()));
                 }
             }
 
@@ -114,7 +114,7 @@ class LockHourController extends Controller
                 return $this->returnError(400, 'not found request');
             }
             if ($lockHour->status == 1) {
-                return $this->returnError(400, "can't delete because the request is accept");
+                return $this->returnError(400, __("backend.can not delete because the request is accept", [], app()->getLocale()));
             }
             if (!$teacher) {
                 return $this->returnError(400, 'Token is Invalid');
@@ -124,7 +124,7 @@ class LockHourController extends Controller
                 'value' => $user->value + (10 / 100) * $lockHour->service->price,
             ]);
             $lockHour->delete();
-            return $this->returnData($wallet, 'operation completed successfully');
+            return $this->returnData($wallet, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -152,7 +152,7 @@ class LockHourController extends Controller
                     'users.governorate'
                 )
                 ->get();
-            return $this->returnData($lock_hour, 'operation completed successfully');
+            return $this->returnData($lock_hour, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -216,7 +216,7 @@ class LockHourController extends Controller
                     $deleteHour->delete();
                 }
             }
-            return $this->returnData(200, 'operation completed successfully');
+            return $this->returnData(200, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -235,7 +235,7 @@ class LockHourController extends Controller
                 return $this->returnError(404, 'Not found Request');
             }
             if ($lock_hour->status == 1) {
-                return $this->returnError(500, "can't delete Request");
+                return $this->returnError(500, __("backend.can not delete Request", [], app()->getLocale()));
             }
             if ($lock_hour->service->type == 'video call') {
                 $wallet->update([
@@ -247,7 +247,7 @@ class LockHourController extends Controller
                 ]);
             }
             $lock_hour->delete();
-            return $this->returnData(200, 'operation completed successfully');
+            return $this->returnData(200, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }

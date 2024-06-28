@@ -20,19 +20,19 @@ class AdminAuthController extends Controller
 {
     use GeneralTrait;
 
-    public function login_admin(LoginRequest $request)//,Dispatcher $dispatcher)
+    public function login_admin(LoginRequest $request)
     {
         $credentials = $request->only(['email', 'password']);
         $token = JWTAuth::attempt($credentials);
         $exist=User::where('email',$request->email)->first();
         if($exist && !$token)
-            return $this->returnError(401,'The password is wrong');
+            return $this->returnError(401,__('backend.The password is wrong', [], app()->getLocale()));
 
         if (!$token)
-            return $this->returnError(401, 'Account Not found');
+            return $this->returnError(401,__('backend.Account Not found', [], app()->getLocale()));
         $is_block=$exist->whereHas('block')->first();
         if($is_block)
-            return $this->returnError(401,'You are block');
+            return $this->returnError(401,__('backend.You are block', [], app()->getLocale()));
 
         $code=mt_rand(100000, 999999);
         $exist->update([
@@ -50,7 +50,7 @@ class AdminAuthController extends Controller
 //        Mail::to($exist->email)->send(new CodeEmail($mailData));
         //sendCodeEmailJob::dispatch($mailData,$exist)->delay(Carbon::now()->addSeconds(2));
         //DeleteCodeJob::dispatch($exist)->delay(Carbon::now()->addMinutes(2));
-        return $this->returnSuccessMessage('code send successfully');
+        return $this->returnSuccessMessage(__('backend.code send successfully', [], app()->getLocale()));
     }
 
 
@@ -61,20 +61,20 @@ class AdminAuthController extends Controller
 
             $user = User::where('email', $request->email)->first();
             if (!$user)
-                return $this->returnError('402', 'The Email Not Found');
+                return $this->returnError('404', __('backend.The Email Not Found', [], app()->getLocale()));
 
             if (!$user->code)
-                return $this->returnError("401", 'Please request the code again');
+                return $this->returnError("401", __('backend.Please request the code again', [], app()->getLocale()));
 
             if ($user->code != $code)
-                return $this->returnError("403", 'The entered verification code is incorrect');
+                return $this->returnError("400", __('backend.The entered verification code is incorrect', [], app()->getLocale()));
 
             $token = JWTAuth::fromUser($user);
             if (!$token) return $this->returnError('402', 'Unauthorized');
             $user->token=$token;
             $user->loadMissing(['roles']);
 
-            return $this->returnData($user, 'operation completed successfully');
+            return $this->returnData($user, __('backend.operation completed successfully', [], app()->getLocale()));
 
 
         } catch (\Exception $ex) {

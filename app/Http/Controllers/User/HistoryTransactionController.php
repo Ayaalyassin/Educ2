@@ -22,7 +22,7 @@ class HistoryTransactionController extends Controller
             DB::beginTransaction();
             $history = HistoryTransaction::all();
             // DB::commit();
-            return $this->returnData($history, 'operation completed successfully');
+            return $this->returnData($history, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -55,7 +55,7 @@ class HistoryTransactionController extends Controller
             $user = Auth()->user()->name;
             $history = HistoryTransaction::where("name", '=', $user)->get();
             // DB::commit();
-            return $this->returnData($history, 'operation completed successfully');
+            return $this->returnData($history, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());

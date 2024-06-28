@@ -28,7 +28,7 @@ class ReservationAdsController extends Controller
                     $reservation_ads->loadMissing('ads');
             }
 
-            return $this->returnData($reservation_ads,'operation completed successfully');
+            return $this->returnData($reservation_ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
         }
@@ -50,17 +50,17 @@ class ReservationAdsController extends Controller
                 return $this->returnError("404", 'Ads not found');
             $is_exist=$profile_student->reservation_ads()->where('ads_id',$request->ads_id)->first();
             if($is_exist)
-                return $this->returnError("400", 'ads already exist');
+                return $this->returnError("400", __('backend.ads already exist', [], app()->getLocale()));
             if ($ads->start_date <= now()) {
-                return $this->returnError("400", 'ads has begun');
+                return $this->returnError("400", __('backend.ads has begun', [], app()->getLocale()));
             }
 
             if ($ads->number_students ==0) {
-                return $this->returnError("401", 'The number is complete');
+                return $this->returnError("401", __('backend.The number is complete', [], app()->getLocale()));
             }
 
             if ($user->wallet->value < $ads->price)
-                return $this->returnError("402", 'not Enough money in wallet');
+                return $this->returnError("402", __('backend.not Enough money in wallet', [], app()->getLocale()));
             $user->wallet->update([
                 'value' => $user->wallet->value - $ads->price
             ]);
@@ -74,7 +74,7 @@ class ReservationAdsController extends Controller
                 EndAdsJob::dispatch($ads)->delay(Carbon::now()->addSeconds(2));
             }
             DB::commit();
-            return $this->returnData($reservation_ads,'operation completed successfully');
+            return $this->returnData($reservation_ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -92,7 +92,7 @@ class ReservationAdsController extends Controller
                     return $this->returnError("404", 'not found');
                 $reservation_ads->loadMissing('ads');
             }
-            return $this->returnData($reservation_ads,'operation completed successfully');
+            return $this->returnData($reservation_ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
         }
@@ -113,7 +113,7 @@ class ReservationAdsController extends Controller
             }
 
             DB::commit();
-            return $this->returnSuccessMessage('operation completed successfully');
+            return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());

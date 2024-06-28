@@ -9,7 +9,6 @@ use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\ProfileTeacherRequest;
-use App\Models\User;
 
 class ProfileTeacherController extends Controller
 {
@@ -25,13 +24,13 @@ class ProfileTeacherController extends Controller
             $user=auth()->user();
 
             $profile_teacher = ProfileTeacher::where('status',1)//->filter($request)
-                ->orderByRaw("CASE WHEN (SELECT address FROM users WHERE users.id = profile_teachers.user_id) = '{$user->address}' THEN 0 ELSE 1 END")
+            ->orderByRaw("CASE WHEN (SELECT address FROM users WHERE users.id = profile_teachers.user_id) = '{$user->address}' THEN 0 ELSE 1 END")
                 ->get();
             if(count($profile_teacher)>0)
                 $profile_teacher->loadMissing(['user','domains']);
 
             DB::commit();
-            return $this->returnData($profile_teacher, 'operation completed successfully');
+            return $this->returnData($profile_teacher, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -52,8 +51,8 @@ class ProfileTeacherController extends Controller
             }
             $profile_teacher = $user->profile_teacher()->create([
                 'certificate' => $certificate,
-                'description' => isset($request->description) ? $request->description : null,
-                'jurisdiction' => isset($request->jurisdiction) ? $request->jurisdiction : null,
+                'description' => $request->description,
+                'jurisdiction' => $request->jurisdiction,
                 'status' => 0,
                 'assessing' => 0
             ]);
@@ -72,7 +71,7 @@ class ProfileTeacherController extends Controller
             $profile_teacher->loadMissing('domains');
 
             DB::commit();
-            return $this->returnData($profile_teacher, 'operation completed successfully');
+            return $this->returnData($profile_teacher, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -89,7 +88,7 @@ class ProfileTeacherController extends Controller
             $user->loadMissing(['profile_teacher.domains']);
 
             DB::commit();
-            return $this->returnData($user, 'operation completed successfully');
+            return $this->returnData($user, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -107,7 +106,7 @@ class ProfileTeacherController extends Controller
             $profile_teacher->loadMissing(['user','domains']);
 
             DB::commit();
-            return $this->returnData($profile_teacher, 'operation completed successfully');
+            return $this->returnData($profile_teacher, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -161,7 +160,7 @@ class ProfileTeacherController extends Controller
 
             $profile_teacher->loadMissing(['domains','user']);
             DB::commit();
-            return $this->returnData($profile_teacher, 'operation completed successfully');
+            return $this->returnData($profile_teacher, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -181,7 +180,7 @@ class ProfileTeacherController extends Controller
                 return $this->returnError("404", 'not found');
             $profile_teacher->delete();
             DB::commit();
-            return $this->returnSuccessMessage('operation completed successfully');
+            return $this->returnSuccessMessage(__('operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -211,7 +210,7 @@ class ProfileTeacherController extends Controller
 
 
             DB::commit();
-            return $this->returnData($profile_teacher, 'operation completed successfully');
+            return $this->returnData($profile_teacher, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');

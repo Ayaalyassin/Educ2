@@ -29,7 +29,7 @@ class JwtMiddleware extends BaseMiddleware
                 return $this->returnError(401,'UnAuthorization User');
             $is_block=$exist->whereHas('block')->first();
             if($is_block)
-                return $this->returnError("401",'You are block');
+                return $this->returnError(401,__('backend.You are block', [], app()->getLocale()));
 
         } catch (Exception $e) {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){

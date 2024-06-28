@@ -27,7 +27,7 @@ class ReservationTeachingMethodController extends Controller
                 if (count($reservation_teaching_methods) > 0)
                     $reservation_teaching_methods->loadMissing('teaching_method');
             }
-            return $this->returnData($reservation_teaching_methods,'operation completed successfully');
+            return $this->returnData($reservation_teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
         }
@@ -47,14 +47,14 @@ class ReservationTeachingMethodController extends Controller
             $teaching_method=TeachingMethod::find($request->teaching_method_id);
 
             if(!$teaching_method)
-                return $this->returnError("404", 'teaching method not found');
+                return $this->returnError("404", __('backend.teaching method not found', [], app()->getLocale()));
             $is_exist=$profile_student->reservation_teaching_methods()->where('teaching_method_id',$request->teaching_method_id)->first();
             if($is_exist)
-                return $this->returnError("400", 'teaching method already exist');
+                return $this->returnError("400", __('backend.teaching method already exist', [], app()->getLocale()));
             if($teaching_method->price>0) {
 
                 if ($user->wallet->value < $teaching_method->price)
-                    return $this->returnError("402", 'not Enough money in wallet');
+                    return $this->returnError("402", __('backend.not Enough money in wallet', [], app()->getLocale()));
                 $user->wallet->update([
                     'value' => $user->wallet->value - $teaching_method->price
                 ]);
@@ -68,7 +68,7 @@ class ReservationTeachingMethodController extends Controller
             AddWalletTeacherJob::dispatch($teaching_method->id)->delay(Carbon::now()->addSeconds(2));
 
             DB::commit();
-            return $this->returnData($reservation_teaching_methods,'operation completed successfully');
+            return $this->returnData($reservation_teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -88,7 +88,7 @@ class ReservationTeachingMethodController extends Controller
                 $reservation_teaching_methods->delete();
             }
             DB::commit();
-            return $this->returnSuccessMessage('operation completed successfully');
+            return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -105,7 +105,7 @@ class ReservationTeachingMethodController extends Controller
                     return $this->returnError("404", 'not found');
                 $reservation_teaching_methods->loadMissing('teaching_method');
             }
-            return $this->returnData($reservation_teaching_methods,'operation completed successfully');
+            return $this->returnData($reservation_teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
         }

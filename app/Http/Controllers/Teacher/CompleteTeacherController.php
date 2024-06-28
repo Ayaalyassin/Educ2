@@ -38,7 +38,7 @@ class CompleteTeacherController extends Controller
                 }
             ])->where('status', '=', 0)->get();
             DB::commit();
-            return $this->returnData($requestCompletes, 'operation completed successfully');
+            return $this->returnData($requestCompletes, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -85,7 +85,7 @@ class CompleteTeacherController extends Controller
             ]);
             $requestComplete->save();
             DB::commit();
-            return $this->returnData($requestComplete, 'operation completed successfully');
+            return $this->returnData($requestComplete, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -139,7 +139,7 @@ class CompleteTeacherController extends Controller
             ]);
             // $request->save();
             DB::commit();
-            return $this->returnData(200, 'operation completed successfully');
+            return $this->returnData(200, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -168,9 +168,9 @@ class CompleteTeacherController extends Controller
                 'type' => 'complete Request'
             ]);
             $requestComplete->delete();
-            NotificationJobProfile::dispatch($requestComplete->teacher, 'was rejected', 'Your request to complete information has been rejected')->delay(Carbon::now()->addSeconds(2));
+            NotificationJobProfile::dispatch($requestComplete->teacher, 'تم الرفض', 'لقد تم رفض رفض طلب الاستكمال الخاص بك')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
-            return $this->returnData(200, 'delete order successfully');
+            return $this->returnData(200, __('backend.delete order successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -206,9 +206,9 @@ class CompleteTeacherController extends Controller
                 'assessing' => $rate
             ]);
             $requestComplete->save();
-            NotificationJobProfile::dispatch($requestComplete->teacher, 'was accepted', 'Your request to complete information has been accepted')->delay(Carbon::now()->addSeconds(2));
+            NotificationJobProfile::dispatch($requestComplete->teacher, 'تم الموافقة', 'لقد تم الموافقة على طلب الاستكمال الخاص بك')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
-            return $this->returnData(200, 'accept request complete successfully');
+            return $this->returnData(200, __('backend.accept request complete successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getMessage(), $ex->getCode());

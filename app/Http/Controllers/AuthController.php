@@ -26,20 +26,20 @@ class AuthController extends Controller
 
         $exist=User::where('email',$request->email)->first();
         if($exist && !$token)
-            return $this->returnError(401,'The password is wrong');
+            return $this->returnError(401,__('backend.The password is wrong', [], app()->getLocale()));
 
         if (!$token)
-            return $this->returnError(401,'Account Not found');
+            return $this->returnError(401,__('backend.Account Not found', [], app()->getLocale()));
 
         $is_block=$exist->whereHas('block')->first();
         if($is_block)
-            return $this->returnError(401,'You are block');
+            return $this->returnError(401,__('backend.You are block', [], app()->getLocale()));
 
         $user = auth()->user();
         $user->token = $token;
         $user->loadMissing(['roles']);
 
-        return $this->returnData($user, 'operation completed successfully');
+        return $this->returnData($user, __('backend.operation completed successfully', [], app()->getLocale()));
     }
 
 
@@ -72,7 +72,7 @@ class AuthController extends Controller
             'number' => random_int(1000000000000, 9000000000000),
             'value' => 0,
         ]);
-        return $this->returnData($user, 'operation completed successfully');
+        return $this->returnData($user, __('backend.operation completed successfully', [], app()->getLocale()));
     }
 
 
@@ -116,7 +116,8 @@ class AuthController extends Controller
             $user->update([
                 'fcm_token' => $fcm_token
             ]);
-            return $this->returnData($user, 'operation completed successfully');
+
+            return $this->returnData($user, __('backend.operation completed successfully', [], app()->getLocale()));
         }
         catch (\Exception $e)
         {

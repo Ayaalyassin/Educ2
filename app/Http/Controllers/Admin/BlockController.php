@@ -55,7 +55,7 @@ class BlockController extends Controller
                 'reason' => isset($request->reason) ? $request->reason : null,
             ]);
             $block->save();
-            NotificationJobUser::dispatch($user,'You have been blocked','You have been blocked because ' . $block->reason)->delay(Carbon::now()->addSeconds(2));
+            NotificationJobUser::dispatch($user,'تم حظرك','تم حظرك بسبب ' . $block->reason)->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData($block, 200);
         } catch (\Exception $ex) {
@@ -74,7 +74,7 @@ class BlockController extends Controller
             }
             $block->delete();
             DB::commit();
-            return $this->returnData('unblock successfully', 200);
+            return $this->returnData(__('backend.unblock successfully', [], app()->getLocale()), 200);
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());

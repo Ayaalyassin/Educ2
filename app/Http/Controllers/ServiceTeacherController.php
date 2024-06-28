@@ -19,13 +19,12 @@ class ServiceTeacherController extends Controller
     public function index($teacher_id)
     {
         try {
-            //$profile_teacher=User::find($teacher_id)->profile_teacher()->first();
             $profile_teacher=ProfileTeacher::find($teacher_id);
             if (!$profile_teacher) {
                 return $this->returnError("404",'Profile Teacher Not found');
             }
             $service_teachers=$profile_teacher->service_teachers()->orderBy('created_at','desc')->get();
-            return $this->returnData($service_teachers,'operation completed successfully');
+            return $this->returnData($service_teachers, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", "Please try again later");
         }
@@ -63,7 +62,7 @@ class ServiceTeacherController extends Controller
 
 
             DB::commit();
-            return $this->returnData($list_services,'operation completed successfully');
+            return $this->returnData($list_services, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -83,7 +82,7 @@ class ServiceTeacherController extends Controller
             }
 
             DB::commit();
-            return $this->returnData($ServiceTeacher,'operation completed successfully');
+            return $this->returnData($ServiceTeacher, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -110,7 +109,7 @@ class ServiceTeacherController extends Controller
 
 
             DB::commit();
-            return $this->returnData($service_teacher,'operation completed successfully');
+            return $this->returnData($service_teacher, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -129,7 +128,7 @@ class ServiceTeacherController extends Controller
             $service_teacher->delete();
 
             DB::commit();
-            return $this->returnSuccessMessage('operation completed successfully');
+            return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -145,7 +144,7 @@ class ServiceTeacherController extends Controller
             if($profile_teacher)
                 $service_teachers=$profile_teacher->service_teachers()->orderBy('created_at','desc')->get();
 
-            return $this->returnData($service_teachers, 'operation completed successfully');
+            return $this->returnData($service_teachers, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", "Please try again later");
         }

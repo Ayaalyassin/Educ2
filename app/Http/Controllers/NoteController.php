@@ -22,13 +22,13 @@ class NoteController extends Controller
             $services_ids=$profile_teacher->service_teachers()->pluck('id');
             $profile_students=[];
             //if($services_ids && $profile_teacher)
-                $profile_students=ProfileStudent::
+            $profile_students=ProfileStudent::
 //                whereHas('hour_lock',function ($query)use ($services_ids){
 //                    $query->where('status',1)->whereIn('service_id',$services_ids);
 //                })->
-                with('note_as_student')->get();
+            with('note_as_student')->get();
 
-            return $this->returnData($profile_students,'operation completed successfully');
+            return $this->returnData($profile_students, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
         }
@@ -52,7 +52,7 @@ class NoteController extends Controller
             ]);
 
             DB::commit();
-            return $this->returnData($note, 'operation completed successfully');
+            return $this->returnData($note, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -82,7 +82,7 @@ class NoteController extends Controller
             $note->delete();
 
             DB::commit();
-            return $this->returnSuccessMessage('operation completed successfully');
+            return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');

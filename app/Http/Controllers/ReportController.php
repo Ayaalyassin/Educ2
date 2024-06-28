@@ -28,7 +28,7 @@ class ReportController extends Controller
             }])->orderBy('created_at','desc')->get();
 
             DB::commit();
-            return $this->returnData($reports,'operation completed successfully');
+            return $this->returnData($reports, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -50,7 +50,7 @@ class ReportController extends Controller
             }
 //            $is_lock=HistoryLockHours::where('nameStudent',$profile_student->user->name)->where('idProfileTeacher',$$profile_teacher->id)->first();
 //            if(!$is_lock)
-//                return $this->returnError("403",'You Can’t do it');
+//                return $this->returnError("403",__('backend.You Can’t do it', [], app()->getLocale()));
             $report = $profile_teacher->report_as_reporter()->firstOrCreate(
                 ['reported_id' =>  $request->reported_id],
                 ['reported_type' => "App\Models\ProfileStudent"]
@@ -62,7 +62,7 @@ class ReportController extends Controller
             $profile_teacher->loadMissing(['report_as_reporter']);
 
             DB::commit();
-            return $this->returnData($profile_teacher, 'operation completed successfully');
+            return $this->returnData($profile_teacher, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -100,7 +100,7 @@ class ReportController extends Controller
 
 //            $is_lock=HistoryLockHours::where('idProfileTeacher',$profile_teacher->id)->where('nameStudent',$user->name)->first();
 //            if(!$is_lock)
-//                return $this->returnError("403",'You Can’t do it');
+//                return $this->returnError("403",__('backend.You Can’t do it', [], app()->getLocale()));
 
             $report = $profile_student->report_as_reporter()->firstOrCreate(
                 ['reported_id' =>  $request->reported_id],
@@ -114,7 +114,7 @@ class ReportController extends Controller
             $profile_student->loadMissing('report_as_reporter');
 
             DB::commit();
-            return $this->returnData($profile_student, 'operation completed successfully');
+            return $this->returnData($profile_student, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());

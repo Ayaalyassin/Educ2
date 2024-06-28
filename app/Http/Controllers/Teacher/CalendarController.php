@@ -41,7 +41,7 @@ class CalendarController extends Controller
                 ];
             });
             // DB::commit();
-            return $this->returnData($calendar_data, 'operation completed successfully');
+            return $this->returnData($calendar_data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -81,7 +81,7 @@ class CalendarController extends Controller
                     }
                 }
             }
-            return $this->returnData(200, 'operation completed successfully');
+            return $this->returnData(200, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -115,7 +115,7 @@ class CalendarController extends Controller
                     })
                 ];
             });
-            return $this->returnData($calendar_data, 'operation completed successfully');
+            return $this->returnData($calendar_data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -253,7 +253,7 @@ class CalendarController extends Controller
 
             DB::commit();
 
-            return $this->returnData(200, 'Operation completed successfully');
+            return $this->returnData(200, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());

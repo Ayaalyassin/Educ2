@@ -72,7 +72,7 @@ class Kernel extends HttpKernel
         'auth.guard' => \App\Http\Middleware\AssignGuard::class,
         'auth:api' => \Illuminate\Auth\Middleware\Authenticate::class,
 
-
+        'localization' => \App\Http\Middleware\LanguageSwitcher::class,
         'isUser' => \App\Http\Middleware\UserMiddleware::class,
         'isAdmin' => \App\Http\Middleware\AdminMiddleware::class,
         'isTeacher' => \App\Http\Middleware\TeacherMiddleware::class,

@@ -25,7 +25,7 @@ class TeachingMethodController extends Controller
                 return $this->returnError("404",'Profile Teacher Not found');
             }
             $teaching_methods=$profile_teacher->teaching_methods()->orderBy('created_at','desc')->get();
-            return $this->returnData($teaching_methods,'operation completed successfully');
+            return $this->returnData($teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
         }
@@ -45,7 +45,7 @@ class TeachingMethodController extends Controller
             $teaching_method->increment('views');
 
             DB::commit();
-            return $this->returnData($teaching_method,'operation completed successfully');
+            return $this->returnData($teaching_method, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -73,7 +73,7 @@ class TeachingMethodController extends Controller
 
 
             DB::commit();
-            return $this->returnData($teaching_method,'operation completed successfully');
+            return $this->returnData($teaching_method, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", $ex->getMessage());
@@ -108,7 +108,7 @@ class TeachingMethodController extends Controller
             ]);
 
             DB::commit();
-            return $this->returnData($teaching_method,'operation completed successfully');
+            return $this->returnData($teaching_method, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -148,7 +148,7 @@ class TeachingMethodController extends Controller
             if($profile_teacher)
                 $teaching_methods=$profile_teacher->teaching_methods()->orderBy('created_at','desc')->get();
 
-            return $this->returnData($teaching_methods, 'operation completed successfully');
+            return $this->returnData($teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", "Please try again later");
         }
@@ -157,14 +157,14 @@ class TeachingMethodController extends Controller
     public function getAll()
     {
         try {
-        //$teaching_methods = TeachingMethod::with('profile_teacher.user:id,name')->get();
+            //$teaching_methods = TeachingMethod::with('profile_teacher.user:id,name')->get();
 
-        $teaching_methods=TeachingMethod::join('profile_teachers','teaching_methods.profile_teacher_id','=','profile_teachers.id')->
-        join('users','profile_teachers.user_id','=','users.id')
-            ->select('teaching_methods.*','users.name')->orderBy('created_at','desc')
-            ->get();
+            $teaching_methods=TeachingMethod::join('profile_teachers','teaching_methods.profile_teacher_id','=','profile_teachers.id')->
+            join('users','profile_teachers.user_id','=','users.id')
+                ->select('teaching_methods.*','users.name')->orderBy('created_at','desc')
+                ->get();
 
-            return $this->returnData($teaching_methods, 'operation completed successfully');
+            return $this->returnData($teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", "Please try again later");
         }
@@ -187,7 +187,7 @@ class TeachingMethodController extends Controller
             $teaching_method->delete();
 
             DB::commit();
-            return $this->returnSuccessMessage('operation completed successfully');
+            return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
