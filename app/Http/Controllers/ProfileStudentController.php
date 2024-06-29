@@ -20,7 +20,8 @@ class ProfileStudentController extends Controller
         try {
             DB::beginTransaction();
 
-            $profile_student = ProfileStudent::orderBy('created_at','desc')->get();
+            $profile_student = ProfileStudent::whereDoesntHave('user.block')
+            ->orderBy('created_at','desc')->get();
             if (count($profile_student) > 0)
                 $profile_student->loadMissing(['user']);
 

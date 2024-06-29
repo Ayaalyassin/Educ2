@@ -201,7 +201,7 @@ class ProfileTeacherController extends Controller
 
             $profile_teacher->loadMissing(['user.wallet'=> function ($query) {
                 $query->withCount(['governor_charge','governor_recharge']);
-            },'request_complete','teaching_methods','ads','day.hours']);
+            },'request_complete','teaching_methods','ads','day.hours','user.qualification_users']);
             $profile_teacher->loadCount([
                 'report_as_reporter',
                 'report_as_reported',
