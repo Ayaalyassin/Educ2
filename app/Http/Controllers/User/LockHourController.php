@@ -204,8 +204,8 @@ class LockHourController extends Controller
                 return $this->returnError(404, 'Not found Request');
             }
             $deleteWallets = LockHour::where('id', '!=', $id)->get();
+            $timeOnly = Carbon::now()->setTimezone('Asia/Damascus')->toDateString();
             foreach ($deleteWallets as $deleteWallet) {
-                $timeOnly = Carbon::parse($lock_hour->created_at)->format('Y-m-d');
                 $service = $deleteWallet->load('service');
                 if ($service->service->type == 'private lesson') {
                     $wallet = $deleteWallet->load('student.user.wallet');
@@ -218,18 +218,17 @@ class LockHourController extends Controller
                         'value' => $wallet->student->user->wallet->value + $service->service->price
                     ]);
                 }
-                $historyLock = HistoryLockHours::create([
-                    'type' => $service->service->type,
-                    'nameStudent' => $deleteWallet->student->user->name,
-                    'idProfileTeacher' => $user->id,
-                    'hour' => $deleteWallet->hour->hour,
-                    'date' => $timeOnly,
-                    'day' => $deleteWallet->hour->day->day,
-                    'price' => $service->service->price,
-                    'status' => "unacceptable"
-                ]);
             }
-
+            $historyLock = HistoryLockHours::create([
+                'type' => $service->service->type,
+                'nameStudent' => $deleteWallet->student->user->name,
+                'idProfileTeacher' => $user->id,
+                'hour' => $lock_hour->hour->hour,
+                'date' => $timeOnly,
+                'day' => $lock_hour->hour->day->day,
+                'price' => $service->service->price,
+                'status' => "acceptable"
+            ]);
             $lock_hour->hour->update([
                 'status' => 1
             ]);
@@ -286,6 +285,37 @@ class LockHourController extends Controller
             }
             $lock_hour->delete();
             return $this->returnData(200, __('backend.operation completed successfully', [], app()->getLocale()));
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+    public function get_my_accept_request()
+    {
+        try {
+            $user = Auth::user()->profile_student;
+            if (!$user) {
+                return $this->returnError(400, 'Token is Invalid');
+            }
+            $lock_hour = DB::table('lock_hours')
+                ->where('lock_hours.student_id', '=', $user->id)
+                ->join('calendar_hours', 'calendar_hours.id', '=', 'lock_hours.hour_id')
+                ->join('calendar_days', 'calendar_days.id', '=', 'calendar_hours.day_id')
+                ->join('service_teachers', 'service_teachers.id', '=', 'lock_hours.service_id')
+                ->join('profile_teachers', 'profile_teachers.id', '=', 'calendar_days.teacher_id')
+                ->join('users', 'users.id', '=', 'profile_teachers.user_id')
+                ->where('lock_hours.status', '=', 1)
+                ->select(
+                    'lock_hours.id',
+                    'users.name',
+                    'users.address',
+                    'users.governorate',
+                    'calendar_days.day',
+                    'calendar_hours.hour',
+                    'service_teachers.type',
+                    'service_teachers.price'
+                )
+                ->get();
+            return $this->returnData($lock_hour, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }

@@ -24,17 +24,7 @@ class UpdateHoursStatus extends Command
 
     public function handle()
     {
-        $daysOfWeek = [
-            'Saturday' => 'سبت',
-            'Sunday' => 'أحد',
-            'Monday' => 'اثنين',
-            'Tuesday' => 'ثلاثاء',
-            'Wednesday' => 'أربعاء',
-            'Thursday' => 'خميس',
-            'Friday' => 'جمعة'
-        ];
-        // $today = Carbon::now()->format('l');
-        // $todayArabic = $daysOfWeek[$today];
+        
         $today = Carbon::now('Asia/Damascus')->locale('ar')->dayName;
         $days = DB::table('calendar_days')->where('day', $today)->get();
 

@@ -366,6 +366,7 @@ Route::group(['middleware' => ['localization']], function () {
                 Route::post('lock-hour', [LockHourController::class, 'store']);
                 Route::get('delete-request/{id}', [LockHourController::class, 'delete_my_request']);
                 Route::get('show_my_request', [LockHourController::class, 'get_my_request']);
+                Route::get('show_my_accept_request', [LockHourController::class, 'get_my_accept_request']);
             });
         });
 
