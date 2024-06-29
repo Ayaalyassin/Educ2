@@ -33,10 +33,12 @@ class AdsController extends Controller
     public function index()
     {
         try {
-            //$ads = Ads::all();
-            $ads=Ads::join('profile_teachers','ads.profile_teacher_id','=','profile_teachers.id')->
+            $user=auth()->user();
+
+            $ads=Ads::orderByRaw("CASE WHEN place = '{$user->governorate}' THEN 0 ELSE 1 END, created_at DESC")->
+            join('profile_teachers','ads.profile_teacher_id','=','profile_teachers.id')->
             join('users','profile_teachers.user_id','=','users.id')
-                ->select('ads.*','users.name')->orderBy('created_at','desc')
+                ->select('ads.*','users.name')
                 ->get();
 
             return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
