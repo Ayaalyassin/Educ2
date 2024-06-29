@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Wallet;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -29,5 +30,11 @@ class AdminSeed extends Seeder
 
         $role = Role::where('name','admin')->first();
         $admin->assignRole($role);
+
+        $wallet = Wallet::create([
+            'user_id' => $admin->id,
+            'number' => random_int(1000000000000, 9000000000000),
+            'value' => 0,
+        ]);
     }
 }

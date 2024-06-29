@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->timestamp('reserved_at');
 
+            $table->boolean('deducted')->default(0);
+
             $table->bigInteger('profile_student_id')->unsigned();
             $table->foreign('profile_student_id')->references('id')->on('profile_students')->onDelete('cascade');
 
