@@ -108,7 +108,7 @@ class AdsController extends Controller
             if (!$data) {
                 return $this->returnError("404", "Not found");
             }
-            $data->loadMissing(['reservation_ads']);
+            $data->loadMissing(['reservation_ads.profile_student.user:id,name,address']);
             return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", 'Please try again later');

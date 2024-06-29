@@ -103,12 +103,16 @@ class ReservationAdsController extends Controller
     {
         try {
             DB::beginTransaction();
-            $profile_student=auth()->user()->profile_student()->first();
+            $user=auth()->user();
+            $profile_student= $user->profile_student()->first();
             if($profile_student) {
                 $reservation_ads = $profile_student->reservation_ads()->where('id', $id)->first();
                 if (!$reservation_ads)
                     return $this->returnError("404", 'not found');
+                $reservation_ads->ads->increment('number_students');
                 $reservation_ads->delete();
+                $wallet=$user->wallet;
+                $wallet->update(['value'=>$wallet->value+$reservation_ads->ads->price]);
             }
 
             DB::commit();
