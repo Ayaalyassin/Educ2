@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Evaluation;
+use App\Models\HistoryLockHours;
 use App\Models\ProfileTeacher;
 use Illuminate\Http\Request;
 use App\Traits\GeneralTrait;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\EvaluationRequest;
-use App\Models\User;
 
 class EvaluationController extends Controller
 {
@@ -31,6 +31,10 @@ class EvaluationController extends Controller
             $teacher=ProfileTeacher::find($request->teacher_id);
             if(!$teacher)
                 return $this->returnError("404", 'teacher not found');
+
+//            $is_lock=HistoryLockHours::where('nameStudent',$profile_student->user->name)->where('idProfileTeacher',$teacher->id)->first();
+//            if(!$is_lock)
+//                return $this->returnError("403",__('backend.You Can’t do it', [], app()->getLocale()));
 
             $evaluation = Evaluation::firstOrCreate(
                 ['profile_teacher_id' =>  $request->teacher_id],

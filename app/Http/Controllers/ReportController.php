@@ -48,7 +48,7 @@ class ReportController extends Controller
             if (!$profile_student) {
                 return $this->returnError("404", 'Not found' . ' Profile student Id : ' . $request->reported_id);
             }
-//            $is_lock=HistoryLockHours::where('nameStudent',$profile_student->user->name)->where('idProfileTeacher',$$profile_teacher->id)->first();
+//            $is_lock=HistoryLockHours::where('nameStudent',$profile_student->user->name)->where('idProfileTeacher',$profile_teacher->id)->first();
 //            if(!$is_lock)
 //                return $this->returnError("403",__('backend.You Can’t do it', [], app()->getLocale()));
             $report = $profile_teacher->report_as_reporter()->firstOrCreate(
@@ -84,19 +84,6 @@ class ReportController extends Controller
             if (!$profile_teacher) {
                 return $this->returnError("404",'Not found' . ' Profile Teacher Id : ' . $reported_id);
             }
-//
-//            $services_ids=$profile_teacher->service_teachers()->pluck('id');
-//
-//            $is_lock=null;
-//
-//            if($services_ids) {
-//                $is_lock = $user->whereHas('hour_lock', function ($query) use ($services_ids) {
-//                    $query->whereIn('service_id', $services_ids);
-//                })->first();
-//            }
-//
-//            if(!$is_lock)
-//                return $this->returnError("403",'You Can’t do it');
 
 //            $is_lock=HistoryLockHours::where('idProfileTeacher',$profile_teacher->id)->where('nameStudent',$user->name)->first();
 //            if(!$is_lock)

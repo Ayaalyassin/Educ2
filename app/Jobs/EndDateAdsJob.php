@@ -38,6 +38,8 @@ class EndDateAdsJob implements ShouldQueue
             $wallet->update([
                 'value' => $count * $ads->price
             ]);
+
         }
+
     }
 }
