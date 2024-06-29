@@ -52,12 +52,15 @@ class BlockController extends Controller
             if (!$user) {
                 return $this->returnError(404, 'not found user');
             }
+            if ($user->block) {
+                return $this->returnError(501, 'the user is block');
+            }
 
             $block = Block::create([
                 'user_id' => $id,
             ]);
             $block->save();
-            NotificationJobUser::dispatch($user, 'تم حظرك',)->delay(Carbon::now()->addSeconds(2));
+            NotificationJobUser::dispatch($user, 'تم حظرك', '')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData($block, 200);
         } catch (\Exception $ex) {
