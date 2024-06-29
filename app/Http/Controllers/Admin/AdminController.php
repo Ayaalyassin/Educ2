@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\NotificationJobProfile;
 use App\Models\Ads;
 use App\Models\Block;
+use App\Models\EmployeeReport;
 use App\Models\ProfileStudent;
 use App\Models\ProfileTeacher;
 use App\Models\QualificationCourse;
@@ -17,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -44,7 +46,6 @@ class AdminController extends Controller
     {
         try {
             DB::beginTransaction();
-
             $cases = $request->input('case');
             $teacher = ProfileTeacher::find($id);
             if (!$teacher) {
@@ -54,6 +55,13 @@ class AdminController extends Controller
                 return $this->returnError(500, 'The teacher is accept');
             }
 
+            $user = Auth::user();
+            $EmployeeReport = EmployeeReport::create([
+                'nameEmployee' => $user->name,
+                'operation' => "destroy Teacher",
+                'name' => 'Teacher',
+                'nameColumn' => $teacher->user->name,
+            ]);
             $reject_requests = RejectRequest::create([
                 'name' => $teacher->user->name,
                 'case' => $cases,
@@ -85,6 +93,14 @@ class AdminController extends Controller
             ]);
             $teacher->save();
 
+            $user = Auth::user();
+            $EmployeeReport = EmployeeReport::create([
+                'nameEmployee' => $user->name,
+                'operation' => "قبول طلب انضمام استاذ",
+                'name' => $teacher->user->name,
+                'nameColumn' => 'استاذ',
+            ]);
+            $EmployeeReport->save();
             NotificationJobProfile::dispatch($teacher, 'تم الموافقة', 'تم الموافقة على طلبك')->delay(Carbon::now()->addSeconds(2));
 
             DB::commit();
@@ -281,8 +297,17 @@ class AdminController extends Controller
 
             $teacher = ProfileTeacher::find($id);
             if (!$teacher) {
-                return $this->returnError(404, 'Student not found');
+                return $this->returnError(404, 'Teacher not found');
             }
+
+            $user = Auth::user();
+            $EmployeeReport = EmployeeReport::create([
+                'nameEmployee' => $user->name,
+                'operation' => "حذف استاذ من المنصة",
+                'name' => $teacher->user->name,
+                'nameColumn' => 'استاذ',
+            ]);
+            $EmployeeReport->save();
             $teacher->domains()->each(function ($domain) {
                 $domain->delete();
             });
@@ -321,6 +346,15 @@ class AdminController extends Controller
             if (!$student) {
                 return $this->returnError(404, 'Student not found');
             }
+            
+            $user = Auth::user();
+            $EmployeeReport = EmployeeReport::create([
+                'nameEmployee' => $user->name,
+                'operation' => "حذف طالب من المنصة",
+                'name' => $student->user->name,
+                'nameColumn' => 'طالب',
+            ]);
+            $EmployeeReport->save();
             $user = $student->user;
             if ($user) {
                 $block = $user->block;
@@ -396,6 +430,19 @@ class AdminController extends Controller
 
             DB::commit();
             return $this->returnData($teacher, 200);
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+    public function getAllReport()
+    {
+        try {
+            DB::beginTransaction();
+            $report = EmployeeReport::get();
+
+            DB::commit();
+            return $this->returnData($report, 200);
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());

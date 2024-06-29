@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Http\Requests\TransactionsRequest;
+use App\Models\EmployeeReport;
 use App\Models\HistoryTransaction;
 use App\Models\User;
 use App\Traits\GeneralTrait;
@@ -278,13 +279,22 @@ class GovernorController extends Controller
             if (!$convenor) {
                 return $this->returnError(404, 'not found request');
             }
+
+            $admin = Auth::user();
+            $EmployeeReport = EmployeeReport::create([
+                'nameEmployee' => $admin->name,
+                'operation' => "رفض طلب محفظة",
+                'name' => $convenor->wallet->user->name,
+                'nameColumn' => 'مستخدم',
+            ]);
             $convenor->delete();
+            // return $request->case;
             $historyTrn = HistoryTransaction::create([
                 'name' => $history->wallet->user->name,
                 'image' => $history->image_transactions,
                 'type' => $history->type,
                 'value' => $history->amount,
-                'status' => 'Unaccepted',
+                'status' => 'رفض',
                 'case' => $request->case
             ]);
             DB::commit();
@@ -312,13 +322,20 @@ class GovernorController extends Controller
             $historyTrn = HistoryTransaction::create([
                 'name' => $history->wallet->user->name,
                 'image' => $history->image_transactions,
-                'type' => 'charge',
+                'type' => 'شحن',
                 'value' => $history->amount,
-                'status' => 'accepted'
+                'status' => 'موافقة'
             ]);
             $wallet = $convenor->wallet()->first();
             $user = $wallet->user()->first();
 
+            $admin = Auth::user();
+            $EmployeeReport = EmployeeReport::create([
+                'nameEmployee' => $admin->name,
+                'operation' => "قبول طلب شحن للمحفظة",
+                'name' => $convenor->wallet->user->name,
+                'nameColumn' => 'مستخدم',
+            ]);
             NotificationJobUser::dispatch($user, 'تم الموافقة', 'تم الموافقة على طلب الشحن الخاص بك')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData(200, __('backend.charge successfully', [], app()->getLocale()));
@@ -340,13 +357,20 @@ class GovernorController extends Controller
             $historyTrn = HistoryTransaction::create([
                 'name' => $history->wallet->user->name,
                 // 'image' => $history->image_transactions,
-                'type' => 'recharge',
+                'type' => 'تفريغ',
                 'value' => $history->amount,
-                'status' => 'accepted'
+                'status' => 'موافقة '
             ]);
             $wallet = $convenor->wallet()->first();
             $user = $wallet->user()->first();
 
+            $admin = Auth::user();
+            $EmployeeReport = EmployeeReport::create([
+                'nameEmployee' => $admin->name,
+                'operation' => "قبول طلب تفريغ للمحفظة",
+                'name' => $convenor->wallet->user->name,
+                'nameColumn' => 'مستخدم',
+            ]);
             NotificationJobUser::dispatch($user, 'تم الموافقة', 'تم الموافقة على طلب التفريغ الخاص بك')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData(200, __('backend.recharge successfully', [], app()->getLocale()));

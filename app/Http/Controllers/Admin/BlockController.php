@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\BlockRequest;
 use App\Jobs\NotificationJobUser;
 use App\Models\Block;
+use App\Models\EmployeeReport;
 use App\Models\User;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class BlockController extends Controller
@@ -50,12 +52,21 @@ class BlockController extends Controller
             if (!$user) {
                 return $this->returnError(404, 'not found user');
             }
+
             $block = Block::create([
                 'user_id' => $id,
                 'reason' => isset($request->reason) ? $request->reason : null,
             ]);
+
+            // $admin = Auth::user();
+            // $EmployeeReport = EmployeeReport::create([
+            //     'nameEmployee' => $admin->name,
+            //     'operation' => "حظر مستخدم",
+            //     'name' => $user->name,
+            //     'nameColumn' => 'مستخدم',
+            // ]);
             $block->save();
-            NotificationJobUser::dispatch($user,'تم حظرك','تم حظرك بسبب ' . $block->reason)->delay(Carbon::now()->addSeconds(2));
+            NotificationJobUser::dispatch($user, 'تم حظرك', 'تم حظرك بسبب ' . $block->reason)->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData($block, 200);
         } catch (\Exception $ex) {
@@ -72,6 +83,15 @@ class BlockController extends Controller
             if (!$block) {
                 return $this->returnError(404, 'not found user');
             }
+
+            $admin = Auth::user();
+            $EmployeeReport = EmployeeReport::create([
+                'nameEmployee' => $admin->name,
+                'operation' => "فك حظر عن مستخدم",
+                'name' => $block->user->name,
+                'nameColumn' => 'مستخدم',
+            ]);
+
             $block->delete();
             DB::commit();
             return $this->returnData(__('backend.unblock successfully', [], app()->getLocale()), 200);

@@ -92,6 +92,9 @@ Route::group(['middleware' => ['localization']], function () {
                 Route::get('getById/{id}', [ProfileTeacherController::class, 'getById']);
                 Route::get('index', [ProfileTeacherController::class, 'index']);
             });
+            Route::group(['prefix' => 'report'], function () {
+                Route::get('getAll', [AdminController::class, 'getAllReport']);
+            });
         });
 
         Route::group(['prefix' => 'profile_teacher'], function () {

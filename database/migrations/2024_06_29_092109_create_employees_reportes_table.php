@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('history_transaction', function (Blueprint $table) {
+        Schema::create('employees_reportes', function (Blueprint $table) {
             $table->id();
-            $table->string("name");
-            $table->string("image")->nullable();
-            $table->string("type");
-            $table->string("status");
-            $table->double("value");
-            $table->string("case")->nullable();
+            $table->string('nameEmployee');
+            $table->string('operation');
+            $table->string('name');
+            $table->string('nameColumn');
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('history_transaction');
+        Schema::dropIfExists('employees_reportes');
     }
 };

@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CompleteRequest;
 use App\Jobs\NotificationJobProfile;
 use App\Models\CompleteTeacher;
+use App\Models\EmployeeReport;
 use App\Models\RejectRequest;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CompleteTeacherController extends Controller
@@ -167,6 +169,13 @@ class CompleteTeacherController extends Controller
                 'case' => $cases,
                 'type' => 'complete Request'
             ]);
+            $admin = Auth::user();
+            $EmployeeReport = EmployeeReport::create([
+                'nameEmployee' => $admin->name,
+                'operation' => "رفض طلب استكمال معلومات",
+                'name' => $requestComplete->teacher->user->name,
+                'nameColumn' => 'استاذ',
+            ]);
             $requestComplete->delete();
             NotificationJobProfile::dispatch($requestComplete->teacher, 'تم الرفض', 'لقد تم رفض رفض طلب الاستكمال الخاص بك')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
@@ -182,7 +191,6 @@ class CompleteTeacherController extends Controller
             DB::beginTransaction();
             $rate = 0;
             $requestComplete = CompleteTeacher::with('teacher')->find($id);
-            // return $requestComplete;
             if (!$requestComplete) {
                 return $this->returnError(404, 'not found request');
             }
@@ -206,6 +214,14 @@ class CompleteTeacherController extends Controller
                 'assessing' => $rate
             ]);
             $requestComplete->save();
+
+            $admin = Auth::user();
+            $EmployeeReport = EmployeeReport::create([
+                'nameEmployee' => $admin->name,
+                'operation' => "قبول طلب استكمال معلومات",
+                'name' => $requestComplete->teacher->user->name,
+                'nameColumn' => 'استاذ',
+            ]);
             NotificationJobProfile::dispatch($requestComplete->teacher, 'تم الموافقة', 'لقد تم الموافقة على طلب الاستكمال الخاص بك')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData(200, __('backend.accept request complete successfully', [], app()->getLocale()));
