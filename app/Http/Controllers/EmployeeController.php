@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateEmployeeRequest;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
@@ -33,6 +34,11 @@ class EmployeeController extends Controller
 //                return $this->returnError("404",'Not found');
             $data->assignRole($role);
             $data->loadMissing('roles');
+            $wallet = Wallet::create([
+                'user_id' => $data->id,
+                'number' => random_int(1000000000000, 9000000000000),
+                'value' => 0,
+            ]);
             DB::commit();
 
             return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));

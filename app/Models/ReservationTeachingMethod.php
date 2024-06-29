@@ -12,6 +12,7 @@ class ReservationTeachingMethod extends Model
         'profile_student_id',
         'teaching_method_id',
         'reserved_at',
+        'deducted'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

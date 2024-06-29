@@ -24,6 +24,10 @@ class TeachingMethod extends Model
     {
         return $this->belongsTo(ProfileTeacher::class, 'profile_teacher_id');
     }
+    public function reservation_teaching_methods()
+    {
+        return $this->hasMany(ReservationTeachingMethod::class, 'teaching_method_id', 'id');
+    }
 
 
 }
