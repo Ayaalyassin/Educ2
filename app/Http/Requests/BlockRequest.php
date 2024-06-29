@@ -25,9 +25,7 @@ class BlockRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'reason' => 'required|string',
-        ];
+        return [];
     }
     public function failedValidation(Validator $validator)
     {

@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('blocks', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->string('reason');
             $table->timestamps();
         });
     }

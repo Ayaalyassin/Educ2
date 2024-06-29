@@ -55,18 +55,9 @@ class BlockController extends Controller
 
             $block = Block::create([
                 'user_id' => $id,
-                'reason' => isset($request->reason) ? $request->reason : null,
             ]);
-
-            // $admin = Auth::user();
-            // $EmployeeReport = EmployeeReport::create([
-            //     'nameEmployee' => $admin->name,
-            //     'operation' => "حظر مستخدم",
-            //     'name' => $user->name,
-            //     'nameColumn' => 'مستخدم',
-            // ]);
             $block->save();
-            NotificationJobUser::dispatch($user, 'تم حظرك', 'تم حظرك بسبب ' . $block->reason)->delay(Carbon::now()->addSeconds(2));
+            NotificationJobUser::dispatch($user, 'تم حظرك',)->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData($block, 200);
         } catch (\Exception $ex) {
