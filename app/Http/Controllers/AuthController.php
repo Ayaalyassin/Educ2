@@ -31,7 +31,7 @@ class AuthController extends Controller
         if (!$token)
             return $this->returnError(401,__('backend.Account Not found', [], app()->getLocale()));
 
-        $is_block=$exist->whereHas('block')->first();
+        $is_block=User::where('email',$request->email)->whereHas('block')->first();
         if($is_block)
             return $this->returnError(401,__('backend.You are block', [], app()->getLocale()));
 

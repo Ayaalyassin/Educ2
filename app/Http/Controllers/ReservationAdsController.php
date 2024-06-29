@@ -70,7 +70,6 @@ class ReservationAdsController extends Controller
             ]);
             $ads->decrement('number_students');
             if($ads->number_students==0) {
-                $ads->update(['active' => 0]);
                 EndAdsJob::dispatch($ads)->delay(Carbon::now()->addSeconds(2));
             }
             DB::commit();

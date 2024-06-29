@@ -27,7 +27,7 @@ class JwtMiddleware extends BaseMiddleware
             $exist=auth()->user();
             if(!$exist)
                 return $this->returnError(401,'UnAuthorization User');
-            $is_block=$exist->whereHas('block')->first();
+            $is_block=auth()->user()->whereHas('block')->first();
             if($is_block)
                 return $this->returnError(401,__('backend.You are block', [], app()->getLocale()));
 
