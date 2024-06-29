@@ -81,6 +81,7 @@ class GovernorController extends Controller
                         'name' => $governor->wallet->user->name,
                         'address' => $governor->wallet->user->address,
                         'governorate' => $governor->wallet->user->governorate,
+                        'transferCompany' => $governor->transferCompany,
                         'date' => Carbon::parse($governor->created_at)->toDateString()
                     ];
                 });
@@ -142,6 +143,7 @@ class GovernorController extends Controller
                         'name' => $governor->wallet->user->name,
                         'address' => $governor->wallet->user->address,
                         'governorate' => $governor->wallet->user->governorate,
+                        'transferCompany' => $governor->transferCompany,
                         'date' => Carbon::parse($governor->created_at)->toDateString()
                     ];
                 });

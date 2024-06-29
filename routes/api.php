@@ -92,12 +92,15 @@ Route::group(['middleware' => ['localization']], function () {
                 Route::get('getById/{id}', [ProfileTeacherController::class, 'getById']);
                 Route::get('index', [ProfileTeacherController::class, 'index']);
             });
+        });
+
+        Route::group(['middleware' => ['hasRole:admin']], function () {
+
             Route::group(['prefix' => 'report'], function () {
                 Route::get('getAll', [AdminController::class, 'getAllReport']);
                 Route::get('getById/{id}', [AdminController::class, 'getById']);
             });
         });
-
         Route::group(['prefix' => 'profile_teacher'], function () {
             Route::group(['middleware' => 'hasRole:admin|employee'], function () {
                 Route::get('getByIdForAdmin/{id}', [ProfileTeacherController::class, 'getByIdForAdmin']);
@@ -194,12 +197,13 @@ Route::group(['middleware' => ['localization']], function () {
             });
         });
 
-        Route::group(['prefix' => 'report'], function () {
-            Route::get('get', [ReportController::class, 'index'])->middleware('hasRole:admin|employee');
-            Route::post('report_student', [ReportController::class, 'report_student'])->middleware(['hasRole:teacher', 'profileTeacher']);;
-            Route::post('report_teacher', [ReportController::class, 'report_teacher'])->middleware(['hasRole:student', 'profileStudent']);
+        Route::group(['middleware' => ['hasRole:admin']], function () {
+            Route::group(['prefix' => 'report'], function () {
+                Route::get('get', [ReportController::class, 'index'])->middleware('hasRole:admin|employee');
+                Route::post('report_student', [ReportController::class, 'report_student'])->middleware(['hasRole:teacher', 'profileTeacher']);;
+                Route::post('report_teacher', [ReportController::class, 'report_teacher'])->middleware(['hasRole:student', 'profileStudent']);
+            });
         });
-
         Route::group(['middleware' => ['hasRole:admin']], function () {
 
             Route::group(['prefix' => 'role'], function () {
@@ -214,7 +218,6 @@ Route::group(['middleware' => ['localization']], function () {
         });
 
         Route::group(['middleware' => ['hasRole:teacher']], function () {
-
             Route::group(['prefix' => 'ServiceTeacher'], function () {
                 Route::group(['middleware' => ['teacher']], function () {
                     Route::post('store', [ServiceTeacherController::class, 'store']);
@@ -226,7 +229,6 @@ Route::group(['middleware' => ['localization']], function () {
         });
 
         Route::get('ServiceTeacher/getById/{id}', [ServiceTeacherController::class, 'show']);
-
         Route::group(['middleware' => ['hasRole:student']], function () {
             Route::get('ServiceTeacher/getAll/{id}', [ServiceTeacherController::class, 'index']);
         });
@@ -267,7 +269,7 @@ Route::group(['middleware' => ['localization']], function () {
         //  khadr
         Route::group(['prefix' => 'transactions-wallet'], function () {
 
-            Route::group(['middleware' => ['hasRole:admin']], function () {
+            Route::group(['middleware' => ['hasRole:admin|employee']], function () {
                 Route::get('get-request-charge-student', [GovernorController::class, 'get_request_charge_student']);
                 Route::get('get-request-charge-teacher', [GovernorController::class, 'get_request_charge_teacher']);
                 Route::get('get-request-recharge-student', [GovernorController::class, 'get_request_recharge_student']);
@@ -277,14 +279,14 @@ Route::group(['middleware' => ['localization']], function () {
                 Route::get('accept_request_recharge/{id}', [GovernorController::class, 'accept_request_recharge']);
                 Route::get('history_transaction', [HistoryTransactionController::class, 'index']);
             });
-            // Route::group(['middleware' => ['hasRole:student', 'hasRole:teacher']], function () {
-            Route::post('add-request-charge', [GovernorController::class, 'addRequestCharge']);
-            Route::post('add-request-recharge', [GovernorController::class, 'addRequestRecharge']);
-            Route::get('show-my-request-charge', [GovernorController::class, 'show']);
-            Route::get('show-my-request-recharge', [GovernorController::class, 'showMyRequestRecharge']);
-            Route::get('show-my-wallet', [WalletController::class, 'show']);
-            Route::get('show-my-history', [HistoryTransactionController::class, 'show']);
-            // });
+            Route::group(['middleware' => ['hasRole:student|teacher']], function () {
+                Route::post('add-request-charge', [GovernorController::class, 'addRequestCharge']);
+                Route::post('add-request-recharge', [GovernorController::class, 'addRequestRecharge']);
+                Route::get('show-my-request-charge', [GovernorController::class, 'show']);
+                Route::get('show-my-request-recharge', [GovernorController::class, 'showMyRequestRecharge']);
+                Route::get('show-my-wallet', [WalletController::class, 'show']);
+                Route::get('show-my-history', [HistoryTransactionController::class, 'show']);
+            });
         });
 
         //  khader
@@ -301,7 +303,7 @@ Route::group(['middleware' => ['localization']], function () {
         });
 
         // Admin khader
-        Route::group(['prefix' => 'request-join', 'middleware' => ['hasRole:admin']], function () {
+        Route::group(['prefix' => 'request-join', 'middleware' => ['hasRole:admin|employee']], function () {
             Route::get('get', [AdminController::class, 'index']);
             Route::post('delete-request-join/{id}', [AdminController::class, 'destroy']);
             Route::get('accept-request-join/{id}', [AdminController::class, 'accept_request_teacher']);

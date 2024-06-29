@@ -453,9 +453,19 @@ class AdminController extends Controller
     {
         try {
             DB::beginTransaction();
-            $employee = User::find($id);
-            $report = EmployeeReport::get();
-
+            $employee = User::where('id', $id)->whereHas('roles', function ($q) {
+                $q->where('name', "employee");
+            })->first();
+            if (!$employee) {
+                return $this->returnError(500, "employee not found");
+            }
+            $reports = EmployeeReport::all();
+            $report = [];
+            foreach ($reports as $value) {
+                if ($value->nameEmployee == $employee->name) {
+                    $report[] = $value;
+                }
+            }
             DB::commit();
             return $this->returnData($report, 200);
         } catch (\Exception $ex) {
