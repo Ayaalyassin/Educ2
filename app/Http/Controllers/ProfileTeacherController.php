@@ -24,6 +24,7 @@ class ProfileTeacherController extends Controller
             $user=auth()->user();
 
             $profile_teacher = ProfileTeacher::where('status',1)//->filter($request)
+                ->whereDoesntHave('user.block')
             ->orderByRaw("CASE WHEN (SELECT governorate FROM users WHERE users.id = profile_teachers.user_id) = '{$user->governorate}' THEN 0 ELSE 1 END")
                 ->get();
             if(count($profile_teacher)>0)
