@@ -346,7 +346,7 @@ class AdminController extends Controller
             if (!$student) {
                 return $this->returnError(404, 'Student not found');
             }
-            
+
             $user = Auth::user();
             $EmployeeReport = EmployeeReport::create([
                 'nameEmployee' => $user->name,
@@ -439,6 +439,21 @@ class AdminController extends Controller
     {
         try {
             DB::beginTransaction();
+            $report = EmployeeReport::get();
+
+            DB::commit();
+            return $this->returnData($report, 200);
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    public function getById($id)
+    {
+        try {
+            DB::beginTransaction();
+            $employee = User::find($id);
             $report = EmployeeReport::get();
 
             DB::commit();

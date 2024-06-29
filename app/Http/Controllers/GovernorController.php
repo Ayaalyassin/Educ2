@@ -49,6 +49,8 @@ class GovernorController extends Controller
                         'name' => $governor->wallet->user->name,
                         'address' => $governor->wallet->user->address,
                         'governorate' => $governor->wallet->user->governorate,
+                        'image_transactions' => $governor->image_transactions,
+                        'date' => Carbon::parse($governor->created_at)->toDateString()
                     ];
                 });
             DB::commit();
@@ -79,6 +81,7 @@ class GovernorController extends Controller
                         'name' => $governor->wallet->user->name,
                         'address' => $governor->wallet->user->address,
                         'governorate' => $governor->wallet->user->governorate,
+                        'date' => Carbon::parse($governor->created_at)->toDateString()
                     ];
                 });
             DB::commit();
@@ -108,6 +111,8 @@ class GovernorController extends Controller
                         'name' => $governor->wallet->user->name,
                         'address' => $governor->wallet->user->address,
                         'governorate' => $governor->wallet->user->governorate,
+                        'image_transactions' => $governor->image_transactions,
+                        'date' => Carbon::parse($governor->created_at)->toDateString()
                     ];
                 });
             DB::commit();
@@ -137,6 +142,7 @@ class GovernorController extends Controller
                         'name' => $governor->wallet->user->name,
                         'address' => $governor->wallet->user->address,
                         'governorate' => $governor->wallet->user->governorate,
+                        'date' => Carbon::parse($governor->created_at)->toDateString()
                     ];
                 });
             DB::commit();

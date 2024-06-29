@@ -94,6 +94,7 @@ Route::group(['middleware' => ['localization']], function () {
             });
             Route::group(['prefix' => 'report'], function () {
                 Route::get('getAll', [AdminController::class, 'getAllReport']);
+                Route::get('getById/{id}', [AdminController::class, 'getById']);
             });
         });
 
