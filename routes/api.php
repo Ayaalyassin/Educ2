@@ -327,6 +327,9 @@ Route::group(['middleware' => ['localization']], function () {
             Route::delete('unblock-user/{id}', [BlockController::class, 'destroy']);
         });
 
+        Route::group(['prefix' => 'statistics', 'middleware' => ['hasRole:admin']], function () {
+            Route::get('percentage', [AdminController::class, 'allPercentage']);
+        });
         //khader
 
         Route::group(['middleware' => 'hasRole:admin|employee'], function () {

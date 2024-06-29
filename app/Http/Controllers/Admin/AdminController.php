@@ -473,6 +473,46 @@ class AdminController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
+    public function allPercentage()
+    {
+        try {
+            DB::beginTransaction();
+            $totalUsers = User::count();
+
+            $studentCount = User::whereHas('roles', function ($query) {
+                $query->where('name', 'student');
+            })->count();
+            $studentPercentage = ($studentCount / $totalUsers) * 100;
+
+            $blockedStudentsCount = User::whereHas('roles', function ($query) {
+                $query->where('name', 'student');
+            })->whereHas('block')->count();
+            $blockedStudentPercentage = ($blockedStudentsCount / $totalUsers) * 100;
+
+            $blockedTeachersCount = User::whereHas('roles', function ($query) {
+                $query->where('name', 'student');
+            })->whereHas('block')->count();
+            $blockedTeacherPercentage = ($blockedTeachersCount / $totalUsers) * 100;
+
+            $teacherCount = User::whereHas('roles', function ($query) {
+                $query->where('name', 'teacher');
+            })->count();
+            $teacherPercentage = ($teacherCount / $totalUsers) * 100;
+
+            $pre = [
+                'studentPercentage' => $studentPercentage,
+                'teacherPercentage' => $teacherPercentage,
+                'blockedStudentPercentage' => $blockedStudentPercentage,
+                'blockedTeacherPercentage' => $blockedTeacherPercentage
+
+            ];
+            DB::commit();
+            return $this->returnData($pre, 200);
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
 }
 
 

@@ -13,8 +13,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('backup:database')->monthly();
-//        $schedule->command('queue:work --once')->everyTwoMinutes()->withoutOverlapping();
-//        $schedule->command('queue:restart')->everyThreeMinutes()->withoutOverlapping();
+        $schedule->command('hours:update-status')->dailyAt('00:00');
+        //        $schedule->command('queue:work --once')->everyTwoMinutes()->withoutOverlapping();
+        //        $schedule->command('queue:restart')->everyThreeMinutes()->withoutOverlapping();
     }
 
     /**
