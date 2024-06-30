@@ -29,8 +29,8 @@ class QualificationCourseRequest extends FormRequest
         return [
             'name' => 'required|string',
             'description' => 'required|string',
-            'date' => 'required|date',
-            'end_date' => 'required|date',
+            'date' => 'required|date|after:today',
+            'end_date' => 'required|date|after:start_date',
             'count_subscribers' => 'required|integer',
             'price' => 'required|integer',
             'place' => 'required|string',

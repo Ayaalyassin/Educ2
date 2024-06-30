@@ -24,7 +24,6 @@ class UpdateHoursStatus extends Command
 
     public function handle()
     {
-        
         $today = Carbon::now('Asia/Damascus')->locale('ar')->dayName;
         $days = DB::table('calendar_days')->where('day', $today)->get();
 
@@ -33,9 +32,18 @@ class UpdateHoursStatus extends Command
                 DB::table('calendar_hours')
                     ->where('day_id', $day->id)
                     ->update(['status' => 0]);
+
+                $hours = DB::table('calendar_hours')->where('day_id', $day->id)->get();
+
+                foreach ($hours as $hour) {
+                    DB::table('lock_hours')
+                        ->where('hour_id', $hour->id)
+                        ->delete();
+                }
             }
-            $this->info('Hours status updated successfully!');
+            $this->info('Hours status updated and related lock hours deleted successfully!');
         } else {
+            // رسالة عدم وجود يوم مطابق لليوم الحالي
             $this->info('No day found for today.');
         }
 
