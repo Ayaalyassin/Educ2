@@ -39,14 +39,6 @@ class ServiceTeacherController extends Controller
 
             $profile_teacher=auth()->user()->profile_teacher()->first();
 
-//            $exist=$profile_teacher->service_teachers()->where('type',$request->type)->first();
-//            if($exist)
-//                return $this->returnError('401', 'the service already exist');
-//
-//            $service_teacher= $profile_teacher->service_teachers()->create([
-//                'price' => $request->price,
-//                'type' =>$request->type,
-//            ]);
             $services = $request->services;
             $list_services = [];
             foreach ($services as $value) {

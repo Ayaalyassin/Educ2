@@ -8,11 +8,13 @@ use App\Http\Requests\PasswordNewRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Jobs\DeleteCodeJob;
 use App\Jobs\ForgetPasswordJob;
+use App\Mail\ForgetPasswordMail;
 use App\Models\User;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class PasswordController extends Controller
@@ -52,8 +54,8 @@ class PasswordController extends Controller
                 ];
 
 //                ForgetPasswordJob::dispatch($mailData,$user)->delay(Carbon::now()->addSeconds(2));
-                //Mail::to($user->email)->send(new ForgetPasswordMail($mailData));
-                //DeleteCodeJob::dispatch($this->exist)->delay(Carbon::now()->addMinutes(2));
+                Mail::to($user->email)->send(new ForgetPasswordMail($mailData));
+                DeleteCodeJob::dispatch($this->exist)->delay(Carbon::now()->addMinutes(2));
                 return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));
             }
             else

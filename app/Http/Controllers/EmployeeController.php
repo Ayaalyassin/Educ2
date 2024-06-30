@@ -30,8 +30,7 @@ class EmployeeController extends Controller
                 'birth_date'     =>$request->birth_date,
             ]);
             $role=Role::where('name',"employee")->first();
-//            if(!$role)
-//                return $this->returnError("404",'Not found');
+
             $data->assignRole($role);
             $data->loadMissing('roles');
             $wallet = Wallet::create([
@@ -116,10 +115,7 @@ class EmployeeController extends Controller
     public function getAll()
     {
         try {
-//            $data = User::whereHas('roles',function ($query){
-//                $query->where('id','!=',1)->where('id','!=',2)
-//                ->where('id','!=',3);
-//            })->get();
+
             $data = User::whereHas('roles',function ($query){
                 $query->where('id',4);
             })->get();

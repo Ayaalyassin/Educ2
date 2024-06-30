@@ -88,7 +88,7 @@ class AdsController extends Controller
             $today = date('Y-m-d');
             $diff = (strtotime($ads->end_date) - strtotime($today)) / (60 * 60 * 24);
 
-            //EndDateAdsJob::dispatch($user->id,$ads->id)->delay(Carbon::now()->addDays($diff));
+            EndDateAdsJob::dispatch($user->id,$ads->id)->delay(Carbon::now()->addDays($diff));
 
             DB::commit();
             return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
@@ -147,7 +147,7 @@ class AdsController extends Controller
             if(isset($request->end_date)) {
                 $today = date('Y-m-d');
                 $diff = (strtotime($ads->end_date) - strtotime($today)) / (60 * 60 * 24);
-                //EndDateAdsJob::dispatch($user->id, $ads->id)->delay(Carbon::now()->addDays($diff));
+                EndDateAdsJob::dispatch($user->id, $ads->id)->delay(Carbon::now()->addDays($diff));
             }
 
             DB::commit();
