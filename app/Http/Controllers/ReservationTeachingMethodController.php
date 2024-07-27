@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TeachingMethodUserRequest;
 use App\Jobs\AddWalletTeacherJob;
-use App\Models\ReservationTeachingMethod;
 use App\Models\TeachingMethod;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileStudentAdsRequest;
 use App\Jobs\EndAdsJob;
 use App\Models\Ads;
-use App\Models\ReservationAds;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

@@ -182,29 +182,18 @@ trait GeneralTrait
 //      public function newFirebase($title,$body,$fcm_token)
 //      {
 //          try {
-//              $message = [
-//                  "message" => [
-//                      "token" => $fcm_token,
-//                      "notification" => [
-//                          "body" => $body,
-//                          "title" => $title
-//                      ]
-//                  ]
-//              ];
+//
 //              $apiUrl = 'https://fcm.googleapis.com/v1/projects/educ-9319e/messages:send';
 //              $access_token = Cache::remember('access_token', now()->addHour(), function () use ($apiUrl) {
 //                  $credentialsFilePath = storage_path('app/fcm.json');
 //                  $client = new \Google_Client();
 //                  $client->setAuthConfig($credentialsFilePath);
 //                  $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
-//                  //$client->fetchAccessTokenWithAssertion();
 //                  $client->refreshTokenWithAssertion();
 //                  $token = $client->getAccessToken();
 //                  return $token['access_token'];
 //              });
-////              $response = Http::withHeader('Authorization', "Bearer $access_token")
-////                  ->post($apiUrl, $message);
-////              return $response;
+//
 //              $headers=["Authorization:Bearer $access_token",
 //                  'Content-Type:application/json'];
 //              $test_data=[

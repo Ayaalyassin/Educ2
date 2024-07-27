@@ -11,7 +11,6 @@ use App\Traits\GeneralTrait;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\ReportRequest;
 use Carbon\Carbon;
-use App\Models\User;
 
 class ReportController extends Controller
 {
@@ -21,10 +20,16 @@ class ReportController extends Controller
     {
         try {
             DB::beginTransaction();
-            $reports = Report::with(['reporter.user'=>function($query){
-                $query->select('users.id','users.name');
-            },'reported.user'=>function($query){
-                $query->select('users.id','users.name');
+            $reports = Report::with(['reporter'=>function($query){
+                $query->select('id','user_id');
+                $query->with([
+                    'user:id,name'
+                ]);
+            },'reported'=>function($query){
+                $query->select('id','user_id');
+                $query->with([
+                    'user:id,name'
+                ]);
             }])->orderBy('created_at','desc')->get();
 
             DB::commit();

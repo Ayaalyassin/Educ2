@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,7 +9,6 @@ use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
-use Spatie\Permission\Traits\HasPermissions;
 //use LaravelLegends\EloquentFilter\Concerns\HasFilter;
 
 class User extends Authenticatable implements JWTSubject
@@ -44,7 +42,9 @@ class User extends Authenticatable implements JWTSubject
         'remember_token',
         'created_at',
         'updated_at',
-        'code'
+        'code',
+        'google_id',
+        'email_verified_at'
     ];
 
     /**
@@ -180,6 +180,13 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Notification::class, 'user_id', 'id');
     }
+
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class,'user_id','id');
+    }
+
 
     public function setPasswordAttribute($value)
     {

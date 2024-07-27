@@ -33,7 +33,7 @@ class EmployeeController extends Controller
 
             $data->assignRole($role);
             $data->loadMissing('roles');
-            $wallet = Wallet::create([
+            Wallet::create([
                 'user_id' => $data->id,
                 'number' => random_int(1000000000000, 9000000000000),
                 'value' => 0,

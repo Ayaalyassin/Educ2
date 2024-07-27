@@ -83,5 +83,11 @@ class ProfileStudent extends Model
         return $this->hasOne(CompleteStudent::class, 'student_id', 'id');
     }
 
+    public function favourites()
+    {
+        return $this->belongsToMany(ProfileTeacher::class, 'favourites', 'profile_student_id', 'profile_teacher_id');
+
+    }
+
 
 }

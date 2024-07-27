@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use App\Traits\GeneralTrait;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\ServiceTeacherRequest;
-use App\Models\User;
 
 class ServiceTeacherController extends Controller
 {

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CodeRequest;
 use App\Http\Requests\LoginRequest;
 use App\Jobs\DeleteCodeJob;
-use App\Jobs\sendCodeEmailJob;
 use App\Models\User;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
@@ -13,8 +12,7 @@ use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CodeEmail;
-use Illuminate\Contracts\Bus\Dispatcher;
-use Illuminate\Support\Facades\Artisan;
+
 
 class AdminAuthController extends Controller
 {
@@ -44,13 +42,12 @@ class AdminAuthController extends Controller
             'title' => 'Code login',
 
             'code' => $code,
-            //'email'=>$exist->email
 
         ];
 
-        Mail::to($exist->email)->send(new CodeEmail($mailData));
+        //Mail::to($exist->email)->send(new CodeEmail($mailData));
         //sendCodeEmailJob::dispatch($mailData,$exist)->delay(Carbon::now()->addSeconds(2));
-        DeleteCodeJob::dispatch($exist)->delay(Carbon::now()->addMinutes(2));
+        //DeleteCodeJob::dispatch($exist)->delay(Carbon::now()->addMinutes(6));
         return $this->returnSuccessMessage(__('backend.code send successfully', [], app()->getLocale()));
     }
 
