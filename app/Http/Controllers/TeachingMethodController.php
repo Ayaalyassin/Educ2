@@ -91,6 +91,8 @@ class TeachingMethodController extends Controller
             $profile_teacher=auth()->user()->profile_teacher()->first();
 
             $teaching_method=$profile_teacher->teaching_methods()->find($id);
+            if (!$teaching_method)
+                return $this->returnError("404",'teaching_method Not found');
 
             $file=null;
             if (isset($request->file)) {

@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateAdsRequest;
 use App\Jobs\DeleteAds;
-use App\Jobs\EndAdsJob;
 use App\Jobs\EndDateAdsJob;
 use App\Models\Ads;
 use App\Models\ProfileTeacher;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests\AdsRequest;
@@ -104,11 +102,20 @@ class AdsController extends Controller
     {
         try {
             $data = Ads::where('id', $id)
+                ->with([
+                    'reservation_ads.profile_student' => function ($query) {
+                        $query->select('id', 'phone', 'user_id');
+                        $query->with([
+                            'user:id,name,address'
+                        ]);
+                    }
+                ])
                 ->first();
+
             if (!$data) {
                 return $this->returnError("404", "Not found");
             }
-            $data->loadMissing(['reservation_ads.profile_student.user:id,name,address']);
+            //$data->loadMissing(['reservation_ads.profile_student.user:id,name,address']);
             return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", 'Please try again later');

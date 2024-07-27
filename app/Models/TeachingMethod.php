@@ -28,6 +28,10 @@ class TeachingMethod extends Model
     {
         return $this->hasMany(ReservationTeachingMethod::class, 'teaching_method_id', 'id');
     }
+    public function series()
+    {
+        return $this->hasMany(Series::class, 'teaching_method_id', 'id');
+    }
 
 
 }

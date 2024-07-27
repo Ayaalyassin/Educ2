@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileStudentRequest;
-use App\Http\Requests\UpdateProfileStudentRequest;
 use App\Models\ProfileStudent;
 use Illuminate\Http\Request;
 use App\Traits\GeneralTrait;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ProfileStudentController extends Controller

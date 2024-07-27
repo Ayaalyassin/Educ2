@@ -3,19 +3,22 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BlockController;
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FavouriteController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordController;
-use App\Http\Controllers\ProfileStudentAdsController;
+//use App\Http\Controllers\ProfileStudentAdsController;
 use App\Http\Controllers\ReservationAdsController;
 use App\Http\Controllers\ReservationTeachingMethodController;
+use App\Http\Controllers\SeriesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileTeacherController;
 use App\Http\Controllers\AdsController;
-use App\Http\Controllers\AppointmentAvailableController;
-use App\Http\Controllers\AppointmentTeacherStudentController;
+//use App\Http\Controllers\AppointmentAvailableController;
+//use App\Http\Controllers\AppointmentTeacherStudentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\GovernorController;
@@ -25,13 +28,13 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\QualificationCourseController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\RequestCompleteController;
+//use App\Http\Controllers\RequestCompleteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceTeacherController;
 use App\Http\Controllers\Teacher\CalendarController;
 use App\Http\Controllers\Teacher\CompleteTeacherController;
 use App\Http\Controllers\TeachingMethodController;
-use App\Http\Controllers\TeachingMethodUserController;
+//use App\Http\Controllers\TeachingMethodUserController;
 use App\Http\Controllers\User\CompleteController;
 use App\Http\Controllers\User\CompleteStudentController;
 use App\Http\Controllers\User\HistoryTransactionController;
@@ -390,6 +393,31 @@ Route::group(['middleware' => ['localization']], function () {
             Route::get("viewed", [NotificationController::class, 'getNotificationsViewed']);
             Route::get("{id}", [NotificationController::class, 'getById']);
             Route::delete("{id}", [NotificationController::class, 'delete']);
+        });
+
+        Route::group(['prefix' => 'comments'], function () {
+            Route::get('commentsAds/{id}', [CommentController::class, 'commentsAds']);
+            Route::post("store", [CommentController::class, 'store']);
+            Route::post("update/{id}", [CommentController::class, 'update']);
+            Route::delete("delete/{id}", [CommentController::class, 'destroy']);
+        });
+
+        Route::group(['prefix' => 'favourite'], function () {
+            Route::group(['middleware' => ['hasRole:student']], function () {
+                Route::get('getMyFavourite', [FavouriteController::class, 'getMyFavourite']);
+                Route::post("store", [FavouriteController::class, 'store'])->middleware('profileStudent');
+            });
+        });
+
+        Route::group(['prefix' => 'series'], function () {
+            Route::get('getAll/{id}', [SeriesController::class, 'index']);
+            Route::group(['middleware' => ['hasRole:teacher','profileTeacher']], function () {
+                Route::post('store', [SeriesController::class, 'store']);
+                Route::post('update/{id}', [SeriesController::class, 'update']);
+                Route::delete("delete/{id}", [SeriesController::class, 'destroy']);
+            });
+            Route::get('getMySeries', [SeriesController::class, 'getMySeries']);
+            Route::get('getById/{id}', [SeriesController::class, 'show']);
         });
     });
 });

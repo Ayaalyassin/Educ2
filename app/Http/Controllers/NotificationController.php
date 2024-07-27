@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Notification;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
 

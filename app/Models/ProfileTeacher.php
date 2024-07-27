@@ -93,4 +93,10 @@ class ProfileTeacher extends Model
     {
         return intval($this->evaluation_as_teacher()->avg('rate'));
     }
+
+    public function favourites()
+    {
+        return $this->belongsToMany(ProfileStudent::class, 'favourites', 'profile_teacher_id', 'profile_student_id');
+
+    }
 }

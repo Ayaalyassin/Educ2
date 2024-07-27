@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\CommentController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 //use LaravelLegends\EloquentFilter\Concerns\HasFilter;
@@ -32,5 +33,10 @@ class Ads extends Model
     public function reservation_ads()
     {
         return $this->hasMany(ReservationAds::class,'ads_id','id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class,'ads_id','id');
     }
 }
