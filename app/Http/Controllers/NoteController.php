@@ -23,13 +23,15 @@ class NoteController extends Controller
             $users_name=HistoryLockHours::where('idProfileTeacher',$profile_teacher->id)->pluck('nameStudent');
             $profile_students=[];
             if(count($users_name)>0) {
-                $profile_students = ProfileStudent::with(['user' => function ($query) use ($users_name) {
+                $profile_students = ProfileStudent::whereHas('user', function ($query) use ($users_name) {
                     $query->select('id', 'name')
                         ->whereIn('name', $users_name);
-                }, 'note_as_student' => function ($query) use ($profile_teacher) {
-                    $query->where('profile_teacher_id', $profile_teacher->id);
-                }])
+                })
+                    ->with(['note_as_student' => function ($query) use ($profile_teacher) {
+                        $query->where('profile_teacher_id', $profile_teacher->id);
+                    }])
                     ->get();
+
             }
 
 
