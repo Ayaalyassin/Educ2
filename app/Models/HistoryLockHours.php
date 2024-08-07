@@ -18,7 +18,8 @@ class HistoryLockHours extends Model
         'day',
         'price',
         'status',
-        'idProfileTeacher'
+        'idProfileTeacher',
+        'case'
     ];
     protected $hidden = ['created_at', 'updated_at'];
 }

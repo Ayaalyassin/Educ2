@@ -13,6 +13,7 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class LockHourController extends Controller
 {
@@ -127,6 +128,7 @@ class LockHourController extends Controller
                         'hour_id' => $request->hour_id,
                         'service_id' => $request->service_id,
                         'date' => $request->date,
+                        'value' => $hour->price,
                         'status' => 0
                     ]);
                     return $this->returnData(200, __('backend.operation completed successfully', [], app()->getLocale()));
@@ -139,7 +141,7 @@ class LockHourController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
             $lockHour = LockHour::find($id);
@@ -155,7 +157,20 @@ class LockHourController extends Controller
             }
             $user = $lockHour->student->user->wallet;
             $wallet = $user->update([
-                'value' => $user->value + (10 / 100) * $lockHour->service->price,
+                'value' => $user->value + (10 / 100) * $lockHour->value,
+            ]);
+            $timeOnly = Carbon::now()->setTimezone('Asia/Damascus')->toDateString();
+            $historyLock = HistoryLockHours::create([
+                'type' => $lockHour->service->type,
+                'nameStudent' => $lockHour->student->user->name,
+                'idProfileTeacher' => $user->id,
+                'hour' => $lockHour->hour->hour,
+                'dateAccept' => $timeOnly,
+                'date' => $lockHour->date,
+                'day' => $lockHour->hour->day->day,
+                'price' => $lockHour->value,
+                'status' => "UnAcceptable",
+                'case' => $request->case,
             ]);
             $lockHour->delete();
             return $this->returnData($wallet, __('backend.operation completed successfully', [], app()->getLocale()));
@@ -179,12 +194,13 @@ class LockHourController extends Controller
                 ->join('users', 'users.id', '=', 'profile_teachers.user_id')
                 ->select(
                     'service_teachers.type',
+                    'lock_hours.value',
                     'calendar_hours.hour',
                     'calendar_days.day',
                     'lock_hours.date',
                     'users.name',
                     'users.address',
-                    'users.governorate'
+                    'users.governorate',
                 )
                 ->get();
             return $this->returnData($lock_hour, __('backend.operation completed successfully', [], app()->getLocale()));
@@ -204,34 +220,38 @@ class LockHourController extends Controller
             if (!$lock_hour) {
                 return $this->returnError(404, 'Not found Request');
             }
+            if ($lock_hour->status == 1) {
+                return $this->returnError(501, 'The Request is accept');
+            }
             $deleteWallets = LockHour::where('id', '!=', $id)
                 ->where('date', '=', $lock_hour->date)
                 ->get();
             $timeOnly = Carbon::now()->setTimezone('Asia/Damascus')->toDateString();
             foreach ($deleteWallets as $deleteWallet) {
                 $service = $deleteWallet->load('service');
+
                 if ($service->service->type == 'private lesson') {
                     $wallet = $deleteWallet->load('student.user.wallet');
                     $wallet->student->user->wallet->update([
-                        'value' => $wallet->student->user->wallet->value + (10 / 100) * $service->service->price
+                        'value' => $wallet->student->user->wallet->value + (10 / 100) * $deleteWallet->value
                     ]);
                 } else {
                     $wallet = $deleteWallet->load('student.user.wallet');
                     $wallet->student->user->wallet->update([
-                        'value' => $wallet->student->user->wallet->value + $service->service->price
+                        'value' => $wallet->student->user->wallet->value + $deleteWallet->value
                     ]);
                 }
             }
             $historyLock = HistoryLockHours::create([
-                'type' => $service->service->type,
-                'nameStudent' => $deleteWallet->student->user->name,
+                'type' => $lock_hour->service->type,
+                'nameStudent' => $lock_hour->student->user->name,
                 'idProfileTeacher' => $user->id,
                 'hour' => $lock_hour->hour->hour,
                 'dateAccept' => $timeOnly,
                 'date' => $lock_hour->date,
                 'day' => $lock_hour->hour->day->day,
-                'price' => $service->service->price,
-                'status' => "acceptable"
+                'price' => $lock_hour->value,
+                'status' => "acceptable",
             ]);
             $lock_hour->hour->update([
                 'status' => 1
@@ -239,11 +259,11 @@ class LockHourController extends Controller
             $wallet = Auth::user()->wallet;
             if ($lock_hour->service->type == 'video call') {
                 $wallet->update([
-                    'value' => $wallet->value + $lock_hour->service->price
+                    'value' => $wallet->value + $lock_hour->value
                 ]);
             } elseif ($lock_hour->service->type == 'private lesson') {
                 $wallet->update([
-                    'value' => $wallet->value + (10 / 100) * $lock_hour->service->price
+                    'value' => $wallet->value + (10 / 100) * $lock_hour->value
                 ]);
             }
             $hour = $lock_hour->hour;
@@ -280,11 +300,11 @@ class LockHourController extends Controller
             }
             if ($lock_hour->service->type == 'video call') {
                 $wallet->update([
-                    'value' => $wallet->value + $lock_hour->service->price
+                    'value' => $wallet->value + $lock_hour->value
                 ]);
             } elseif ($lock_hour->service->type == 'private lesson') {
                 $wallet->update([
-                    'value' => $wallet->value + (10 / 100) * $lock_hour->service->price
+                    'value' => $wallet->value + (10 / 100) * $lock_hour->value
                 ]);
             }
             $lock_hour->delete();
@@ -317,7 +337,7 @@ class LockHourController extends Controller
                     'calendar_hours.hour',
                     'lock_hours.date',
                     'service_teachers.type',
-                    'service_teachers.price'
+                    'lock_hours.value'
                 )
                 ->get();
             return $this->returnData($lock_hour, __('backend.operation completed successfully', [], app()->getLocale()));

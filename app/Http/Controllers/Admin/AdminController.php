@@ -27,9 +27,6 @@ class AdminController extends Controller
 {
 
     use GeneralTrait;
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         try {

@@ -363,7 +363,7 @@ Route::group(['middleware' => ['localization']], function () {
                 Route::get('get_all_accept_request', [LockHourController::class, 'get_all_accept_request']);
                 Route::get('accept-request/{id}', [LockHourController::class, 'accept_request']);
                 Route::get('user_lock', [LockHourController::class, 'index']);
-                Route::delete('delete/{id}', [LockHourController::class, 'destroy']);
+                Route::post('delete/{id}', [LockHourController::class, 'destroy']);
             });
             Route::group(['middleware' => 'hasRole:student'], function () {
                 Route::get('getById/{id}', [CalendarController::class, 'show']);

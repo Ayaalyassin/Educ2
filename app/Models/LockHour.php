@@ -13,6 +13,7 @@ class LockHour extends Model
         'teacher_id',
         'service_id',
         'hour_id',
+        'value',
         'status',
         'date'
     ];

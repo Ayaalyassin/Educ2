@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('student_id')->references('id')->on('profile_students')->onDelete('cascade');
             $table->integer('service_id')->references('id')->on('service_teachers')->onDelete('cascade');
             $table->integer('hour_id')->references('id')->on('calendar_hours')->onDelete('cascade');
+            $table->float('value')->default(0.0);
             $table->integer('status')->default(0);
             $table->date('date');
             $table->timestamps();
