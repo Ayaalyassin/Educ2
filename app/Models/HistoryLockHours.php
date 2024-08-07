@@ -14,6 +14,7 @@ class HistoryLockHours extends Model
         'nameStudent',
         'hour',
         'date',
+        'dateAccept',
         'day',
         'price',
         'status',

@@ -28,6 +28,7 @@ class LockHourRequest extends FormRequest
         return [
             'service_id' => 'required|exists:service_teachers,id',
             'hour_id' => 'required|exists:calendar_hours,id',
+            'date' => 'required|date|after_or_equal:today'
         ];
     }
     public function failedValidation(Validator $validator)

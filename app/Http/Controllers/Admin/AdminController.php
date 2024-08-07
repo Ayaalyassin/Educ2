@@ -7,6 +7,7 @@ use App\Jobs\NotificationJobProfile;
 use App\Models\Ads;
 use App\Models\Block;
 use App\Models\EmployeeReport;
+use App\Models\HistoryLockHours;
 use App\Models\ProfileStudent;
 use App\Models\ProfileTeacher;
 use App\Models\QualificationCourse;
@@ -163,11 +164,32 @@ class AdminController extends Controller
         }
     }
 
-
-    public function count_teacher()
+    public function allPercentage()
     {
         try {
             DB::beginTransaction();
+            $totalUsers = User::count();
+
+            $studentCount = User::whereHas('roles', function ($query) {
+                $query->where('name', 'student');
+            })->whereDoesntHave('block')->count();
+            $studentPercentage = ($studentCount / $totalUsers) * 100;
+
+            $blockedStudentsCount = User::whereHas('roles', function ($query) {
+                $query->where('name', 'student');
+            })->whereHas('block')->count();
+            $blockedStudentPercentage = ($blockedStudentsCount / $totalUsers) * 100;
+
+            ///////////
+            $blockedTeachersCount = User::whereHas('roles', function ($query) {
+                $query->where('name', 'student');
+            })->whereHas('block')->count();
+            $blockedTeacherPercentage = ($blockedTeachersCount / $totalUsers) * 100;
+
+            $teacherCount = User::whereHas('roles', function ($query) {
+                $query->where('name', 'teacher');
+            })->whereDoesntHave('block')->count();
+            $teacherPercentage = ($teacherCount / $totalUsers) * 100;
             $totalTeachers = User::whereHas('roles', function ($q) {
                 $q->where('name', "teacher");
             })->whereHas('profile_teacher', function ($qu) {
@@ -189,20 +211,68 @@ class AdminController extends Controller
             $courses = QualificationCourse::count();
             $ads_free = Ads::where('price', 0)->count();
             $ads = Ads::count();
-            DB::commit();
 
-            $data = [
+            ///////////
+
+
+            $totalStudents = User::whereHas('roles', function ($q) {
+                $q->where('name', "student");
+            })->whereHas('profile_student')->count();
+
+            $unblockStudents = User::whereHas('roles', function ($q) {
+                $q->where('name', "student");
+            })->whereHas('profile_student')
+                ->whereDoesntHave('block')->count();
+
+            $blockStudents = User::whereHas('roles', function ($q) {
+                $q->where('name', "student");
+            })->whereHas('profile_student')
+                ->whereHas('block')->count();
+
+            $employees = User::whereHas('roles', function ($q) {
+                $q->where('name', "employee");
+            })->count();
+
+            $blockEmployees = User::whereHas('roles', function ($q) {
+                $q->where('name', "employee");
+            })->whereHas('block')->count();
+
+            $unBlockEmployees = User::whereHas('roles', function ($q) {
+                $q->where('name', "employee");
+            })->whereDoesntHave('block')->count();
+            $employeesCount = User::whereHas('roles', function ($query) {
+                $query->where('name', 'employee');
+            })->whereDoesntHave('block')->count();
+            $employeesPercentage = ($employeesCount / $totalUsers) * 100;
+            $video = HistoryLockHours::where('type', 'vide')->count();
+            $pre = [
                 'total_teachers' => $totalTeachers,
                 'unblock_teachers' => $unblockTeachers,
                 'block_teachers' => $blockTeachers,
+                'teacherPercentage' => $teacherPercentage,
+                'blockedTeacherPercentage' => $blockedTeacherPercentage,
                 'teaching_methods' => $teaching_methods,
                 'teaching_methods_free' => $teaching_methods_free,
+
+                'total_students' => $totalStudents,
+                'unblock_students' => $unblockStudents,
+                'block_students' => $blockStudents,
+                'studentPercentage' => $studentPercentage,
+                'blockedStudentPercentage' => $blockedStudentPercentage,
+
+                'employees' => $employees,
+                'unblock_employees' => $unBlockEmployees,
+                'block_employees' => $blockEmployees,
+                'employeesPercentage' => $employeesPercentage,
+
                 'courses' => $courses,
                 'ads' => $ads,
                 'ads_free' => $ads_free,
-            ];
+                'video_call' => $video,
 
-            return $this->returnData($data, 'Counts retrieved successfully');
+            ];
+            DB::commit();
+            return $this->returnData($pre, 200);
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -251,39 +321,6 @@ class AdminController extends Controller
             $teachers = ProfileStudent::with('user')->with('user.wallet')->get();
             DB::commit();
             return $this->returnData($teachers, 200);
-        } catch (\Exception $ex) {
-            DB::rollback();
-            return $this->returnError($ex->getCode(), $ex->getMessage());
-        }
-    }
-    public function count_student()
-    {
-        try {
-            DB::beginTransaction();
-
-            $totalStudents = User::whereHas('roles', function ($q) {
-                $q->where('name', "student");
-            })->whereHas('profile_student')->count();
-
-            $unblockStudents = User::whereHas('roles', function ($q) {
-                $q->where('name', "student");
-            })->whereHas('profile_student')
-                ->whereDoesntHave('block')->count();
-
-            $blockStudents = User::whereHas('roles', function ($q) {
-                $q->where('name', "student");
-            })->whereHas('profile_student')
-                ->whereHas('block')->count();
-
-            DB::commit();
-
-            $data = [
-                'total_students' => $totalStudents,
-                'unblock_students' => $unblockStudents,
-                'block_students' => $blockStudents
-            ];
-
-            return $this->returnData($data, 'Counts retrieved successfully');
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -468,46 +505,6 @@ class AdminController extends Controller
             }
             DB::commit();
             return $this->returnData($report, 200);
-        } catch (\Exception $ex) {
-            DB::rollback();
-            return $this->returnError($ex->getCode(), $ex->getMessage());
-        }
-    }
-    public function allPercentage()
-    {
-        try {
-            DB::beginTransaction();
-            $totalUsers = User::count();
-
-            $studentCount = User::whereHas('roles', function ($query) {
-                $query->where('name', 'student');
-            })->count();
-            $studentPercentage = ($studentCount / $totalUsers) * 100;
-
-            $blockedStudentsCount = User::whereHas('roles', function ($query) {
-                $query->where('name', 'student');
-            })->whereHas('block')->count();
-            $blockedStudentPercentage = ($blockedStudentsCount / $totalUsers) * 100;
-
-            $blockedTeachersCount = User::whereHas('roles', function ($query) {
-                $query->where('name', 'student');
-            })->whereHas('block')->count();
-            $blockedTeacherPercentage = ($blockedTeachersCount / $totalUsers) * 100;
-
-            $teacherCount = User::whereHas('roles', function ($query) {
-                $query->where('name', 'teacher');
-            })->count();
-            $teacherPercentage = ($teacherCount / $totalUsers) * 100;
-
-            $pre = [
-                'studentPercentage' => $studentPercentage,
-                'teacherPercentage' => $teacherPercentage,
-                'blockedStudentPercentage' => $blockedStudentPercentage,
-                'blockedTeacherPercentage' => $blockedTeacherPercentage
-
-            ];
-            DB::commit();
-            return $this->returnData($pre, 200);
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());

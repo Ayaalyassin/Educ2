@@ -9,6 +9,7 @@ use App\Models\HistoryLockHours;
 use App\Models\LockHour;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -72,8 +73,9 @@ class LockHourController extends Controller
                     'users.name',
                     'users.address',
                     'users.governorate',
-                    'calendar_days.day',
                     'calendar_hours.hour',
+                    'calendar_days.day',
+                    'lock_hours.date',
                     'service_teachers.type'
                 )
                 ->get();
@@ -94,22 +96,19 @@ class LockHourController extends Controller
                 return $this->returnError(400, 'Token is Invalid');
             }
 
-            $locks = $student->hour_lock;
-            foreach ($locks as $lock) {
-                if (
-                    $lock->service_id == $request->service_id and
-                    $lock->hour_id == $request->hour_id
-                ) {
-                    return $this->returnError(400, __('backend.already request hour lock', [], app()->getLocale()));
-                }
+            $existingLock = $student->hour_lock()
+                ->where('service_id', $request->service_id)
+                ->where('hour_id', $request->hour_id)
+                ->where('date', $request->date)
+                ->first();
+
+            if ($existingLock) {
+                return $this->returnError(400, __('backend.already request hour lock', [], app()->getLocale()));
             }
-
             $hours = CalendarHour::find($request->hour_id)->day->teacher->service_teachers;
-
             if (!CalendarHour::find($request->hour_id)) {
                 return $this->returnError(404, 'The Hour Not Found');
             }
-
             foreach ($hours as $hour) {
                 if ($hour->id == $request->service_id) {
                     if ($wallet->value < $hour->price) {
@@ -127,6 +126,7 @@ class LockHourController extends Controller
                     $student->hour_lock()->create([
                         'hour_id' => $request->hour_id,
                         'service_id' => $request->service_id,
+                        'date' => $request->date,
                         'status' => 0
                     ]);
                     return $this->returnData(200, __('backend.operation completed successfully', [], app()->getLocale()));
@@ -181,6 +181,7 @@ class LockHourController extends Controller
                     'service_teachers.type',
                     'calendar_hours.hour',
                     'calendar_days.day',
+                    'lock_hours.date',
                     'users.name',
                     'users.address',
                     'users.governorate'
@@ -203,7 +204,9 @@ class LockHourController extends Controller
             if (!$lock_hour) {
                 return $this->returnError(404, 'Not found Request');
             }
-            $deleteWallets = LockHour::where('id', '!=', $id)->get();
+            $deleteWallets = LockHour::where('id', '!=', $id)
+                ->where('date', '=', $lock_hour->date)
+                ->get();
             $timeOnly = Carbon::now()->setTimezone('Asia/Damascus')->toDateString();
             foreach ($deleteWallets as $deleteWallet) {
                 $service = $deleteWallet->load('service');
@@ -224,7 +227,8 @@ class LockHourController extends Controller
                 'nameStudent' => $deleteWallet->student->user->name,
                 'idProfileTeacher' => $user->id,
                 'hour' => $lock_hour->hour->hour,
-                'date' => $timeOnly,
+                'dateAccept' => $timeOnly,
+                'date' => $lock_hour->date,
                 'day' => $lock_hour->hour->day->day,
                 'price' => $service->service->price,
                 'status' => "acceptable"
@@ -311,6 +315,7 @@ class LockHourController extends Controller
                     'users.governorate',
                     'calendar_days.day',
                     'calendar_hours.hour',
+                    'lock_hours.date',
                     'service_teachers.type',
                     'service_teachers.price'
                 )

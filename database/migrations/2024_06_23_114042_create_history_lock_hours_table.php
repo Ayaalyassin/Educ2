@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string("type");
             $table->string("nameStudent");
             $table->string("hour");
-            $table->string("date");
+            $table->date("date");
+            $table->date("dateAccept");
             $table->string("day");
             $table->string("status");
             $table->float('price');

@@ -309,13 +309,13 @@ Route::group(['middleware' => ['localization']], function () {
             Route::get('get', [AdminController::class, 'index']);
             Route::post('delete-request-join/{id}', [AdminController::class, 'destroy']);
             Route::get('accept-request-join/{id}', [AdminController::class, 'accept_request_teacher']);
-            Route::get('count-teacher', [AdminController::class, 'count_teacher']);
+            // Route::get('count-teacher', [AdminController::class, 'count_teacher']);
             Route::delete('delete-teacher/{id}', [AdminController::class, 'destroy_teacher']);
             Route::delete('delete-student/{id}', [AdminController::class, 'destroy_student']);
             Route::get('get-teacher-unblock', [AdminController::class, 'get_all_teacher_unblock']);
             Route::get('get-teacher-block', [AdminController::class, 'get_all_teacher_block']);
             Route::get('get-teacher', [AdminController::class, 'get_all_teacher']);
-            Route::get('count-student', [AdminController::class, 'count_student']);
+            // Route::get('count-student', [AdminController::class, 'count_student']);
 
             Route::get('get-student-unblock', [AdminController::class, 'get_all_student_unblock']);
             Route::get('get-student-block', [AdminController::class, 'get_all_student_block']);

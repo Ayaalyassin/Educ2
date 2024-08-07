@@ -10,7 +10,11 @@ class LockHour extends Model
     use HasFactory;
     protected $table = "lock_hours";
     protected $fillable = [
-        'teacher_id', 'service_id', 'hour_id','status'
+        'teacher_id',
+        'service_id',
+        'hour_id',
+        'status',
+        'date'
     ];
     protected $hidden = ['created_at', 'updated_at', 'id'];
 
