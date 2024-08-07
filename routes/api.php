@@ -10,6 +10,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordController;
 //use App\Http\Controllers\ProfileStudentAdsController;
 use App\Http\Controllers\ReservationAdsController;
+use App\Http\Controllers\ReservationSeriesController;
 use App\Http\Controllers\ReservationTeachingMethodController;
 use App\Http\Controllers\SeriesController;
 use Illuminate\Http\Request;
@@ -71,6 +72,7 @@ Route::group(['middleware' => ['localization']], function () {
     Route::post('login_admin', [AdminAuthController::class, 'login_admin']);
     Route::post('codeAdmin', [AdminAuthController::class, 'codeAdmin']);
     Route::post('refreshToken', [AuthController::class, 'refreshToken']);
+    Route::get('test', [AuthController::class, 'test']);
 
 
     Route::group(['middleware' => ['jwt.verify']], function () {
@@ -78,7 +80,7 @@ Route::group(['middleware' => ['localization']], function () {
         Route::post('test', [AuthController::class, 'test']);
         Route::post('resetPassword', [PasswordController::class, 'resetPassword']);
         Route::delete('deleteMyAccount', [AuthController::class, 'deleteMyAccount']);
-        Route::get('test', [AdminAuthController::class, 'test']);
+        //Route::get('test', [AdminAuthController::class, 'test']);
 
         Route::group(['middleware' => ['hasRole:teacher']], function () {
 
@@ -416,8 +418,11 @@ Route::group(['middleware' => ['localization']], function () {
                 Route::post('update/{id}', [SeriesController::class, 'update']);
                 Route::delete("delete/{id}", [SeriesController::class, 'destroy']);
             });
-            Route::get('getMySeries', [SeriesController::class, 'getMySeries']);
+            Route::get('getMySeries', [SeriesController::class, 'getMySeries'])->middleware('hasRole:teacher');
             Route::get('getById/{id}', [SeriesController::class, 'show']);
+            Route::get('getSeries', [ReservationSeriesController::class, 'getSeries'])->middleware('hasRole:student');
+            Route::get('getByIdSeries/{id}', [ReservationSeriesController::class, 'getByIdSeries'])->middleware('hasRole:student');
+            Route::get('getSeriesForTeaching/{id}', [ReservationSeriesController::class, 'getSeriesForTeaching'])->middleware('hasRole:student');
         });
     });
 });

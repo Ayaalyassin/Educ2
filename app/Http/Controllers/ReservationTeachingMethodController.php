@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TeachingMethodUserRequest;
 use App\Jobs\AddWalletTeacherJob;
+use App\Models\Series;
 use App\Models\TeachingMethod;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
@@ -18,20 +19,19 @@ class ReservationTeachingMethodController extends Controller
     public function getMyTeachingMethod()
     {
         try {
-            $profile_student=auth()->user()->profile_student()->first();
-            $reservation_teaching_methods=[];
-            if($profile_student) {
+            $profile_student = auth()->user()->profile_student()->first();
+            $reservation_teaching_methods = [];
+            if ($profile_student) {
                 $reservation_teaching_methods = $profile_student->reservation_teaching_methods()
-                    ->orderBy('created_at','desc')->get();
+                    ->orderBy('created_at', 'desc')->get();
                 if (count($reservation_teaching_methods) > 0)
                     $reservation_teaching_methods->loadMissing('teaching_method');
             }
             return $this->returnData($reservation_teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
-            return $this->returnError("500",$ex->getMessage());
+            return $this->returnError("500", $ex->getMessage());
         }
     }
-
 
 
     public function store(TeachingMethodUserRequest $request)
@@ -39,18 +39,18 @@ class ReservationTeachingMethodController extends Controller
         try {
             DB::beginTransaction();
 
-            $user=auth()->user();
+            $user = auth()->user();
 
-            $profile_student=$user->profile_student()->first();
+            $profile_student = $user->profile_student()->first();
 
-            $teaching_method=TeachingMethod::find($request->teaching_method_id);
+            $teaching_method = TeachingMethod::find($request->teaching_method_id);
 
-            if(!$teaching_method)
+            if (!$teaching_method)
                 return $this->returnError("404", __('backend.teaching method not found', [], app()->getLocale()));
-            $is_exist=$profile_student->reservation_teaching_methods()->where('teaching_method_id',$request->teaching_method_id)->first();
-            if($is_exist)
+            $is_exist = $profile_student->reservation_teaching_methods()->where('teaching_method_id', $request->teaching_method_id)->first();
+            if ($is_exist)
                 return $this->returnError("400", __('backend.teaching method already exist', [], app()->getLocale()));
-            if($teaching_method->price>0) {
+            if ($teaching_method->price > 0) {
 
                 if ($user->wallet->value < $teaching_method->price)
                     return $this->returnError("402", __('backend.not Enough money in wallet', [], app()->getLocale()));
@@ -60,9 +60,9 @@ class ReservationTeachingMethodController extends Controller
                 $user->wallet->save();
             }
 
-            $reservation_teaching_methods=$profile_student->reservation_teaching_methods()->create([
-                'teaching_method_id'=>$request->teaching_method_id,
-                'reserved_at'=>Carbon::now()->format('Y-m-d H:i:s')
+            $reservation_teaching_methods = $profile_student->reservation_teaching_methods()->create([
+                'teaching_method_id' => $request->teaching_method_id,
+                'reserved_at' => Carbon::now()->format('Y-m-d H:i:s')
             ]);
             AddWalletTeacherJob::dispatch($teaching_method->id)->delay(Carbon::now()->addSeconds(2));
 
@@ -79,8 +79,8 @@ class ReservationTeachingMethodController extends Controller
     {
         try {
             DB::beginTransaction();
-            $profile_student=auth()->user()->profile_student()->first();
-            if($profile_student) {
+            $profile_student = auth()->user()->profile_student()->first();
+            if ($profile_student) {
                 $reservation_teaching_methods = $profile_student->reservation_teaching_methods()->where('id', $id)->first();
                 if (!$reservation_teaching_methods)
                     return $this->returnError("404", 'not found');
@@ -97,8 +97,8 @@ class ReservationTeachingMethodController extends Controller
     public function show($id)
     {
         try {
-            $profile_student=auth()->user()->profile_student()->first();
-            if($profile_student) {
+            $profile_student = auth()->user()->profile_student()->first();
+            if ($profile_student) {
                 $reservation_teaching_methods = $profile_student->reservation_teaching_methods()->where('id', $id)->first();
                 if (!$reservation_teaching_methods)
                     return $this->returnError("404", 'not found');
@@ -106,7 +106,9 @@ class ReservationTeachingMethodController extends Controller
             }
             return $this->returnData($reservation_teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
-            return $this->returnError("500",$ex->getMessage());
+            return $this->returnError("500", $ex->getMessage());
         }
     }
+
 }
+
