@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\HistoryLockHours;
 use App\Models\Note;
 use App\Models\ProfileStudent;
 use Illuminate\Http\Request;
@@ -19,14 +20,18 @@ class NoteController extends Controller
     {
         try {
             $profile_teacher=auth()->user()->profile_teacher()->first();
-            $services_ids=$profile_teacher->service_teachers()->pluck('id');
+            $users_name=HistoryLockHours::where('idProfileTeacher',$profile_teacher->id)->pluck('nameStudent');
             $profile_students=[];
-            //if($services_ids && $profile_teacher)
-            $profile_students=ProfileStudent::
-//                whereHas('hour_lock',function ($query)use ($services_ids){
-//                    $query->where('status',1)->whereIn('service_id',$services_ids);
-//                })->
-            with('note_as_student')->get();
+            if(count($users_name)>0) {
+                $profile_students = ProfileStudent::with(['user' => function ($query) use ($users_name) {
+                    $query->select('id', 'name')
+                        ->whereIn('name', $users_name);
+                }, 'note_as_student' => function ($query) use ($profile_teacher) {
+                    $query->where('profile_teacher_id', $profile_teacher->id);
+                }])
+                    ->get();
+            }
+
 
             return $this->returnData($profile_students, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
@@ -46,10 +51,14 @@ class NoteController extends Controller
             if (!$student)
                 return $this->returnError(404, 'Profile Student Id Not Found');
 
-            $note = $user->note_as_teacher()->create([
-                'note' => $request->note,
+            $exists=HistoryLockHours::where('nameStudent',$student->user->name)->exists();
+            if(!$exists)
+                return $this->returnError("403",__('backend.You Can’t do it', [], app()->getLocale()));
+
+            $note = $user->note_as_teacher()->firstOrCreate([
                 'profile_student_id' => $request->student_id
             ]);
+            $note->update(['note'=>$request->note]);
 
             DB::commit();
             return $this->returnData($note, __('backend.operation completed successfully', [], app()->getLocale()));

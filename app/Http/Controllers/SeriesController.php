@@ -71,7 +71,10 @@ class SeriesController extends Controller
         try {
             DB::beginTransaction();
 
-            $series= Series::find($id);
+            $profile_teacher=auth()->user()->profile_teacher()->first();
+            $teaching_methods_ids=$profile_teacher->teaching_methods()->get('id');
+
+            $series= Series::whereIn('teaching_method_id',$teaching_methods_ids)->first();
             if (!$series) {
                 return $this->returnError("404",'series Not found');
             }
