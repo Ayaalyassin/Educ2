@@ -85,14 +85,21 @@ class ChannelController extends Controller
      */
     public function disconnect($id)
     {
-        $channel = Channel::find($id);
-        if (!$channel) {
-            return $this->returnError(404, 'not Found channel');
+        try {
+            $channel = Channel::find($id);
+            if (!$channel) {
+                return $this->returnError(404, 'not Found channel');
+            }
+            $channel->update([
+                'status' => false,
+                'teacherId' => null,
+                'studentId' => null
+            ]);
+
+            return $this->returnData(200, "the channel {{$channel->id}} became free");
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
         }
-        $channel->update([
-            'status' => false,
-            'teacherId' => null,
-            'studentId' => null
-        ]);
     }
 }

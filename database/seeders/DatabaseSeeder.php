@@ -24,5 +24,6 @@ class DatabaseSeeder extends Seeder
         );
         $this->call(AdminSeed::class);
         $this->call(ChannelSeeder::class);
+        $this->call(ProfitRatiosSeeder::class);
     }
 }

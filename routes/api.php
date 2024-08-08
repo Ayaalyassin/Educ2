@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BlockController;
 use App\Http\Controllers\Admin\ChannelController;
+use App\Http\Controllers\Admin\ProfitRatioController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FavouriteController;
@@ -334,6 +335,11 @@ Route::group(['middleware' => ['localization']], function () {
 
         Route::group(['prefix' => 'statistics', 'middleware' => ['hasRole:admin']], function () {
             Route::get('percentage', [AdminController::class, 'allPercentage']);
+            Route::get('getAllProfitRatios', [ProfitRatioController::class, 'index']);
+            Route::post('updateProfitRatioFile/{id}', [ProfitRatioController::class, 'updateProfitRatioFile']);
+            Route::post('updateProfitRatioVideoCall/{id}', [ProfitRatioController::class, 'updateProfitRatioVideoCall']);
+            Route::post('updateProfitRatioPrivate/{id}', [ProfitRatioController::class, 'updateProfitRatioPrivate']);
+            Route::post('updateProfitRatioAds/{id}', [ProfitRatioController::class, 'updateProfitRatioAds']);
         });
         //khader
 
@@ -417,7 +423,6 @@ Route::group(['middleware' => ['localization']], function () {
                 Route::post('store', [SeriesController::class, 'store']);
                 Route::post('update/{id}', [SeriesController::class, 'update']);
                 Route::delete("delete/{id}", [SeriesController::class, 'destroy']);
-
             });
             Route::get('getSeriesForTeachingFT/{id}', [SeriesController::class, 'getSeriesForTeachingFT'])->middleware('hasRole:teacher');
             Route::get('getMySeries', [SeriesController::class, 'getMySeries'])->middleware('hasRole:teacher');
