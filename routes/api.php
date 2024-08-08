@@ -72,7 +72,7 @@ Route::group(['middleware' => ['localization']], function () {
     Route::post('login_admin', [AdminAuthController::class, 'login_admin']);
     Route::post('codeAdmin', [AdminAuthController::class, 'codeAdmin']);
     Route::post('refreshToken', [AuthController::class, 'refreshToken']);
-    Route::get('test', [AuthController::class, 'test']);
+    Route::get('test', [AuthController::class, 'test'])->middleware('jwt.verify');
 
 
     Route::group(['middleware' => ['jwt.verify']], function () {
@@ -417,7 +417,9 @@ Route::group(['middleware' => ['localization']], function () {
                 Route::post('store', [SeriesController::class, 'store']);
                 Route::post('update/{id}', [SeriesController::class, 'update']);
                 Route::delete("delete/{id}", [SeriesController::class, 'destroy']);
+
             });
+            Route::get('getSeriesForTeachingFT/{id}', [SeriesController::class, 'getSeriesForTeachingFT'])->middleware('hasRole:teacher');
             Route::get('getMySeries', [SeriesController::class, 'getMySeries'])->middleware('hasRole:teacher');
             Route::get('getById/{id}', [SeriesController::class, 'show']);
             Route::get('getSeries', [ReservationSeriesController::class, 'getSeries'])->middleware('hasRole:student');

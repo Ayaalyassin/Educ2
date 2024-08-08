@@ -21,7 +21,7 @@ return new class extends Migration
             //$table->string('domain');  // مجال العمل
             $table->boolean('status');// الاستاذ مقبول في المنصة أو قيد الانتظار
             $table->integer('assessing'); //درجة تحقيق وثقية الشخص
-            $table->string('image')->nullable();
+            //$table->string('image')->nullable();
             $table->timestamps();
         });
     }

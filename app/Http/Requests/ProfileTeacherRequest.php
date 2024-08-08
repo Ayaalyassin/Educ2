@@ -23,7 +23,6 @@ class ProfileTeacherRequest extends FormRequest
             'certificate' => 'required|image|mimes:jpeg,jpg,png,gif',
             'description' => 'required',
             'jurisdiction' => 'required|string',
-
             'domains'=>'required|array',
 
 

@@ -140,7 +140,7 @@ class AuthController extends Controller
 //                            'body'=>"message"
 //                        ]
 //                ]);
-        $fcm=$this->newFirebase("title","body",$user->fcm_token);
+        $fcm=$this->send($user,"title","message",'basic');
         return $fcm;
         //return $this->returnSuccessMessage('operation completed successfully');
     }

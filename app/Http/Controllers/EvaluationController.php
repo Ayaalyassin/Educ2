@@ -32,9 +32,9 @@ class EvaluationController extends Controller
             if(!$teacher)
                 return $this->returnError("404", 'teacher not found');
 
-//            $is_lock=HistoryLockHours::where('nameStudent',$profile_student->user->name)->where('idProfileTeacher',$teacher->id)->first();
-//            if(!$is_lock)
-//                return $this->returnError("403",__('backend.You Can’t do it', [], app()->getLocale()));
+            $is_lock=HistoryLockHours::where('nameStudent',$profile_student->user->name)->where('idProfileTeacher',$teacher->id)->first();
+            if(!$is_lock)
+                return $this->returnError("403",__('backend.You Can’t do it', [], app()->getLocale()));
 
             $evaluation = Evaluation::firstOrCreate(
                 ['profile_teacher_id' =>  $request->teacher_id],
