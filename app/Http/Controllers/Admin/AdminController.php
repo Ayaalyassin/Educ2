@@ -146,6 +146,7 @@ class AdminController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
+
     public function get_all_teacher()
     {
         try {

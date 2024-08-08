@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BlockController;
+use App\Http\Controllers\Admin\ChannelController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FavouriteController;
@@ -202,11 +203,11 @@ Route::group(['middleware' => ['localization']], function () {
             });
         });
 
-            Route::group(['prefix' => 'report'], function () {
-                Route::get('get', [ReportController::class, 'index'])->middleware('hasRole:admin|employee');
-                Route::post('report_student', [ReportController::class, 'report_student'])->middleware(['hasRole:teacher', 'profileTeacher']);;
-                Route::post('report_teacher', [ReportController::class, 'report_teacher'])->middleware(['hasRole:student', 'profileStudent']);
-            });
+        Route::group(['prefix' => 'report'], function () {
+            Route::get('get', [ReportController::class, 'index'])->middleware('hasRole:admin|employee');
+            Route::post('report_student', [ReportController::class, 'report_student'])->middleware(['hasRole:teacher', 'profileTeacher']);;
+            Route::post('report_teacher', [ReportController::class, 'report_teacher'])->middleware(['hasRole:student', 'profileStudent']);
+        });
 
         Route::group(['middleware' => ['hasRole:admin']], function () {
 
@@ -373,7 +374,12 @@ Route::group(['middleware' => ['localization']], function () {
                 Route::get('show_my_accept_request', [LockHourController::class, 'get_my_accept_request']);
             });
         });
-
+        Route::group(['prefix' => 'channel'], function () {
+            Route::group(['middleware' => ['hasRole:teacher']], function () {
+                Route::post('connect', [ChannelController::class, 'connect']);
+                Route::get('Disconnect/{id}', [ChannelController::class, 'Disconnect']);
+            });
+        });
         Route::controller(CompleteStudentController::class)
             ->prefix('complete-student')->middleware('hasRole:student')->group(function () {
                 Route::get('get', 'index');
@@ -413,7 +419,7 @@ Route::group(['middleware' => ['localization']], function () {
 
         Route::group(['prefix' => 'series'], function () {
             Route::get('getAll/{id}', [SeriesController::class, 'index']);
-            Route::group(['middleware' => ['hasRole:teacher','profileTeacher']], function () {
+            Route::group(['middleware' => ['hasRole:teacher', 'profileTeacher']], function () {
                 Route::post('store', [SeriesController::class, 'store']);
                 Route::post('update/{id}', [SeriesController::class, 'update']);
                 Route::delete("delete/{id}", [SeriesController::class, 'destroy']);
