@@ -12,6 +12,8 @@ class ProfileStudentController extends Controller
 {
     use GeneralTrait;
 
+    private $uploadPath = "assets/images/profile_students";
+
 
     public function getAll()
     {
@@ -44,10 +46,19 @@ class ProfileStudentController extends Controller
             $profile_student->phone = isset($request->phone) ? $request->phone : $profile_student->phone;
             $profile_student->save();
 
+            if(isset($request->image))
+            {
+                $image = $this->saveImage($request->image, $this->uploadPath);
+                $profile_student->image=$image;
+            }
+
             $name=$request->name;
             if($name)
             {
-                $user->update(['name'=>$name]);
+                $user->update([
+                    'name'=>$name,
+                    'image'=>isset($request->image) ? $image : $user->image
+                ]);
                 $profile_student->name=$name;
             }
 

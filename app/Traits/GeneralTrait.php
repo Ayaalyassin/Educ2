@@ -2,10 +2,12 @@
 
 namespace App\Traits;
 
-use App\Models\User;
+//use App\Models\Notification as NotificationModel;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+//use Kreait\Firebase\Factory;
+//use Kreait\Firebase\Messaging\CloudMessage;
 
 trait GeneralTrait
 {
@@ -242,5 +244,53 @@ trait GeneralTrait
               return $this->returnError("500",$e->getMessage());
           }
       }
+
+    public function send($user, $title, $message, $type = 'basic')
+    {
+        $serviceAccountPath = storage_path('app/fcm.json');
+
+        $factory = (new Factory)->withServiceAccount($serviceAccountPath);
+
+        $messaging = $factory->createMessaging();
+
+        $notification = [
+            'title' => $title,
+            'body' => $message,
+            'sound' => 'default',
+        ];
+
+        $data = [
+            'type' => $type,
+            'id' => $user['id'],
+            'message' => $message,
+        ];
+
+        $cloudMessage = CloudMessage::withTarget('token', $user['fcm_token'])
+            ->withNotification($notification)
+            ->withData($data);
+
+        try {
+            $messaging->send($cloudMessage);
+
+
+//            NotificationModel::query()->create([
+//                'type' => 'App\Notifications\UserFollow',
+//                'notifiable_type' => 'App\Models\User',
+//                'notifiable_id' => $user['id'],
+//                'data' => json_encode([
+//                    'user' => $user['first_name'] . ' ' . $user['last_name'],
+//                    'message' => $message,
+//                    'title' => $title,
+//                ]),
+//            ]);
+            return 1;
+        } catch (\Kreait\Firebase\Exception\MessagingException $e) {
+            Log::error($e->getMessage());
+            return 0;
+        } catch (\Kreait\Firebase\Exception\FirebaseException $e) {
+            Log::error($e->getMessage());
+            return 0;
+        }
+    }
 
 }

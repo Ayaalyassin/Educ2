@@ -26,6 +26,7 @@ class ProfileStudentRequest extends FormRequest
                 'sometimes|regex:/^09\d{8}$/
                 |unique:profile_students',
             'name'=>'sometimes|string',
+            'image' => 'sometimes|image|mimes:jpeg,jpg,png,gif',
 
         ];
     }

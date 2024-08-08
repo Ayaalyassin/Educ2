@@ -25,6 +25,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->string('google_id')->nullable()->unique();
             $table->text('fcm_token')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

@@ -23,7 +23,7 @@ class SeriesController extends Controller
                 return $this->returnError("404",'Profile Teacher Not found');
             }
             $teaching_methods=$profile_teacher->teaching_methods()->whereHas('series')->orderBy('created_at','desc')->get();
-            $teaching_methods->loadMissing('series');
+            //$teaching_methods->loadMissing('series');
             return $this->returnData($teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500",$ex->getMessage());
@@ -157,12 +157,32 @@ class SeriesController extends Controller
             $series=[];
             if($profile_teacher) {
                 $series = $profile_teacher->teaching_methods()->whereHas('series')->orderBy('created_at', 'desc')->get();
-                $series->loadMissing('series');
+                //$series->loadMissing('series');
             }
 
             return $this->returnData($series, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", "Please try again later");
+        }
+    }
+
+    public function getSeriesForTeachingFT($id)
+    {
+        try {
+            $profile_teacher = auth()->user()->profile_teacher()->first();
+
+            $teaching_method=[];
+            if ($profile_teacher) {
+                $teaching_method = $profile_teacher->teaching_methods()->where('id',$id)
+                    ->whereHas('series')
+                    ->with(['series'])
+                    ->get();
+            }
+            return $this->returnData($teaching_method, __('backend.operation completed successfully', [], app()->getLocale()));
+
+
+        } catch (\Exception $ex) {
+            return $this->returnError("500", $ex->getMessage());
         }
     }
 }

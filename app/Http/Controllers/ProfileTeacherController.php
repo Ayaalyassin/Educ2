@@ -140,7 +140,6 @@ class ProfileTeacherController extends Controller
                 'certificate' => isset($request->certificate) ? $certificate : $profile_teacher->certificate,
                 'description' => isset($request->description) ? $request->description : $profile_teacher->description,
                 'jurisdiction'=> isset($request->jurisdiction) ? $request->jurisdiction : $profile_teacher->jurisdiction,
-                'image'       => isset($request->image) ? $image : $profile_teacher->image
             ]);
 
             $user->update([

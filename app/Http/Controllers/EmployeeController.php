@@ -20,6 +20,11 @@ class EmployeeController extends Controller
     {
         try {
             DB::beginTransaction();
+            $image=null;
+            if(isset($request->image))
+            {
+                $image = $this->saveImage($request->image, $this->uploadPath);
+            }
 
             $data=User::create([
                 'name'           => $request->name,//
@@ -28,6 +33,7 @@ class EmployeeController extends Controller
                 'address'        => $request->address,
                 'governorate'    => $request->governorate,
                 'birth_date'     =>$request->birth_date,
+                'image'          =>$image
             ]);
             $role=Role::where('name',"employee")->first();
 
@@ -57,6 +63,10 @@ class EmployeeController extends Controller
             if (!$data) {
                 return $this->returnError("404",'Not found');
             }
+            if(isset($request->image))
+            {
+                $image = $this->saveImage($request->image, $this->uploadPath);
+            }
 
 
             $data->update([
@@ -66,6 +76,7 @@ class EmployeeController extends Controller
                 'address'         => isset($request->address)? $request->address :$data->address,
                 'governorate'    => isset($request->governorate)? $request->governorate :$data->governorate,
                 'birth_date'     => isset($request->birth_date)? $request->birth_date :$data->birth_date,
+                'image'           => isset($request->image)? $image :$data->image,
             ]);
             $data->loadMissing('roles');
             DB::commit();

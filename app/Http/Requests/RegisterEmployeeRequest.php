@@ -26,6 +26,7 @@ class RegisterEmployeeRequest extends FormRequest
             'address'=>'required|string',
             'governorate'=>'required|string',
             'birth_date'=>'required|date|before:today',
+            'image' => 'sometimes|image|mimes:jpeg,jpg,png,gif',
         ];
     }
     public function failedValidation(Validator $validator)

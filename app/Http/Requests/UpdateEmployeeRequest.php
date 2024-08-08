@@ -25,6 +25,7 @@ class UpdateEmployeeRequest extends FormRequest
             'address'=>'sometimes|string',
             'governorate'=>'sometimes|string',
             'birth_date'=>'date|before:today',
+            'image' => 'sometimes|image|mimes:jpeg,jpg,png,gif',
         ];
     }
     public function failedValidation(Validator $validator)
