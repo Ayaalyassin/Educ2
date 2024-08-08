@@ -77,7 +77,7 @@ class ProfitRatioController extends Controller
                 'value' => $request->value
             ]);
             DB::commit();
-            return $this->returnData($ProfitRatio, 200);
+            return $this->returnData($ProfitRatio, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -99,7 +99,7 @@ class ProfitRatioController extends Controller
                 'value' => $request->value
             ]);
             DB::commit();
-            return $this->returnData($ProfitRatio, 200);
+            return $this->returnData($ProfitRatio, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -122,7 +122,7 @@ class ProfitRatioController extends Controller
                 'value' => $request->value
             ]);
             DB::commit();
-            return $this->returnData($ProfitRatio, 200);
+            return $this->returnData($ProfitRatio, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -145,7 +145,7 @@ class ProfitRatioController extends Controller
                 'value' => $request->value
             ]);
             DB::commit();
-            return $this->returnData($ProfitRatio, 200);
+            return $this->returnData($ProfitRatio, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError($ex->getCode(), $ex->getMessage());
