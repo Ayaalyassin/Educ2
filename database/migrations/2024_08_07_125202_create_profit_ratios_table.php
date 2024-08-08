@@ -14,9 +14,7 @@ return new class extends Migration
         Schema::create('profit_ratios', function (Blueprint $table) {
             $table->id();
             $table->string('type');
-            $table->string('name');
             $table->float('value');
-            $table->date('date');
             $table->timestamps();
         });
     }

@@ -374,12 +374,6 @@ Route::group(['middleware' => ['localization']], function () {
                 Route::get('show_my_accept_request', [LockHourController::class, 'get_my_accept_request']);
             });
         });
-        Route::group(['prefix' => 'channel'], function () {
-            Route::group(['middleware' => ['hasRole:teacher']], function () {
-                Route::post('connect', [ChannelController::class, 'connect']);
-                Route::get('Disconnect/{id}', [ChannelController::class, 'Disconnect']);
-            });
-        });
         Route::controller(CompleteStudentController::class)
             ->prefix('complete-student')->middleware('hasRole:student')->group(function () {
                 Route::get('get', 'index');
@@ -429,6 +423,13 @@ Route::group(['middleware' => ['localization']], function () {
             Route::get('getSeries', [ReservationSeriesController::class, 'getSeries'])->middleware('hasRole:student');
             Route::get('getByIdSeries/{id}', [ReservationSeriesController::class, 'getByIdSeries'])->middleware('hasRole:student');
             Route::get('getSeriesForTeaching/{id}', [ReservationSeriesController::class, 'getSeriesForTeaching'])->middleware('hasRole:student');
+        });
+
+        Route::group(['prefix' => 'channel'], function () {
+            Route::group(['middleware' => ['hasRole:teacher']], function () {
+                Route::post('connect', [ChannelController::class, 'connect']);
+                Route::get('Disconnect/{id}', [ChannelController::class, 'Disconnect']);
+            });
         });
     });
 });
