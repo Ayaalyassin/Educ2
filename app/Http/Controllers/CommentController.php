@@ -39,7 +39,6 @@ class CommentController extends Controller
 
             $ads=Ads::find($request->ads_id);
 
-
             if(!$ads)
                 return $this->returnError("404", 'Ads not found');
             if(isset($request->parent_id))
@@ -48,7 +47,6 @@ class CommentController extends Controller
                 if(!$parent)
                     return $this->returnError("404", 'Parent not found');
             }
-
 
             $comment=$user->comments()->create([
                 'ads_id'=>$request->ads_id,
@@ -85,7 +83,6 @@ class CommentController extends Controller
                 return $this->returnError("404",'Not found');
             }
 
-
             $data->update([
                 'comment'  => $request->comment,
             ]);
@@ -109,7 +106,6 @@ class CommentController extends Controller
             if (!$comment)
                 return $this->returnError("404", 'not found');
             $comment->delete();
-
 
             DB::commit();
             return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));

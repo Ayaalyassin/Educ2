@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 //use App\Models\Notification as NotificationModel;
+use App\Models\Notification;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -283,6 +284,12 @@ trait GeneralTrait
 //                    'title' => $title,
 //                ]),
 //            ]);
+            Notification::create([
+                'title'=>$title,
+                'body'=>$message,
+                'user_id'=>$user['id']
+
+            ]);
             return 1;
         } catch (\Kreait\Firebase\Exception\MessagingException $e) {
             Log::error($e->getMessage());

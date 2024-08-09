@@ -13,6 +13,7 @@ class ReservationSeriesController extends Controller
     {
         try {
             $profile_student = auth()->user()->profile_student()->first();
+            $teaching_methods=[];
             if ($profile_student) {
                 $teaching_methods = $profile_student->reservation_teaching_methods()
                     ->with(['teaching_method'])

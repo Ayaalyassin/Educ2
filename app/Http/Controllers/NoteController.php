@@ -24,8 +24,7 @@ class NoteController extends Controller
             $profile_students=[];
             if(count($users_name)>0) {
                 $profile_students = ProfileStudent::whereHas('user', function ($query) use ($users_name) {
-                    $query
-                        ->whereIn('name', $users_name);
+                    $query->whereIn('name', $users_name);
                 })
                     ->with(['user'=> function ($query){
                         $query->select('id','name');
@@ -33,9 +32,7 @@ class NoteController extends Controller
                         $query->where('profile_teacher_id', $profile_teacher->id);
                     }])
                     ->get();
-
             }
-
 
             return $this->returnData($profile_students, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {

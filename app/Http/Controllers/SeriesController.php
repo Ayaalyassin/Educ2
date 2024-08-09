@@ -42,6 +42,17 @@ class SeriesController extends Controller
             if (!$teaching_method)
                 return $this->returnError("404",'teaching_method Not found');
 
+//            $file = $this->saveImage($request->file, $this->uploadPath);
+//
+//            $teaching_method= $profile_teacher->teaching_methods()->create([
+//                'title'=>$request->title,
+//                'type'=>$request->type,
+//                'description'=>$request->description,
+//                'file'=>$file,
+//                'status'=>$request->status,
+//                'price'=>$request->price
+//            ]);
+
             $series = $request->series;
             $list_series = [];
             foreach ($series as $value) {
@@ -74,7 +85,7 @@ class SeriesController extends Controller
             $profile_teacher=auth()->user()->profile_teacher()->first();
             $teaching_methods_ids=$profile_teacher->teaching_methods()->get('id');
 
-            $series= Series::whereIn('teaching_method_id',$teaching_methods_ids)->first();
+            $series= Series::where('id',$id)->whereIn('teaching_method_id',$teaching_methods_ids)->first();
             if (!$series) {
                 return $this->returnError("404",'series Not found');
             }
@@ -104,16 +115,12 @@ class SeriesController extends Controller
             if (!$series)
                 return $this->returnError("404",'series Not found');
 
-            $file=null;
-            if (isset($request->file)) {
-                $this->deleteImage($series->file);
-                $file = $this->saveImage($request->file, $this->uploadPath);
-            }
+            $this->deleteImage($series->file);
+            $file = $this->saveImage($request->file, $this->uploadPath);
 
             $series->update([
-                'file'=>isset($request->file)? $file :$series->file,
+                'file'=>$file,
             ]);
-
 
             DB::commit();
             return $this->returnData($series, __('backend.operation completed successfully', [], app()->getLocale()));
@@ -136,13 +143,11 @@ class SeriesController extends Controller
             if (!$series)
                 return $this->returnError("404",'series Not found');
 
-
             if (isset($series->file)) {
                 $this->deleteImage($series->file);
             }
 
             $series->delete();
-
             DB::commit();
             return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
@@ -150,6 +155,7 @@ class SeriesController extends Controller
             return $this->returnError("500", 'Please try again later');
         }
     }
+
     public function getMySeries()
     {
         try {
@@ -179,7 +185,6 @@ class SeriesController extends Controller
                     ->get();
             }
             return $this->returnData($teaching_method, __('backend.operation completed successfully', [], app()->getLocale()));
-
 
         } catch (\Exception $ex) {
             return $this->returnError("500", $ex->getMessage());
