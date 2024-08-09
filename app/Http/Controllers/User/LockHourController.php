@@ -41,9 +41,10 @@ class LockHourController extends Controller
                     'users.name',
                     'users.address',
                     'users.governorate',
+                    'lock_hours.date',
                     'calendar_days.day',
                     'calendar_hours.hour',
-                    'service_teachers.type'
+                    'service_teachers.type',
                 )
                 ->get();
             return $this->returnData($lock_hour, 'operation completed successfully');
@@ -74,6 +75,7 @@ class LockHourController extends Controller
                     'users.name',
                     'users.address',
                     'users.governorate',
+                    'lock_hours.date',
                     'calendar_hours.hour',
                     'calendar_days.day',
                     'lock_hours.date',
@@ -195,9 +197,9 @@ class LockHourController extends Controller
                 ->select(
                     'service_teachers.type',
                     'lock_hours.value',
+                    'lock_hours.date',
                     'calendar_hours.hour',
                     'calendar_days.day',
-                    'lock_hours.date',
                     'users.name',
                     'users.address',
                     'users.governorate',
@@ -267,8 +269,8 @@ class LockHourController extends Controller
                 ]);
             }
             $hour = $lock_hour->hour;
-            $deleteHours = $hour->hour_lock;
-            foreach ($deleteHours as $deleteHour) {
+            // $deleteHours = $hour->hour_lock;
+            foreach ($deleteWallets as $deleteHour) {
                 if ($deleteHour->id == $id) {
                     $deleteHour->update([
                         'status' => 1
@@ -333,9 +335,9 @@ class LockHourController extends Controller
                     'users.name',
                     'users.address',
                     'users.governorate',
+                    'lock_hours.date',
                     'calendar_days.day',
                     'calendar_hours.hour',
-                    'lock_hours.date',
                     'service_teachers.type',
                     'lock_hours.value'
                 )

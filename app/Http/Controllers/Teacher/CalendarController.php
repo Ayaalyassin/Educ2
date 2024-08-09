@@ -183,7 +183,6 @@ class CalendarController extends Controller
                         $existingHour = CalendarHour::where('day_id', $alternativeDayId)
                             ->where('hour', $value)
                             ->first();
-
                         if ($existingHour) {
                             $existingHour->update(['status' => $existingHour->status]);
                         } else {
@@ -191,7 +190,6 @@ class CalendarController extends Controller
                                 ->where('hour', $value)
                                 ->first();
                             $status = $originalHour && $originalHour->status == 1 ? 1 : 0;
-
                             CalendarHour::create([
                                 'day_id' => $alternativeDayId,
                                 'hour' => $value,
@@ -200,7 +198,6 @@ class CalendarController extends Controller
                         }
                     }
                 }
-
                 $calendarHours = $calendarDay->hours;
                 foreach ($calendarHours as $calendarHour) {
                     $hourFound = false;
@@ -213,11 +210,11 @@ class CalendarController extends Controller
                         }
                     }
                     if (!$hourFound && $calendarHour->status == 0) {
+                        // return $calendarHour;
                         $students = LockHour::with('student.user.wallet')
                             ->with('service')
                             ->where('hour_id', $calendarHour->id)
                             ->get();
-
                         foreach ($students as $student) {
                             if ($student->service && $student->service->type == 'video call') {
                                 if ($student->student && $student->student->user && $student->student->user->wallet) {
