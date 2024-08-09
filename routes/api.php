@@ -42,9 +42,9 @@ use App\Http\Controllers\User\CompleteStudentController;
 use App\Http\Controllers\User\HistoryTransactionController;
 use App\Http\Controllers\User\LockHourController;
 use App\Http\Controllers\WalletController;
-use App\Models\Wallet;
-use Spatie\Permission\Contracts\Permission;
-use GuzzleHttp\Middleware;
+//use App\Models\Wallet;
+//use Spatie\Permission\Contracts\Permission;
+//use GuzzleHttp\Middleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -188,7 +188,7 @@ Route::group(['middleware' => ['localization']], function () {
             Route::group(['prefix' => 'note'], function () {
                 Route::post('store', [NoteController::class, 'store'])->middleware('profileTeacher');;
                 Route::delete('delete/{id}', [NoteController::class, 'destroy']);
-                Route::get('getStudentsNotes', [NoteController::class, 'index'])->middleware('hasRole:teacher');
+                Route::get('getStudentsNotes', [NoteController::class, 'index']);
             });
         });
 
@@ -234,9 +234,7 @@ Route::group(['middleware' => ['localization']], function () {
         });
 
         Route::get('ServiceTeacher/getById/{id}', [ServiceTeacherController::class, 'show']);
-        Route::group(['middleware' => ['hasRole:student']], function () {
-            Route::get('ServiceTeacher/getAll/{id}', [ServiceTeacherController::class, 'index']);
-        });
+        Route::get('ServiceTeacher/getAll/{id}', [ServiceTeacherController::class, 'index'])->middleware('hasRole:student');
 
 
         Route::group(['middleware' => ['hasRole:teacher']], function () {
@@ -412,19 +410,24 @@ Route::group(['middleware' => ['localization']], function () {
         });
 
         Route::group(['prefix' => 'series'], function () {
-            Route::get('getAll/{id}', [SeriesController::class, 'index']);
             Route::group(['middleware' => ['hasRole:teacher', 'profileTeacher']], function () {
                 Route::post('store', [SeriesController::class, 'store']);
                 Route::post('update/{id}', [SeriesController::class, 'update']);
                 Route::delete("delete/{id}", [SeriesController::class, 'destroy']);
 
             });
-            Route::get('getSeriesForTeachingFT/{id}', [SeriesController::class, 'getSeriesForTeachingFT'])->middleware('hasRole:teacher');
-            Route::get('getMySeries', [SeriesController::class, 'getMySeries'])->middleware('hasRole:teacher');
+            Route::group(['middleware' => ['hasRole:teacher']], function () {
+                Route::get('getSeriesForTeachingFT/{id}', [SeriesController::class, 'getSeriesForTeachingFT']);
+                Route::get('getMySeries', [SeriesController::class, 'getMySeries']);
+            });
             Route::get('getById/{id}', [SeriesController::class, 'show']);
-            Route::get('getSeries', [ReservationSeriesController::class, 'getSeries'])->middleware('hasRole:student');
-            Route::get('getByIdSeries/{id}', [ReservationSeriesController::class, 'getByIdSeries'])->middleware('hasRole:student');
-            Route::get('getSeriesForTeaching/{id}', [ReservationSeriesController::class, 'getSeriesForTeaching'])->middleware('hasRole:student');
+
+            Route::group(['middleware' => ['hasRole:student']], function () {
+                Route::get('getSeries', [ReservationSeriesController::class, 'getSeries']);
+                Route::get('getByIdSeries/{id}', [ReservationSeriesController::class, 'getByIdSeries']);
+                Route::get('getSeriesForTeaching/{id}', [ReservationSeriesController::class, 'getSeriesForTeaching']);
+                Route::get('getAll/{id}', [SeriesController::class, 'index']);
+            });
         });
 
         Route::group(['prefix' => 'channel'], function () {
