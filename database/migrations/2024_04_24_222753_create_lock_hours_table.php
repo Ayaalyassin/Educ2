@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('hour_id')->references('id')->on('calendar_hours')->onDelete('cascade');
             $table->float('value')->default(0.0);
             $table->integer('status')->default(0);
+            $table->string('appointmentAddress')->nullable();
             $table->date('date');
             $table->timestamps();
         });

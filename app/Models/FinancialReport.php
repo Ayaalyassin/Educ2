@@ -12,8 +12,9 @@ class FinancialReport extends Model
     protected $table = "financial_reports";
     protected $fillable = [
         'type',
-        'name',
+        'teacherName',
         'value',
+        'ProfitAmount',
         'profitRatio'
     ];
     protected $hidden = ['created_at', 'updated_at'];

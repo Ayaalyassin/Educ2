@@ -10,6 +10,9 @@ use App\Models\ProfileTeacher;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests\AdsRequest;
+use App\Models\FinancialReport;
+use App\Models\ProfitRatio;
+use App\Models\User;
 use App\Traits\GeneralTrait;
 use Illuminate\Support\Facades\DB;
 
@@ -21,9 +24,9 @@ class AdsController extends Controller
 
     public function getSimilar()
     {
-        $user=auth()->user();
-        $desiredData=Ads::whereRaw("INSTR(place, ?) > 0", [$user->governorate])
-            ->orderBy('created_at','desc')->get();
+        $user = auth()->user();
+        $desiredData = Ads::whereRaw("INSTR(place, ?) > 0", [$user->governorate])
+            ->orderBy('created_at', 'desc')->get();
 
         return $this->returnData($desiredData, __('backend.operation completed successfully', [], app()->getLocale()));
     }
@@ -31,12 +34,10 @@ class AdsController extends Controller
     public function index()
     {
         try {
-            $user=auth()->user();
+            $user = auth()->user();
 
-            $ads=Ads::orderByRaw("CASE WHEN place = '{$user->governorate}' THEN 0 ELSE 1 END, created_at DESC")->
-            join('profile_teachers','ads.profile_teacher_id','=','profile_teachers.id')->
-            join('users','profile_teachers.user_id','=','users.id')
-                ->select('ads.*','users.name')
+            $ads = Ads::orderByRaw("CASE WHEN place = '{$user->governorate}' THEN 0 ELSE 1 END, created_at DESC")->join('profile_teachers', 'ads.profile_teacher_id', '=', 'profile_teachers.id')->join('users', 'profile_teachers.user_id', '=', 'users.id')
+                ->select('ads.*', 'users.name')
                 ->get();
 
             return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
@@ -50,9 +51,9 @@ class AdsController extends Controller
         try {
 
             $profile_teacher = ProfileTeacher::find($teacherId);
-            if(!$profile_teacher)
+            if (!$profile_teacher)
                 return $this->returnError("404", "Not found");
-            $ads=$profile_teacher->ads()->orderBy('created_at','desc')->get();
+            $ads = $profile_teacher->ads()->orderBy('created_at', 'desc')->get();
 
             return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
@@ -72,22 +73,38 @@ class AdsController extends Controller
                 $file = $this->saveImage($request->file, $this->uploadPath);
             }
 
-            $profile_teacher=$user->profile_teacher()->first();
-            $ads =$profile_teacher->ads()->create([
+            $profile_teacher = $user->profile_teacher()->first();
+            $ads = $profile_teacher->ads()->create([
                 'title' => $request->title,
                 'description' => $request->description,
                 'price' => $request->price,
                 'number_students' => $request->number_students,
                 'file' => $file,
-                'place'=>$request->place,
-                'start_date'=>$request->start_date,
-                'end_date'=>$request->end_date,
+                'place' => $request->place,
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
             ]);
             $today = date('Y-m-d');
             $diff = (strtotime($ads->end_date) - strtotime($today)) / (60 * 60 * 24);
 
-            EndDateAdsJob::dispatch($user->id,$ads->id)->delay(Carbon::now()->addDays($diff));
-
+            EndDateAdsJob::dispatch($user->id, $ads->id)->delay(Carbon::now()->addDays($diff));
+            /*start Khader */
+            $profit = ProfitRatio::where('type', 'ads')->first();
+            $financialReport = FinancialReport::create([
+                'type' => 'ads',
+                'teacherName' =>  $user->name,
+                'value' => $request->price,
+                'ProfitAmount' => $request->price * ($profit->value / 100),
+                'profitRatio' => $profit->value
+            ]);
+            $admin = User::whereHas('roles', function ($query) {
+                $query->where('name', 'admin');
+            })->first();
+            $admin->load('wallet');
+            $admin->wallet->update([
+                'value' => $admin->wallet->value + $request->price * ($profit->value / 100)
+            ]);
+            /*end khader */
             DB::commit();
             return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
@@ -131,7 +148,7 @@ class AdsController extends Controller
             $user = auth()->user();
 
             $profile_teacher = $user->profile_teacher()->first();
-            $ads=$profile_teacher->ads()->find($id);
+            $ads = $profile_teacher->ads()->find($id);
 
             if (!$ads)
                 return $this->returnError("404", 'not found');
@@ -147,11 +164,11 @@ class AdsController extends Controller
                 'price' => isset($request->price) ? $request->price : $ads->price,
                 'number_students' => isset($request->number_students) ? $request->number_students : $ads->number_students,
                 'file' => isset($request->file) ? $file : $ads->file,
-                'place'=> isset($request->place) ? $request->place : $ads->place,
-                'start_date'=> isset($request->start_date) ? $request->start_date : $ads->start_date,
-                'end_date'=> isset($request->end_date) ? $request->end_date : $ads->end_date,
+                'place' => isset($request->place) ? $request->place : $ads->place,
+                'start_date' => isset($request->start_date) ? $request->start_date : $ads->start_date,
+                'end_date' => isset($request->end_date) ? $request->end_date : $ads->end_date,
             ]);
-            if(isset($request->end_date)) {
+            if (isset($request->end_date)) {
                 $today = date('Y-m-d');
                 $diff = (strtotime($ads->end_date) - strtotime($today)) / (60 * 60 * 24);
                 EndDateAdsJob::dispatch($user->id, $ads->id)->delay(Carbon::now()->addDays($diff));
@@ -183,8 +200,6 @@ class AdsController extends Controller
             DeleteAds::dispatch($id)->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));
-
-
         } catch (\Exception $ex) {
             DB::rollback();
             return $this->returnError("500", 'Please try again later');
@@ -194,11 +209,11 @@ class AdsController extends Controller
     public function getMyAds()
     {
         try {
-            $profile_teacher =auth()->user()->profile_teacher()->first();
+            $profile_teacher = auth()->user()->profile_teacher()->first();
 
-            $ads=[];
-            if($profile_teacher)
-                $ads=$profile_teacher->ads()->get();
+            $ads = [];
+            if ($profile_teacher)
+                $ads = $profile_teacher->ads()->get();
 
             return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {

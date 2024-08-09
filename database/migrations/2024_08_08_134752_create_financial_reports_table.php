@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('financial_reports', function (Blueprint $table) {
             $table->id();
             $table->string('type');
-            $table->string('name');
+            $table->string('teacherName');
             $table->float('value');
+            $table->float('ProfitAmount');
             $table->float('profitRatio');
             $table->timestamps();
         });

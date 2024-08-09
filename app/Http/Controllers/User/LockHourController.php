@@ -5,8 +5,11 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LockHourRequest;
 use App\Models\CalendarHour;
+use App\Models\FinancialReport;
 use App\Models\HistoryLockHours;
 use App\Models\LockHour;
+use App\Models\ProfitRatio;
+use App\Models\User;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
 use DateTime;
@@ -117,6 +120,15 @@ class LockHourController extends Controller
                     if ($wallet->value < $hour->price) {
                         return $this->returnError(501, __('backend.not Enough money in wallet', [], app()->getLocale()));
                     }
+                    $lock = $student->hour_lock()->create([
+                        'hour_id' => $request->hour_id,
+                        'service_id' => $request->service_id,
+                        'date' => $request->date,
+                        'value' => $hour->price,
+                        'status' => 0,
+                        'appointmentAddress' => $request->appointmentAddress ? $request->appointmentAddress : null
+                    ]);
+                    $lock->save();
                     if ($hour->type == 'private lesson') {
                         $wallet->update([
                             'value' => $wallet->value  - (10 / 100) * $hour->price,
@@ -126,13 +138,7 @@ class LockHourController extends Controller
                             'value' => $wallet->value  - $hour->price,
                         ]);
                     }
-                    $student->hour_lock()->create([
-                        'hour_id' => $request->hour_id,
-                        'service_id' => $request->service_id,
-                        'date' => $request->date,
-                        'value' => $hour->price,
-                        'status' => 0
-                    ]);
+
                     return $this->returnData(200, __('backend.operation completed successfully', [], app()->getLocale()));
                 }
             }
@@ -225,25 +231,45 @@ class LockHourController extends Controller
             if ($lock_hour->status == 1) {
                 return $this->returnError(501, 'The Request is accept');
             }
+
+            $admin = User::whereHas('roles', function ($query) {
+                $query->where('name', 'admin');
+            })->first();
+            $admin->load('wallet');
+            $profit = ProfitRatio::first();
+            if ($lock_hour->service->type == 'video call') {
+                $profit = ProfitRatio::where('type', 'video call')->first();
+                $admin->wallet->update([
+                    'value' => $admin->wallet->value + $lock_hour->value * ($profit->value / 100)
+                ]);
+            } else {
+                $profit = ProfitRatio::where('type', 'private lesson')->first();
+                $admin->wallet->update([
+                    'value' => $admin->wallet->value + $lock_hour->value * ($profit->value / 100)
+                ]);
+            }
             $deleteWallets = LockHour::where('id', '!=', $id)
                 ->where('date', '=', $lock_hour->date)
                 ->get();
-            $timeOnly = Carbon::now()->setTimezone('Asia/Damascus')->toDateString();
-            foreach ($deleteWallets as $deleteWallet) {
-                $service = $deleteWallet->load('service');
 
-                if ($service->service->type == 'private lesson') {
-                    $wallet = $deleteWallet->load('student.user.wallet');
-                    $wallet->student->user->wallet->update([
-                        'value' => $wallet->student->user->wallet->value + (10 / 100) * $deleteWallet->value
-                    ]);
-                } else {
-                    $wallet = $deleteWallet->load('student.user.wallet');
-                    $wallet->student->user->wallet->update([
-                        'value' => $wallet->student->user->wallet->value + $deleteWallet->value
-                    ]);
+            $timeOnly = Carbon::now()->setTimezone('Asia/Damascus')->toDateString();
+            if ($deleteWallets) {
+                foreach ($deleteWallets as $deleteWallet) {
+                    $service = $deleteWallet->load('service');
+                    if ($service->service->type == 'private lesson') {
+                        $wallet = $deleteWallet->load('student.user.wallet');
+                        $wallet->student->user->wallet->update([
+                            'value' => $wallet->student->user->wallet->value + (10 / 100) * $deleteWallet->value
+                        ]);
+                    } else {
+                        $wallet = $deleteWallet->load('student.user.wallet');
+                        $wallet->student->user->wallet->update([
+                            'value' => $wallet->student->user->wallet->value + $deleteWallet->value
+                        ]);
+                    }
                 }
             }
+
             $historyLock = HistoryLockHours::create([
                 'type' => $lock_hour->service->type,
                 'nameStudent' => $lock_hour->student->user->name,
@@ -255,7 +281,7 @@ class LockHourController extends Controller
                 'price' => $lock_hour->value,
                 'status' => "acceptable",
             ]);
-            $lock_hour->hour->update([
+            $lock_hour->update([
                 'status' => 1
             ]);
             $wallet = Auth::user()->wallet;
@@ -268,17 +294,16 @@ class LockHourController extends Controller
                     'value' => $wallet->value + (10 / 100) * $lock_hour->value
                 ]);
             }
-            $hour = $lock_hour->hour;
-            // $deleteHours = $hour->hour_lock;
-            foreach ($deleteWallets as $deleteHour) {
-                if ($deleteHour->id == $id) {
-                    $deleteHour->update([
-                        'status' => 1
-                    ]);
-                } else {
-                    $deleteHour->delete();
-                }
-            }
+            $lock_hour->hour->update([
+                'status' => 1
+            ]);
+            $financialReport = FinancialReport::create([
+                'type' => $lock_hour->service->type,
+                'teacherName' =>  Auth::user()->name,
+                'value' => $lock_hour->value,
+                'ProfitAmount' => $lock_hour->value * ($profit->value / 100),
+                'profitRatio' => $profit->value
+            ]);
             return $this->returnData(200, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());

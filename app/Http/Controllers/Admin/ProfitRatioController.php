@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfitRatioRequest;
+use App\Models\FinancialReport;
 use App\Models\ProfitRatio;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
@@ -156,8 +157,17 @@ class ProfitRatioController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function getFinancialReports()
     {
-        //
+        DB::beginTransaction();
+        try {
+
+            $reports = FinancialReport::get();
+            DB::commit();
+            return $this->returnData($reports, __('backend.operation completed successfully', [], app()->getLocale()));
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
     }
 }

@@ -15,7 +15,8 @@ class LockHour extends Model
         'hour_id',
         'value',
         'status',
-        'date'
+        'date',
+        'appointmentAddress'
     ];
     protected $hidden = ['created_at', 'updated_at', 'id'];
 

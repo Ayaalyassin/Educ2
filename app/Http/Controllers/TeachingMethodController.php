@@ -7,6 +7,9 @@ use App\Models\ProfileTeacher;
 use App\Models\TeachingMethod;
 use Illuminate\Http\Request;
 use App\Http\Requests\TeachingMethodRequest;
+use App\Models\FinancialReport;
+use App\Models\ProfitRatio;
+use App\Models\User;
 use App\Traits\GeneralTrait;
 use Illuminate\Support\Facades\DB;
 
@@ -20,14 +23,14 @@ class TeachingMethodController extends Controller
     public function index($teacher_id)
     {
         try {
-            $profile_teacher=ProfileTeacher::find($teacher_id);
+            $profile_teacher = ProfileTeacher::find($teacher_id);
             if (!$profile_teacher) {
-                return $this->returnError("404",'Profile Teacher Not found');
+                return $this->returnError("404", 'Profile Teacher Not found');
             }
-            $teaching_methods=$profile_teacher->teaching_methods()->orderBy('created_at','desc')->get();
+            $teaching_methods = $profile_teacher->teaching_methods()->orderBy('created_at', 'desc')->get();
             return $this->returnData($teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
-            return $this->returnError("500",$ex->getMessage());
+            return $this->returnError("500", $ex->getMessage());
         }
     }
 
@@ -38,9 +41,9 @@ class TeachingMethodController extends Controller
         try {
             DB::beginTransaction();
 
-            $teaching_method= TeachingMethod::find($id);
+            $teaching_method = TeachingMethod::find($id);
             if (!$teaching_method) {
-                return $this->returnError("404",'teaching_method Not found');
+                return $this->returnError("404", 'teaching_method Not found');
             }
             $teaching_method->increment('views');
 
@@ -58,19 +61,35 @@ class TeachingMethodController extends Controller
     {
         try {
             DB::beginTransaction();
-            $profile_teacher=auth()->user()->profile_teacher()->first();
+            $profile_teacher = auth()->user()->profile_teacher()->first();
 
             $file = $this->saveImage($request->file, $this->uploadPath);
 
-            $teaching_method= $profile_teacher->teaching_methods()->create([
-                'title'=>$request->title,
-                'type'=>$request->type,
-                'description'=>$request->description,
-                'file'=>$file,
-                'status'=>$request->status,
-                'price'=>$request->price
+            $teaching_method = $profile_teacher->teaching_methods()->create([
+                'title' => $request->title,
+                'type' => $request->type,
+                'description' => $request->description,
+                'file' => $file,
+                'status' => $request->status,
+                'price' => $request->price
             ]);
-
+            /*start Khader */
+            $profit = ProfitRatio::where('type', 'file')->first();
+            $financialReport = FinancialReport::create([
+                'type' => 'Teaching Method',
+                'teacherName' =>  auth()->user()->name,
+                'value' => $request->price,
+                'ProfitAmount' => $request->price * ($profit->value / 100),
+                'profitRatio' => $profit->value
+            ]);
+            $admin = User::whereHas('roles', function ($query) {
+                $query->where('name', 'admin');
+            })->first();
+            $admin->load('wallet');
+            $admin->wallet->update([
+                'value' => $admin->wallet->value + $request->price * ($profit->value / 100)
+            ]);
+            /*end khader */
 
             DB::commit();
             return $this->returnData($teaching_method, __('backend.operation completed successfully', [], app()->getLocale()));
@@ -83,30 +102,30 @@ class TeachingMethodController extends Controller
 
 
 
-    public function update(UpdateTeachingMethodRequest $request,$id)
+    public function update(UpdateTeachingMethodRequest $request, $id)
     {
         try {
             DB::beginTransaction();
 
-            $profile_teacher=auth()->user()->profile_teacher()->first();
+            $profile_teacher = auth()->user()->profile_teacher()->first();
 
-            $teaching_method=$profile_teacher->teaching_methods()->find($id);
+            $teaching_method = $profile_teacher->teaching_methods()->find($id);
             if (!$teaching_method)
-                return $this->returnError("404",'teaching_method Not found');
+                return $this->returnError("404", 'teaching_method Not found');
 
-            $file=null;
+            $file = null;
             if (isset($request->file)) {
                 $this->deleteImage($teaching_method->file);
                 $file = $this->saveImage($request->file, $this->uploadPath);
             }
 
             $teaching_method->update([
-                'title'=>isset($request->title)? $request->title :$teaching_method->title,
-                'type'=>isset($request->type)? $request->type :$teaching_method->type,
-                'description'=>isset($request->description)? $request->description :$teaching_method->description,
-                'file'=>isset($request->file)? $file :$teaching_method->file,
-                'status'=>isset($request->status)? $request->status :$teaching_method->status,
-                'price'=>isset($request->price)? $request->price :$teaching_method->price,
+                'title' => isset($request->title) ? $request->title : $teaching_method->title,
+                'type' => isset($request->type) ? $request->type : $teaching_method->type,
+                'description' => isset($request->description) ? $request->description : $teaching_method->description,
+                'file' => isset($request->file) ? $file : $teaching_method->file,
+                'status' => isset($request->status) ? $request->status : $teaching_method->status,
+                'price' => isset($request->price) ? $request->price : $teaching_method->price,
             ]);
 
             DB::commit();
@@ -122,11 +141,11 @@ class TeachingMethodController extends Controller
     {
         try {
             DB::beginTransaction();
-            $profile_teacher=auth()->user()->profile_teacher()->first();
-            $teaching_method=$profile_teacher->teaching_methods()->find($id);
+            $profile_teacher = auth()->user()->profile_teacher()->first();
+            $teaching_method = $profile_teacher->teaching_methods()->find($id);
 
             if (!$teaching_method) {
-                return $this->returnError("404",'teaching_method Not found');
+                return $this->returnError("404", 'teaching_method Not found');
             }
             if (isset($teaching_method->file)) {
                 $this->deleteImage($teaching_method->file);
@@ -145,10 +164,10 @@ class TeachingMethodController extends Controller
     public function getMyTeachingMethod()
     {
         try {
-            $profile_teacher =auth()->user()->profile_teacher()->first();
-            $teaching_methods=[];
-            if($profile_teacher)
-                $teaching_methods=$profile_teacher->teaching_methods()->orderBy('created_at','desc')->get();
+            $profile_teacher = auth()->user()->profile_teacher()->first();
+            $teaching_methods = [];
+            if ($profile_teacher)
+                $teaching_methods = $profile_teacher->teaching_methods()->orderBy('created_at', 'desc')->get();
 
             return $this->returnData($teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
@@ -161,9 +180,8 @@ class TeachingMethodController extends Controller
         try {
             //$teaching_methods = TeachingMethod::with('profile_teacher.user:id,name')->get();
 
-            $teaching_methods=TeachingMethod::join('profile_teachers','teaching_methods.profile_teacher_id','=','profile_teachers.id')->
-            join('users','profile_teachers.user_id','=','users.id')
-                ->select('teaching_methods.*','users.name')->orderBy('created_at','desc')
+            $teaching_methods = TeachingMethod::join('profile_teachers', 'teaching_methods.profile_teacher_id', '=', 'profile_teachers.id')->join('users', 'profile_teachers.user_id', '=', 'users.id')
+                ->select('teaching_methods.*', 'users.name')->orderBy('created_at', 'desc')
                 ->get();
 
             return $this->returnData($teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
@@ -177,10 +195,10 @@ class TeachingMethodController extends Controller
     {
         try {
             DB::beginTransaction();
-            $teaching_method=TeachingMethod::find($id);
+            $teaching_method = TeachingMethod::find($id);
 
             if (!$teaching_method) {
-                return $this->returnError("404",'teaching_method Not found');
+                return $this->returnError("404", 'teaching_method Not found');
             }
             if (isset($teaching_method->file)) {
                 $this->deleteImage($teaching_method->file);
