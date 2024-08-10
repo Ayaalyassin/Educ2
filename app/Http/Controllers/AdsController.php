@@ -109,7 +109,10 @@ class AdsController extends Controller
                             'user:id,name,address'
                         ]);
                     }
-                ])
+                ,'profile_teacher'=>function($q){
+                    $q->select('id','user_id','jurisdiction')
+                    ->with('user:id,name');
+            }])
                 ->first();
 
             if (!$data) {
