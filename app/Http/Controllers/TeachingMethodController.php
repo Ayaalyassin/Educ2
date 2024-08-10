@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateTeachingMethodRequest;
+use App\Jobs\financialReportJob;
 use App\Models\ProfileTeacher;
 use App\Models\TeachingMethod;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests\TeachingMethodRequest;
 use App\Models\FinancialReport;
@@ -90,6 +92,8 @@ class TeachingMethodController extends Controller
                 'value' => $admin->wallet->value + $request->price * ($profit->value / 100)
             ]);
             /*end khader */
+
+            financialReportJob::dispatch('file',$request->price,auth()->user())->delay(Carbon::now()->addSeconds(1));
 
             DB::commit();
             return $this->returnData($teaching_method, __('backend.operation completed successfully', [], app()->getLocale()));

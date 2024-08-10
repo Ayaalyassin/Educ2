@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UpdateAdsRequest;
 use App\Jobs\DeleteAds;
 use App\Jobs\EndDateAdsJob;
+use App\Jobs\financialReportJob;
 use App\Models\Ads;
 use App\Models\ProfileTeacher;
 use Carbon\Carbon;
@@ -105,6 +106,8 @@ class AdsController extends Controller
                 'value' => $admin->wallet->value + $request->price * ($profit->value / 100)
             ]);
             /*end khader */
+
+            //financialReportJob::dispatch('ads',$request->price,auth()->user())->delay(Carbon::now()->addSeconds(1));
             DB::commit();
             return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
