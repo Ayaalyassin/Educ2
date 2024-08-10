@@ -2,17 +2,16 @@
 
 namespace App\Jobs;
 
-use Carbon\Carbon;
+use App\Traits\GeneralTrait;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
 
 class NotificationJobUser implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels,GeneralTrait;
 
     private $user,$title,$body;
     public function __construct($user,$title,$body)
@@ -27,11 +26,7 @@ class NotificationJobUser implements ShouldQueue
      */
     public function handle(): void
     {
-        DB::table('notifications')->insert([
-            'title' => $this->title,
-            'body' => $this->body,
-            'user_id' => $this->user->id,
-            'created_at'=>Carbon::now()->format('Y-m-d H:i:s')
-        ]);
+
+        $this->send($this->user,$this->title,$this->body);
     }
 }

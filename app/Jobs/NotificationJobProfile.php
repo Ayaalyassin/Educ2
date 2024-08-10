@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use Carbon\Carbon;
+use App\Traits\GeneralTrait;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class NotificationJobProfile implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels,GeneralTrait;
 
     private $profile,$title,$body;
     public function __construct($profile,$title,$body)
@@ -22,17 +22,11 @@ class NotificationJobProfile implements ShouldQueue
         $this->profile=$profile;
     }
 
-    /**
-     * Execute the job.
-     */
+
     public function handle(): void
     {
         $user=$this->profile->user()->first();
-        DB::table('notifications')->insert([
-            'title' => $this->title,
-            'body' => $this->body,
-            'user_id' => $user->id,
-            'created_at'=>Carbon::now()->format('Y-m-d H:i:s')
-        ]);
+
+        $this->send($user,$this->title,$this->body);
     }
 }

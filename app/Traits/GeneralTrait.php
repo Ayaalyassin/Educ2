@@ -2,10 +2,8 @@
 
 namespace App\Traits;
 
-//use App\Models\Notification as NotificationModel;
 use App\Models\Notification;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 //use Kreait\Firebase\Factory;
 //use Kreait\Firebase\Messaging\CloudMessage;
@@ -147,104 +145,6 @@ trait GeneralTrait
     }
 
 
-//    public function sendNotification($user_id,$message,$title)
-//    {
-//        $SERVER_KEY=env('FCM_SERVER_KEY');
-//        $user=User::find($user_id);
-//        $fcm=Http::acceptJson()->withToken($SERVER_KEY)
-//            ->post('https://fcm.googleapis.com/fcm/send',
-//            [
-//                'to'=>$user->fcm_token,
-//                'notification'=>
-//                [
-//                    'title'=>$title,
-//                    'body'=>$message
-//                ]
-//            ]);
-//        return json_decode($fcm);
-//    }
-
-//    public function sendNotificationMulti($user_ids,$message,$title)
-//    {
-//        $SERVER_KEY=env('FCM_SERVER_KEY');
-//        $fcm_tokens=User::find($user_ids)->pluck('fcm_token);
-//        $fcm=Http::acceptJson()->withToken($SERVER_KEY)
-//            ->post('https://fcm.googleapis.com/fcm/send',
-//            [
-//                'registration_ids'=>$fcm_tokens,
-//                'notification'=>
-//                [
-//                    'title'=>$title,
-//                    'body'=>$message
-//                ]
-//            ]);
-//        return json_decode($fcm);
-//    }
-
-
-      public function newFirebase($title,$body,$fcm_token)
-      {
-          try {
-
-              $apiUrl = 'https://fcm.googleapis.com/v1/projects/educ-9319e/messages:send';
-              $access_token = Cache::remember('access_token', now()->addHour(), function () use ($apiUrl) {
-                  $credentialsFilePath = storage_path('app/fcm.json');
-                  $client = new \Google_Client();
-                  $client->setAuthConfig($credentialsFilePath);
-                  $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
-                  $client->refreshTokenWithAssertion();
-                  $token = $client->getAccessToken();
-                  return $token['access_token'];
-              });
-
-              $headers=["Authorization:Bearer $access_token",
-                  'Content-Type:application/json'];
-              $test_data=[
-                  "title"=>$title,
-                  "description"=>$body
-              ];
-
-//              $data['data']=$test_data;
-//              $data['token']=$fcm_token;
-//              $payload['message']=$data;
-              $payload = [
-                  "message" => [
-                      "token" => $fcm_token,
-                      "notification" => [
-                          "title" => $title,
-                          "body" => $body
-                      ],
-                      "data" => [
-                          "extra_data" => "Your additional data here"
-                      ]
-                  ]
-              ];
-              $payload=json_encode($payload);
-              $ch=curl_init();
-              curl_setopt($ch,CURLOPT_URL,$apiUrl);
-              curl_setopt($ch,CURLOPT_POST,true);
-              curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-              curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-              curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-              curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-              $response = curl_exec($ch);
-              $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-              curl_close($ch);
-              if ($statusCode == 200) {
-                  return response()->json([
-                      'message' => 'Notification has been Sent'
-                  ]);
-              } else {
-                  return $this->returnError($statusCode, $response);
-              }
-
-
-          }
-          catch (\Exception $e)
-          {
-              return $this->returnError("500",$e->getMessage());
-          }
-      }
 
     public function send($user, $title, $message, $type = 'basic')
     {
@@ -273,22 +173,10 @@ trait GeneralTrait
         try {
             $messaging->send($cloudMessage);
 
-
-//            NotificationModel::query()->create([
-//                'type' => 'App\Notifications\UserFollow',
-//                'notifiable_type' => 'App\Models\User',
-//                'notifiable_id' => $user['id'],
-//                'data' => json_encode([
-//                    'user' => $user['first_name'] . ' ' . $user['last_name'],
-//                    'message' => $message,
-//                    'title' => $title,
-//                ]),
-//            ]);
             Notification::create([
                 'title'=>$title,
                 'body'=>$message,
-                'user_id'=>$user['id']
-
+                'user_id'=>$user['id'],
             ]);
             return 1;
         } catch (\Kreait\Firebase\Exception\MessagingException $e) {

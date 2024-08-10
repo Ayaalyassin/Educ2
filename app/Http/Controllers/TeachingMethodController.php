@@ -9,9 +9,6 @@ use App\Models\TeachingMethod;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests\TeachingMethodRequest;
-use App\Models\FinancialReport;
-use App\Models\ProfitRatio;
-use App\Models\User;
 use App\Traits\GeneralTrait;
 use Illuminate\Support\Facades\DB;
 
@@ -75,25 +72,8 @@ class TeachingMethodController extends Controller
                 'status' => $request->status,
                 'price' => $request->price
             ]);
-            /*start Khader */
-            $profit = ProfitRatio::where('type', 'file')->first();
-            $financialReport = FinancialReport::create([
-                'type' => 'Teaching Method',
-                'teacherName' =>  auth()->user()->name,
-                'value' => $request->price,
-                'ProfitAmount' => $request->price * ($profit->value / 100),
-                'profitRatio' => $profit->value
-            ]);
-            $admin = User::whereHas('roles', function ($query) {
-                $query->where('name', 'admin');
-            })->first();
-            $admin->load('wallet');
-            $admin->wallet->update([
-                'value' => $admin->wallet->value + $request->price * ($profit->value / 100)
-            ]);
-            /*end khader */
 
-            //financialReportJob::dispatch('file',$request->price,auth()->user())->delay(Carbon::now()->addSeconds(1));
+            financialReportJob::dispatch('file',$request->price,auth()->user())->delay(Carbon::now()->addSeconds(1));
 
             DB::commit();
             return $this->returnData($teaching_method, __('backend.operation completed successfully', [], app()->getLocale()));

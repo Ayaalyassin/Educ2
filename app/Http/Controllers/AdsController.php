@@ -11,9 +11,6 @@ use App\Models\ProfileTeacher;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests\AdsRequest;
-use App\Models\FinancialReport;
-use App\Models\ProfitRatio;
-use App\Models\User;
 use App\Traits\GeneralTrait;
 use Illuminate\Support\Facades\DB;
 
@@ -89,25 +86,8 @@ class AdsController extends Controller
             $diff = (strtotime($ads->end_date) - strtotime($today)) / (60 * 60 * 24);
 
             EndDateAdsJob::dispatch($user->id, $ads->id)->delay(Carbon::now()->addDays($diff));
-            /*start Khader */
-            $profit = ProfitRatio::where('type', 'ads')->first();
-            $financialReport = FinancialReport::create([
-                'type' => 'ads',
-                'teacherName' =>  $user->name,
-                'value' => $request->price,
-                'ProfitAmount' => $request->price * ($profit->value / 100),
-                'profitRatio' => $profit->value
-            ]);
-            $admin = User::whereHas('roles', function ($query) {
-                $query->where('name', 'admin');
-            })->first();
-            $admin->load('wallet');
-            $admin->wallet->update([
-                'value' => $admin->wallet->value + $request->price * ($profit->value / 100)
-            ]);
-            /*end khader */
 
-            //financialReportJob::dispatch('ads',$request->price,auth()->user())->delay(Carbon::now()->addSeconds(1));
+            financialReportJob::dispatch('ads',$request->price,auth()->user())->delay(Carbon::now()->addSeconds(1));
             DB::commit();
             return $this->returnData($ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
