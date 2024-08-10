@@ -93,7 +93,7 @@ class TeachingMethodController extends Controller
             ]);
             /*end khader */
 
-            financialReportJob::dispatch('file',$request->price,auth()->user())->delay(Carbon::now()->addSeconds(1));
+            //financialReportJob::dispatch('file',$request->price,auth()->user())->delay(Carbon::now()->addSeconds(1));
 
             DB::commit();
             return $this->returnData($teaching_method, __('backend.operation completed successfully', [], app()->getLocale()));
