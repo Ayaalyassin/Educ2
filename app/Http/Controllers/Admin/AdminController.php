@@ -417,7 +417,10 @@ class AdminController extends Controller
         $searchTerms = explode(' ', $searchTerm);
         $usersQuery = User::query();
         foreach ($searchTerms as $term) {
-            $usersQuery->where('name', 'LIKE', '%' . $term . '%');
+            $usersQuery->where('name', 'LIKE', '%' . $term . '%')
+                ->orWhere('address', 'LIKE', '%' . $term . '%')
+                // ->Where('status', 1);
+            ;
         }
         $users = $usersQuery->get();
         if ($users->isEmpty()) {

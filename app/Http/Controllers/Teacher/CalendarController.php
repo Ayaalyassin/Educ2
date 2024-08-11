@@ -87,10 +87,6 @@ class CalendarController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
         try {
@@ -122,17 +118,11 @@ class CalendarController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request)
     {
         try {
@@ -210,7 +200,6 @@ class CalendarController extends Controller
                         }
                     }
                     if (!$hourFound && $calendarHour->status == 0) {
-                        // return $calendarHour;
                         $students = LockHour::with('student.user.wallet')
                             ->with('service')
                             ->where('hour_id', $calendarHour->id)
@@ -233,7 +222,6 @@ class CalendarController extends Controller
                             }
                             $student->delete();
                         }
-
                         $studentsToNotify = array_merge($studentsToNotify, $students->toArray());
                         $calendarHour->delete();
                     }

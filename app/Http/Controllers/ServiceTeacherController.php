@@ -111,9 +111,6 @@ class ServiceTeacherController extends Controller
     public function destroy($id)
     {
         try {
-            // DB::beginTransaction();
-
-            // الحصول على ملف المعلم والخدمة
             $profile_teacher = auth()->user()->profile_teacher()->first();
             $service_teacher = $profile_teacher->service_teachers()->find($id);
 
@@ -122,7 +119,6 @@ class ServiceTeacherController extends Controller
             }
             $timeNow = Carbon::now()->setTimezone('Asia/Damascus')->toDateString();
             $services_lock = $service_teacher->hour_lock()->orderBy('status')->get();
-            // معالجة المواعيد غير المثبتة (status == 0)
             foreach ($services_lock as $service_lock) {
                 if ($service_lock->status == 0) {
                     $value = 0;
