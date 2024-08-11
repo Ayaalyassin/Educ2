@@ -204,14 +204,19 @@ class AdminController extends Controller
             })->whereHas('profile_teacher', function ($qu) {
                 $qu->where('status', 1);
             })->whereHas('block')->count();
-            $teaching_methods_free = TeachingMethod::where('price', 0)->count();
-            $teaching_methods = TeachingMethod::count();
+            $teaching_methods = TeachingMethod::where('type', 'Video')->count();
+            $teaching_methods_free = TeachingMethod::where('type', 'Video')->where('price', 0)->count();
+
+            $teaching_methods_pdf = TeachingMethod::where('type', 'PDF file')->count();
+            $teaching_methods_free_pdf = TeachingMethod::where('type', 'PDF file')->where('price', 0)->count();
+
             $courses = QualificationCourse::count();
             $ads_free = Ads::where('price', 0)->count();
             $ads = Ads::count();
 
             ///////////
 
+            $wallet = Auth::user()->wallet->value;
 
             $totalStudents = User::whereHas('roles', function ($q) {
                 $q->where('name', "student");
@@ -242,15 +247,17 @@ class AdminController extends Controller
                 $query->where('name', 'employee');
             })->whereDoesntHave('block')->count();
             $employeesPercentage = ($employeesCount / $totalUsers) * 100;
-            $video = HistoryLockHours::where('type', 'vide')->count();
+            $video = HistoryLockHours::where('type', 'video call')->count();
             $pre = [
                 'total_teachers' => $totalTeachers,
                 'unblock_teachers' => $unblockTeachers,
                 'block_teachers' => $blockTeachers,
                 'teacherPercentage' => $teacherPercentage,
                 'blockedTeacherPercentage' => $blockedTeacherPercentage,
-                'teaching_methods' => $teaching_methods,
-                'teaching_methods_free' => $teaching_methods_free,
+                'teaching_methods_video' => $teaching_methods,
+                'teaching_methods_free_video' => $teaching_methods_free,
+                'teaching_methods_pdf' => $teaching_methods_pdf,
+                'teaching_methods_free_pdf' => $teaching_methods_free_pdf,
 
                 'total_students' => $totalStudents,
                 'unblock_students' => $unblockStudents,
@@ -267,7 +274,7 @@ class AdminController extends Controller
                 'ads' => $ads,
                 'ads_free' => $ads_free,
                 'video_call' => $video,
-
+                'Profits' => $wallet
             ];
             DB::commit();
             return $this->returnData($pre, 200);

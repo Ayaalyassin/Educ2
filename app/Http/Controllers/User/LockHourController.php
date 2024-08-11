@@ -372,4 +372,9 @@ class LockHourController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
+    public function getDate($id)
+    {
+        $hour = CalendarHour::find($id);
+        return $hour->day->day;
+    }
 }

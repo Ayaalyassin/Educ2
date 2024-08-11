@@ -372,6 +372,7 @@ Route::group(['middleware' => ['localization']], function () {
                 Route::post('delete/{id}', [LockHourController::class, 'destroy']);
             });
             Route::group(['middleware' => 'hasRole:student'], function () {
+                Route::get('getDate/{id}', [LockHourController::class, 'getDate']);
                 Route::get('getById/{id}', [CalendarController::class, 'show']);
                 Route::post('lock-hour', [LockHourController::class, 'store']);
                 Route::get('delete-request/{id}', [LockHourController::class, 'delete_my_request']);
