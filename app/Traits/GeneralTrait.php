@@ -5,8 +5,8 @@ namespace App\Traits;
 use App\Models\Notification;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Log;
-//use Kreait\Firebase\Factory;
-//use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
 
 trait GeneralTrait
 {
