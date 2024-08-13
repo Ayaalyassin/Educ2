@@ -44,5 +44,9 @@ class financialReportJob implements ShouldQueue
             'value' => $admin->wallet->value + $this->price * ($profit->value / 100)
         ]);
         /*end khader */
+
+        $this->user->wallet->update([
+            'value' =>$this->user->wallet->value-$profit->value
+        ]);
     }
 }

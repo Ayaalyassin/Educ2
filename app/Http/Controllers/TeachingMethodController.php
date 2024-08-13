@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UpdateTeachingMethodRequest;
 use App\Jobs\financialReportJob;
 use App\Models\ProfileTeacher;
+use App\Models\ProfitRatio;
 use App\Models\TeachingMethod;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -60,7 +61,8 @@ class TeachingMethodController extends Controller
     {
         try {
             DB::beginTransaction();
-            $profile_teacher = auth()->user()->profile_teacher()->first();
+            $user=auth()->user();
+            $profile_teacher = $user->profile_teacher()->first();
 
             $file = $this->saveImage($request->file, $this->uploadPath);
 
@@ -72,6 +74,10 @@ class TeachingMethodController extends Controller
                 'status' => $request->status,
                 'price' => $request->price
             ]);
+            $profit = ProfitRatio::where('type', 'file')->first();
+
+            if ($user->wallet->value < $profit->value*$request->price)
+                return $this->returnError("402", __('backend.not Enough money in wallet', [], app()->getLocale()));
 
             financialReportJob::dispatch('file',$request->price,auth()->user())->delay(Carbon::now()->addSeconds(1));
 
