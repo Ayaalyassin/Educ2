@@ -8,6 +8,7 @@ use App\Jobs\EndDateAdsJob;
 use App\Jobs\financialReportJob;
 use App\Models\Ads;
 use App\Models\ProfileTeacher;
+use App\Models\ProfitRatio;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests\AdsRequest;
@@ -84,6 +85,11 @@ class AdsController extends Controller
             ]);
             $today = date('Y-m-d');
             $diff = (strtotime($ads->end_date) - strtotime($today)) / (60 * 60 * 24);
+
+            $profit = ProfitRatio::where('type', 'file')->first();
+
+            if ($user->wallet->value < $profit->value*$request->price)
+                return $this->returnError("402", __('backend.not Enough money in wallet', [], app()->getLocale()));
 
             EndDateAdsJob::dispatch($user->id, $ads->id)->delay(Carbon::now()->addDays($diff));
 
