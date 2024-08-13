@@ -4,6 +4,8 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LockHourRequest;
+use App\Jobs\LockHourJob;
+use App\Jobs\NotificationJobProfile;
 use App\Models\CalendarHour;
 use App\Models\FinancialReport;
 use App\Models\HistoryLockHours;
@@ -139,6 +141,8 @@ class LockHourController extends Controller
                         ]);
                     }
 
+                    LockHourJob::dispatch($request->service_id,'طلب حجز موعد', $user->name.' تم طلب حجز موعد من قبل ')->delay(Carbon::now()->addSeconds(2));
+
                     return $this->returnData(200, __('backend.operation completed successfully', [], app()->getLocale()));
                 }
             }
@@ -181,6 +185,8 @@ class LockHourController extends Controller
                 'case' => $request->case,
             ]);
             $lockHour->delete();
+
+            NotificationJobProfile::dispatch($lockHour->student, 'تم الرفض', ' تم رفض طلب حجز الموعد الخاص بك ')->delay(Carbon::now()->addSeconds(2));
             return $this->returnData($wallet, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -304,6 +310,8 @@ class LockHourController extends Controller
                 'ProfitAmount' => $lock_hour->value * ($profit->value / 100),
                 'profitRatio' => $profit->value
             ]);
+
+            NotificationJobProfile::dispatch($lock_hour->student, 'تم الموافقة', 'تم الموافقة على طلب حجز الموعد الخاص بك')->delay(Carbon::now()->addSeconds(2));
             return $this->returnData(200, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());

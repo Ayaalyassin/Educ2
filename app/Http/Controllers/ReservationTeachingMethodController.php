@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TeachingMethodUserRequest;
-use App\Jobs\AddWalletTeacherJob;
+use App\Jobs\NotificationJobProfile;
 use App\Models\TeachingMethod;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
@@ -63,8 +63,9 @@ class ReservationTeachingMethodController extends Controller
                 'teaching_method_id' => $request->teaching_method_id,
                 'reserved_at' => Carbon::now()->format('Y-m-d H:i:s')
             ]);
-            AddWalletTeacherJob::dispatch($teaching_method->id)->delay(Carbon::now()->addSeconds(2));
+            //AddWalletTeacherJob::dispatch($teaching_method->id,$user)->delay(Carbon::now()->addSeconds(2));
 
+            NotificationJobProfile::dispatch($teaching_method->profile_teacher, ' تم شراء وسيلة تعليمية', $user->name.' من قبل '.$teaching_method->title.' تم شراء الوسيلة ')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData($reservation_teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {

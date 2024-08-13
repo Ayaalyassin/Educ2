@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProfileTeacherRequest;
+use App\Jobs\AdminNotificationJob;
 use App\Models\Domain;
 use App\Models\ProfileTeacher;
 use App\Traits\GeneralTrait;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\ProfileTeacherRequest;
@@ -23,9 +25,10 @@ class ProfileTeacherController extends Controller
             DB::beginTransaction();
             $user=auth()->user();
 
-            $profile_teacher = ProfileTeacher::where('status',1)//->filter($request)
+            $profile_teacher = ProfileTeacher::where('status',1)
                 ->whereDoesntHave('user.block')
             ->orderByRaw("CASE WHEN (SELECT governorate FROM users WHERE users.id = profile_teachers.user_id) = '{$user->governorate}' THEN 0 ELSE 1 END")
+                ->filter($request)
                 ->get();
             if(count($profile_teacher)>0)
                 $profile_teacher->loadMissing(['user','domains']);
@@ -70,6 +73,8 @@ class ProfileTeacherController extends Controller
             Domain::insert($list_domains);
 
             $profile_teacher->loadMissing('domains');
+
+            AdminNotificationJob::dispatch( 'طلب انضمام', $user->name.' طلب انضمام جديد من قبل ')->delay(Carbon::now()->addSeconds(2));
 
             DB::commit();
             return $this->returnData($profile_teacher, __('backend.operation completed successfully', [], app()->getLocale()));

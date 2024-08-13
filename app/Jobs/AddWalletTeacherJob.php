@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\TeachingMethod;
 use App\Models\User;
+use App\Traits\GeneralTrait;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -12,12 +13,13 @@ use Illuminate\Queue\SerializesModels;
 
 class AddWalletTeacherJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels,GeneralTrait;
 
-    private $teaching_method_id;
-    public function __construct($teaching_method_id)
+    private $teaching_method_id,$user;
+    public function __construct($teaching_method_id,$user)
     {
         $this->teaching_method_id=$teaching_method_id;
+        $this->user=$user;
     }
 
 
@@ -46,5 +48,7 @@ class AddWalletTeacherJob implements ShouldQueue
                 ->where('deducted',0)
                 ->update(['deducted' => 1]);
         }
+
+        $this->send($user,'تم شراء وسيلة تعليمية','تم شراء الوسيلة'.$teaching_method->title.'من قبل '.$user->name );
     }
 }

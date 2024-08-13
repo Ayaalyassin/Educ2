@@ -3,23 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GovernorRequest;
-use App\Jobs\NotificationJobProfile;
+use App\Jobs\AdminNotificationJob;
 use App\Jobs\NotificationJobUser;
 use App\Models\Governor;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-use App\Http\Requests\TransactionsRequest;
 use App\Models\EmployeeReport;
 use App\Models\HistoryTransaction;
-use App\Models\User;
 use App\Traits\GeneralTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Expr\Cast\Object_;
 
-use function PHPSTORM_META\type;
 
 class GovernorController extends Controller
 {
@@ -172,7 +167,8 @@ class GovernorController extends Controller
     {
         try {
             DB::beginTransaction();
-            if (!auth()->user()) {
+            $user_auth=auth()->user();
+            if (!$user_auth) {
                 return $this->returnError(500, 'the token is not valid ');
             }
             $image_transactions = null;
@@ -190,6 +186,7 @@ class GovernorController extends Controller
 
             ]);
             $convenor->save();
+            AdminNotificationJob::dispatch( 'طلب شحن', $user_auth->name.' طلب شحن جديد من قبل ')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData($convenor, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
@@ -202,10 +199,11 @@ class GovernorController extends Controller
     {
         try {
             DB::beginTransaction();
-            if (!auth()->user()) {
+            $user_auth=auth()->user();
+            if (!$user_auth) {
                 return $this->returnError(500, 'the token is not valid ');
             }
-            $user = auth()->user()->wallet;
+            $user = $user_auth->wallet;
             if ($request->amount > $user->value) {
                 return $this->returnError(400, __('backend.not Enough money in wallet', [], app()->getLocale()));
             }
@@ -222,6 +220,7 @@ class GovernorController extends Controller
 
             ]);
             $convenor->save();
+            AdminNotificationJob::dispatch( 'طلب تفريغ', $user_auth->name.' طلب تفريغ جديد من قبل ')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData($convenor, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {

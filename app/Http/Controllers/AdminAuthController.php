@@ -28,9 +28,7 @@ class AdminAuthController extends Controller
 
         if (!$token)
             return $this->returnError(401,__('backend.Account Not found', [], app()->getLocale()));
-        $is_block=User::where('email',$request->email)->whereHas('block')->first();
-
-        if($is_block)
+        if (isset($exist->block))
             return $this->returnError(401,__('backend.You are block', [], app()->getLocale()));
 
         $code=mt_rand(100000, 999999);

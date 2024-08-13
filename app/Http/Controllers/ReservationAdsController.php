@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileStudentAdsRequest;
 use App\Jobs\EndAdsJob;
+use App\Jobs\NotificationJobProfile;
+use App\Jobs\NotificationJobUser;
 use App\Models\Ads;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
@@ -71,6 +73,7 @@ class ReservationAdsController extends Controller
             if($ads->number_students==0) {
                 EndAdsJob::dispatch($ads)->delay(Carbon::now()->addSeconds(2));
             }
+            NotificationJobProfile::dispatch($ads->profile_teacher,'تم التسجيل في الدورة', $user->name.' تم التسجيل في الدورة الخاصة بك من قبل ')->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnData($reservation_ads, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {

@@ -20,14 +20,14 @@ class TeachingMethodController extends Controller
     private $uploadPath = "assets/images/teaching_methods";
 
 
-    public function index($teacher_id)
+    public function index($teacher_id,Request $request)
     {
         try {
             $profile_teacher = ProfileTeacher::find($teacher_id);
             if (!$profile_teacher) {
                 return $this->returnError("404", 'Profile Teacher Not found');
             }
-            $teaching_methods = $profile_teacher->teaching_methods()->orderBy('created_at', 'desc')->get();
+            $teaching_methods = $profile_teacher->teaching_methods()->orderBy('created_at', 'desc')->filter($request)->get();
             return $this->returnData($teaching_methods, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", $ex->getMessage());

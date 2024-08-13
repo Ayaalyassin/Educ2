@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CompleteRequest;
+use App\Jobs\AdminNotificationJob;
 use App\Jobs\NotificationJobProfile;
 use App\Models\CompleteTeacher;
 use App\Models\EmployeeReport;
@@ -86,6 +87,9 @@ class CompleteTeacherController extends Controller
                 'status' => 0
             ]);
             $requestComplete->save();
+
+            AdminNotificationJob::dispatch( 'طلب استكمال', $user->user->name.' طلب استكمال جديد من قبل ')->delay(Carbon::now()->addSeconds(2));
+
             DB::commit();
             return $this->returnData($requestComplete, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {

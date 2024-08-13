@@ -50,11 +50,4 @@ class FavouriteController extends Controller
         }
     }
 
-
-
-
-    public function destroy(Favourite $favourite)
-    {
-        //
-    }
 }

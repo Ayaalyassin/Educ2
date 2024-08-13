@@ -15,13 +15,14 @@ class ProfileStudentController extends Controller
     private $uploadPath = "assets/images/profile_students";
 
 
-    public function getAll()
+    public function getAll(Request $request)
     {
         try {
             DB::beginTransaction();
 
             $profile_student = ProfileStudent::whereDoesntHave('user.block')
-            ->orderBy('created_at','desc')->get();
+            ->orderBy('created_at','desc')
+                ->filter($request)->get();
             if (count($profile_student) > 0)
                 $profile_student->loadMissing(['user']);
 
