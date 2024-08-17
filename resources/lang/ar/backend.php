@@ -605,6 +605,7 @@ return array (
     'already insert'=>'لقم تم الطلب مسبقا',
     'cant delete course because There are users who have joined the course'=>'لا يمكن حذف الدورة لأنه هناك منضمين',
     'Logged in successfully'=>'تم تسجيل الدخول بنجاح',
-    'You Can’t do it because there\'s no appointment between you.'=>'لا يمكنك فعل ذلك لأنه لا يوجد موعد بينكما'
+    'You Can’t do it because there\'s no appointment between you.'=>'لا يمكنك فعل ذلك لأنه لا يوجد موعد بينكما',
+    'Logged out successfully'=>'تم تسجيل الخروج بنجاح'
 
 );

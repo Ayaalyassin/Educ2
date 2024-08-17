@@ -10,10 +10,10 @@ class NotificationController extends Controller
     use GeneralTrait;
 
 
-    public function getAll(){
+    public function getAll(Request $request){
         try {
             $user = auth('api')->user();
-            $notifications=$user->notifications()->orderBy('created_at','desc')->get();
+            $notifications=$user->notifications()->filter($request)->orderBy('created_at','desc')->get();
 
             return $this->returnData($notifications, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {

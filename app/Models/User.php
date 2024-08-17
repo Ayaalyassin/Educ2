@@ -9,11 +9,11 @@ use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
-//use LaravelLegends\EloquentFilter\Concerns\HasFilter;
+use LaravelLegends\EloquentFilter\Concerns\HasFilter;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles; //,HasFilter;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles,HasFilter;
 
     /**
      * The attributes that are mass assignable.

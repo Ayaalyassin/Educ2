@@ -605,5 +605,6 @@ return array (
     'already insert'=>'already insert',
     'cant delete course because There are users who have joined the course'=>'cant delete course because There are users who have joined the course',
     'Logged in successfully'=>'Logged in successfully',
-    'You Can’t do it because there\'s no appointment between you.'=>'You Can’t do it because there\'s no appointment between you.'
+    'You Can’t do it because there\'s no appointment between you.'=>'You Can’t do it because there\'s no appointment between you.',
+    'Logged out successfully'=>'Logged out successfully'
 );

@@ -82,7 +82,7 @@ Route::group(['middleware' => ['localization']], function () {
         Route::post('test', [AuthController::class, 'test']);
         Route::post('resetPassword', [PasswordController::class, 'resetPassword']);
         Route::delete('deleteMyAccount', [AuthController::class, 'deleteMyAccount']);
-        //Route::get('test', [AdminAuthController::class, 'test']);
+        Route::post('logout', [AuthController::class, 'logout']);
 
         Route::group(['middleware' => ['hasRole:teacher']], function () {
 

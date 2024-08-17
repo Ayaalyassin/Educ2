@@ -23,7 +23,7 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'password' => bcrypt('12341234a'),
             'remember_token' => Str::random(10),
             'governorate'=>$this->faker->text(7),
             'address'=>$this->faker->text(10),

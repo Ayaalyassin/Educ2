@@ -109,11 +109,11 @@ class AdminController extends Controller
         }
     }
 
-    public function get_all_teacher_unblock()
+    public function get_all_teacher_unblock(Request $request)
     {
         try {
             DB::beginTransaction();
-            $teacher = ProfileTeacher::with('user')
+            $teacher = ProfileTeacher::filter($request)->with('user')
                 ->whereHas('user', function ($query) {
                     $query->whereDoesntHave('block');
                 })
@@ -130,11 +130,11 @@ class AdminController extends Controller
         }
     }
 
-    public function get_all_teacher_block()
+    public function get_all_teacher_block(Request $request)
     {
         try {
             DB::beginTransaction();
-            $teacher = User::whereHas('block')
+            $teacher = User::filter($request)->whereHas('block')
                 ->whereHas('profile_teacher')
                 ->with('profile_teacher')
                 ->with('wallet')
@@ -147,11 +147,11 @@ class AdminController extends Controller
         }
     }
 
-    public function get_all_teacher()
+    public function get_all_teacher(Request $request)
     {
         try {
             DB::beginTransaction();
-            $teachers = ProfileTeacher::with('user')->with('domains')
+            $teachers = ProfileTeacher::filter($request)->with('user')->with('domains')
                 ->with('user.wallet')
                 ->where('status', 1)->get()->map(function ($profileTeacher) {
                     $profileTeacher->is_blocked = $profileTeacher->user->isBlocked() ;
@@ -288,11 +288,11 @@ class AdminController extends Controller
     }
 
     //Student
-    public function get_all_student_unblock()
+    public function get_all_student_unblock(Request $request)
     {
         try {
             DB::beginTransaction();
-            $users = ProfileStudent::with('user')
+            $users = ProfileStudent::filter($request)->with('user')
                 ->whereHas('user', function ($query) {
                     $query->whereDoesntHave('block');
                 })
@@ -305,11 +305,11 @@ class AdminController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-    public function get_all_student_block()
+    public function get_all_student_block(Request $request)
     {
         try {
             DB::beginTransaction();
-            $users = User::whereHas('block')
+            $users = User::filter($request)->whereHas('block')
                 ->whereHas('profile_student')
                 ->with('profile_student')
                 ->with('wallet')
@@ -322,11 +322,11 @@ class AdminController extends Controller
         }
     }
 
-    public function get_all_student()
+    public function get_all_student(Request $request)
     {
         try {
             DB::beginTransaction();
-            $teachers = ProfileStudent::with('user')->with('user.wallet')->get()->map(function ($profileStudent) {
+            $teachers = ProfileStudent::filter($request)->with('user')->with('user.wallet')->get()->map(function ($profileStudent) {
                 $profileStudent->is_blocked =$profileStudent->user->isBlocked();
                 return $profileStudent;
             });
