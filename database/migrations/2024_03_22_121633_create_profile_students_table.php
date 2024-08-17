@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('phone')->unique()->nullable();
             $table->string('educational_level')->nullable();
 
-            $table->bigInteger('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned()->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->timestamps();

@@ -79,7 +79,7 @@ class TeachingMethodController extends Controller
             if ($user->wallet->value < $profit->value*$request->price)
                 return $this->returnError("402", __('backend.not Enough money in wallet', [], app()->getLocale()));
 
-            financialReportJob::dispatch('file',$request->price,auth()->user())->delay(Carbon::now()->addSeconds(1));
+            financialReportJob::dispatch('file',$request->price,$user)->delay(Carbon::now()->addSeconds(1));
 
             DB::commit();
             return $this->returnData($teaching_method, __('backend.operation completed successfully', [], app()->getLocale()));

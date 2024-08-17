@@ -188,6 +188,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Comment::class,'user_id','id');
     }
 
+    public function isBlocked()
+    {
+        return $this->block()->exists();
+    }
+
 
     public function setPasswordAttribute($value)
     {

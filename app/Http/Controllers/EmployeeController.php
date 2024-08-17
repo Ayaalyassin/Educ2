@@ -127,11 +127,13 @@ class EmployeeController extends Controller
     {
         try {
 
-            $data = User::whereHas('roles',function ($query){
+            $data = User::with('roles'
+            )->whereHas('roles',function ($query){
                 $query->where('id',4);
-            })->get();
-            if(count($data)>0)
-                $data->loadMissing('roles');
+            })->get()->map(function ($user){
+                $user->is_blocked = $user->isBlocked() ;
+                return $user;
+            });
             return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(),'Please try again later');

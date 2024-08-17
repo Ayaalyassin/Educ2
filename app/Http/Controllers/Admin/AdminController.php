@@ -153,7 +153,10 @@ class AdminController extends Controller
             DB::beginTransaction();
             $teachers = ProfileTeacher::with('user')->with('domains')
                 ->with('user.wallet')
-                ->where('status', 1)->get();
+                ->where('status', 1)->get()->map(function ($profileTeacher) {
+                    $profileTeacher->is_blocked = $profileTeacher->user->isBlocked() ;
+                    return $profileTeacher;
+                });
             DB::commit();
             return $this->returnData($teachers, 200);
         } catch (\Exception $ex) {
@@ -323,7 +326,10 @@ class AdminController extends Controller
     {
         try {
             DB::beginTransaction();
-            $teachers = ProfileStudent::with('user')->with('user.wallet')->get();
+            $teachers = ProfileStudent::with('user')->with('user.wallet')->get()->map(function ($profileStudent) {
+                $profileStudent->is_blocked =$profileStudent->user->isBlocked();
+                return $profileStudent;
+            });
             DB::commit();
             return $this->returnData($teachers, 200);
         } catch (\Exception $ex) {
