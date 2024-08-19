@@ -438,7 +438,7 @@ Route::group(['middleware' => ['localization']], function () {
         });
 
         Route::group(['prefix' => 'channel'], function () {
-            Route::group(['middleware' => ['hasRole:teacher']], function () {
+            Route::group(['middleware' => ['hasRole:teacher|student']], function () {
                 Route::post('connect', [ChannelController::class, 'connect']);
                 Route::get('Disconnect/{id}', [ChannelController::class, 'Disconnect']);
             });

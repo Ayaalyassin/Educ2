@@ -73,7 +73,7 @@ class BlockController extends Controller
     {
         try {
             DB::beginTransaction();
-            $block = Block::find($id);
+            $block = Block::where('user_id', $id)->first();
             if (!$block) {
                 return $this->returnError(404, 'not found user');
             }

@@ -50,6 +50,7 @@ class LockHourController extends Controller
                     'calendar_days.day',
                     'calendar_hours.hour',
                     'service_teachers.type',
+                    'lock_hours.appointmentAddress'
                 )
                 ->get();
             return $this->returnData($lock_hour, 'operation completed successfully');
@@ -84,7 +85,8 @@ class LockHourController extends Controller
                     'calendar_hours.hour',
                     'calendar_days.day',
                     'lock_hours.date',
-                    'service_teachers.type'
+                    'service_teachers.type',
+                    'lock_hours.appointmentAddress'
                 )
                 ->get();
             return $this->returnData($lock_hour, 'operation completed successfully');
@@ -141,7 +143,7 @@ class LockHourController extends Controller
                         ]);
                     }
 
-                    LockHourJob::dispatch($request->service_id,'طلب حجز موعد', $user->name.' تم طلب حجز موعد من قبل ')->delay(Carbon::now()->addSeconds(2));
+                    LockHourJob::dispatch($request->service_id, 'طلب حجز موعد', $user->name . ' تم طلب حجز موعد من قبل ')->delay(Carbon::now()->addSeconds(2));
 
                     return $this->returnData(200, __('backend.operation completed successfully', [], app()->getLocale()));
                 }
@@ -215,6 +217,7 @@ class LockHourController extends Controller
                     'users.name',
                     'users.address',
                     'users.governorate',
+                    'lock_hours.appointmentAddress'
                 )
                 ->get();
             return $this->returnData($lock_hour, __('backend.operation completed successfully', [], app()->getLocale()));
@@ -372,7 +375,8 @@ class LockHourController extends Controller
                     'calendar_days.day',
                     'calendar_hours.hour',
                     'service_teachers.type',
-                    'lock_hours.value'
+                    'lock_hours.value',
+                    'lock_hours.appointmentAddress'
                 )
                 ->get();
             return $this->returnData($lock_hour, __('backend.operation completed successfully', [], app()->getLocale()));
