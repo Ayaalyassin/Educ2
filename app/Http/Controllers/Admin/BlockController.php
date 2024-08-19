@@ -77,7 +77,6 @@ class BlockController extends Controller
             if (!$block) {
                 return $this->returnError(404, 'not found user');
             }
-
             $admin = Auth::user();
             $EmployeeReport = EmployeeReport::create([
                 'nameEmployee' => $admin->name,
