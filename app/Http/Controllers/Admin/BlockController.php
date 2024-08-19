@@ -84,7 +84,6 @@ class BlockController extends Controller
                 'name' => $block->user->name,
                 'nameColumn' => 'مستخدم',
             ]);
-
             $block->delete();
             DB::commit();
             return $this->returnData(__('backend.unblock successfully', [], app()->getLocale()), 200);
