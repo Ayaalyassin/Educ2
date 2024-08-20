@@ -18,7 +18,7 @@ class ProfileTeacher extends Model
         //'domain',
         'status',
         'assessing',
-        'image'
+        //'image'
     ];
     protected $hidden = ['created_at', 'updated_at'];
     protected $appends = ['rate'];

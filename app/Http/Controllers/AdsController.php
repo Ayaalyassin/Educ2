@@ -225,6 +225,7 @@ class AdsController extends Controller
             if (isset($ads->file)) {
                 $this->deleteImage($ads->file);
             }
+            $ads->delete();
             DeleteAds::dispatch($id)->delay(Carbon::now()->addSeconds(2));
             DB::commit();
             return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));
