@@ -42,23 +42,13 @@ class SeriesController extends Controller
             if (!$teaching_method)
                 return $this->returnError("404",'teaching_method Not found');
 
-//            $file = $this->saveImage($request->file, $this->uploadPath);
-//
-//            $teaching_method= $profile_teacher->teaching_methods()->create([
-//                'title'=>$request->title,
-//                'type'=>$request->type,
-//                'description'=>$request->description,
-//                'file'=>$file,
-//                'status'=>$request->status,
-//                'price'=>$request->price
-//            ]);
-
             $series = $request->series;
             $list_series = [];
             foreach ($series as $value) {
                 $file = $this->saveImage($value['file'], $this->uploadPath);
                 $data = [
                     'teaching_method_id' => $teaching_method->id,
+                    'title'=>$value['title'],
                     'file' => $file,
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s')
@@ -119,7 +109,8 @@ class SeriesController extends Controller
             $file = $this->saveImage($request->file, $this->uploadPath);
 
             $series->update([
-                'file'=>$file,
+                'title'=>isset($request->title) ? $request->title : $series->title,
+                'file'=>isset($request->file) ?$file : $series->file,
             ]);
 
             DB::commit();
@@ -143,9 +134,7 @@ class SeriesController extends Controller
             if (!$series)
                 return $this->returnError("404",'series Not found');
 
-            if (isset($series->file)) {
-                $this->deleteImage($series->file);
-            }
+            $this->deleteImage($series->file);
 
             $series->delete();
             DB::commit();
@@ -163,7 +152,6 @@ class SeriesController extends Controller
             $series=[];
             if($profile_teacher) {
                 $series = $profile_teacher->teaching_methods()->whereHas('series')->orderBy('created_at', 'desc')->get();
-                //$series->loadMissing('series');
             }
 
             return $this->returnData($series, __('backend.operation completed successfully', [], app()->getLocale()));

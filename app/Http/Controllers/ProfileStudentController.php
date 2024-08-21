@@ -37,7 +37,8 @@ class ProfileStudentController extends Controller
 
     public function store(ProfileStudentRequest $request)
     {
-        try {
+        //try {
+
             DB::beginTransaction();
 
             $user = auth()->user();
@@ -47,28 +48,29 @@ class ProfileStudentController extends Controller
             $profile_student->phone = isset($request->phone) ? $request->phone : $profile_student->phone;
             $profile_student->save();
 
+            $image=null;
             if(isset($request->image))
             {
                 $image = $this->saveImage($request->image, $this->uploadPath);
+                $this->deleteImage($user->image);
                 $profile_student->image=$image;
             }
 
             $name=$request->name;
-            if($name)
-            {
-                $user->update([
-                    'name'=>$name,
-                    'image'=>isset($request->image) ? $image : $user->image
-                ]);
-                $profile_student->name=$name;
-            }
+
+            $user->update([
+                'name'=>isset($request->name)  ? $name :$user->name,
+                'image'=>isset($request->image) ? $image : $user->image
+            ]);
+            $profile_student->name=$name;
+
 
             DB::commit();
             return $this->returnData($profile_student, __('backend.operation completed successfully', [], app()->getLocale()));
-        } catch (\Exception $ex) {
-            DB::rollback();
-            return $this->returnError("500", $ex->getMessage());
-        }
+//        } catch (\Exception $ex) {
+//            DB::rollback();
+//            return $this->returnError("500", $ex->getMessage());
+//        }
     }
 
 

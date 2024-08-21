@@ -106,7 +106,8 @@ trait GeneralTrait
                 unlink($photo);
             }
         } catch (\Exception $ex) {
-            throw new HttpResponseException($this->returnError($ex->getCode(), "This image Not found"));
+            //throw new HttpResponseException($this->returnError('500', "This image Not found"));
+            return null;
         }
     }
 

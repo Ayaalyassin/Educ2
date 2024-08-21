@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('series', function (Blueprint $table) {
             $table->id();
+            $table->string('title')->nullable();
             $table->string('file');
             $table->bigInteger('teaching_method_id')->unsigned();
             $table->foreign('teaching_method_id')->references('id')->on('teaching_methods')->onDelete('cascade');

@@ -14,10 +14,6 @@ class EvaluationController extends Controller
 {
     use GeneralTrait;
 
-    public function index()
-    {
-        //
-    }
 
 
     public function store(EvaluationRequest $request)
@@ -49,17 +45,6 @@ class EvaluationController extends Controller
         }
     }
 
-
-    public function show(Evaluation $evaluation)
-    {
-
-    }
-
-
-    public function update(Request $request, Evaluation $evaluation)
-    {
-        //
-    }
 
 
     public function destroy($id)

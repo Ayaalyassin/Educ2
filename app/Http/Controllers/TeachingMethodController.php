@@ -137,9 +137,7 @@ class TeachingMethodController extends Controller
             if (!$teaching_method) {
                 return $this->returnError("404", 'teaching_method Not found');
             }
-            if (isset($teaching_method->file)) {
-                $this->deleteImage($teaching_method->file);
-            }
+            $this->deleteImage($teaching_method->file);
 
             $teaching_method->delete();
 
@@ -190,9 +188,7 @@ class TeachingMethodController extends Controller
             if (!$teaching_method) {
                 return $this->returnError("404", 'teaching_method Not found');
             }
-            if (isset($teaching_method->file)) {
-                $this->deleteImage($teaching_method->file);
-            }
+            $this->deleteImage($teaching_method->file);
 
             $teaching_method->delete();
 

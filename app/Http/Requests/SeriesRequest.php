@@ -20,15 +20,10 @@ class SeriesRequest extends FormRequest
     public function rules(): array
     {
         return [
-//            'title'=>'required|string',
-//            'type'=>'required|string',
-//            'description'=>'required',
-//            'file'=>'required|file',
-//            'status'=>'required|boolean',
-//            'price'=>'required|numeric|min:0',
            'teaching_method_id'=>'required|integer',
             'series'=>'required|array|min:1',
             'series.*.file'=>'required|file',
+            'series.*.title'=>'required|string',
         ];
     }
 

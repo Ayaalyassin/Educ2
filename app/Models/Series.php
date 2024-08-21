@@ -9,6 +9,7 @@ class Series extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'title',
         'file',
         'teaching_method_id',
     ];

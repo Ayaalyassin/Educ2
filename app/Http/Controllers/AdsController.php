@@ -69,9 +69,7 @@ class AdsController extends Controller
             $user = auth()->user();
 
             $file = null;
-            if (isset($request->file)) {
-                $file = $this->saveImage($request->file, $this->uploadPath);
-            }
+            $file = $this->saveImage($request->file, $this->uploadPath);
 
             $profile_teacher = $user->profile_teacher()->first();
             $ads = $profile_teacher->ads()->create([
@@ -125,7 +123,6 @@ class AdsController extends Controller
             if (!$data) {
                 return $this->returnError("404", "Not found");
             }
-            //$data->loadMissing(['reservation_ads.profile_student.user:id,name,address']);
             return $this->returnData($data, __('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {
             return $this->returnError("500", 'Please try again later');

@@ -20,7 +20,8 @@ class UpdateSeriesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file'=>'required|file',
+            'title'=>'sometimes|string',
+            'file'=>'sometimes|file',
         ];
     }
 

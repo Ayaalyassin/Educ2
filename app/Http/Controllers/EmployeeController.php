@@ -27,7 +27,7 @@ class EmployeeController extends Controller
             }
 
             $data=User::create([
-                'name'           => $request->name,//
+                'name'           => $request->name,
                 'email'          => $request->email,
                 'password'       => $request->password,
                 'address'        => $request->address,
@@ -66,8 +66,8 @@ class EmployeeController extends Controller
             if(isset($request->image))
             {
                 $image = $this->saveImage($request->image, $this->uploadPath);
+                $this->deleteImage($data->image);
             }
-
 
             $data->update([
                 'name'           => isset($request->name)? $request->name :$data->name,
@@ -115,6 +115,7 @@ class EmployeeController extends Controller
             if (!$data) {
                 return $this->returnError("404",'Not found');
             }
+            $this->deleteImage($data->image);
             $data->delete();
             return $this->returnSuccessMessage(__('backend.operation completed successfully', [], app()->getLocale()));
         } catch (\Exception $ex) {

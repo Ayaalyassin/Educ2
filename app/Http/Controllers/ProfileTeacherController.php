@@ -139,6 +139,7 @@ class ProfileTeacherController extends Controller
             if(isset($request->image))
             {
                 $image = $this->saveImage($request->image, $this->uploadPath);
+                $this->deleteImage($user->image);
             }
 
             $profile_teacher->update([
